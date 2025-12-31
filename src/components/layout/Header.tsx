@@ -1,9 +1,17 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ShoppingBag, User, Search, ChevronDown } from "lucide-react";
+import { Menu, X, ShoppingBag, User, Search, LogOut, Settings, Shield, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -17,6 +25,8 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, profile, role, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,6 +39,33 @@ export function Header() {
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
+  const getRoleIcon = () => {
+    switch (role) {
+      case 'admin':
+        return <Shield className="w-4 h-4" />;
+      case 'artisan':
+        return <Palette className="w-4 h-4" />;
+      default:
+        return <User className="w-4 h-4" />;
+    }
+  };
+
+  const getRoleLabel = () => {
+    switch (role) {
+      case 'admin':
+        return 'Administrator';
+      case 'artisan':
+        return 'Artisan';
+      default:
+        return 'Buyer';
+    }
+  };
 
   return (
     <header
@@ -106,14 +143,60 @@ export function Header() {
                 0
               </span>
             </Button>
-            <Button
-              variant={isScrolled ? "outline" : "outline-light"}
-              size="sm"
-              className="hidden md:flex"
-            >
-              <User className="h-4 w-4 mr-2" />
-              Sign In
-            </Button>
+            
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={isScrolled ? "outline" : "outline-light"}
+                    size="sm"
+                    className="hidden md:flex gap-2"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold">
+                      {profile?.full_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase()}
+                    </div>
+                    <span className="max-w-[100px] truncate">
+                      {profile?.full_name || 'Account'}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="px-2 py-2 border-b">
+                    <p className="font-medium truncate">{profile?.full_name || 'User'}</p>
+                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    <div className="mt-1 flex items-center gap-1 text-xs text-primary">
+                      {getRoleIcon()}
+                      {getRoleLabel()}
+                    </div>
+                  </div>
+                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <Settings className="w-4 h-4 mr-2" />
+                    Profile Settings
+                  </DropdownMenuItem>
+                  {role === 'admin' && (
+                    <DropdownMenuItem onClick={() => navigate('/admin')}>
+                      <Shield className="w-4 h-4 mr-2" />
+                      Admin Dashboard
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button
+                variant={isScrolled ? "outline" : "outline-light"}
+                size="sm"
+                className="hidden md:flex"
+                onClick={() => navigate('/auth')}
+              >
+                <User className="h-4 w-4 mr-2" />
+                Sign In
+              </Button>
+            )}
             
             {/* Mobile Menu Button */}
             <Button
@@ -168,10 +251,35 @@ export function Header() {
                   transition={{ delay: navigation.length * 0.1 }}
                   className="pt-4"
                 >
-                  <Button variant="hero" className="w-full">
-                    <User className="h-4 w-4 mr-2" />
-                    Sign In
-                  </Button>
+                  {user ? (
+                    <div className="space-y-2">
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-start"
+                        onClick={() => navigate('/profile')}
+                      >
+                        <Settings className="h-4 w-4 mr-2" />
+                        Profile Settings
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start text-destructive"
+                        onClick={handleSignOut}
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Sign Out
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button 
+                      variant="hero" 
+                      className="w-full"
+                      onClick={() => navigate('/auth')}
+                    >
+                      <User className="h-4 w-4 mr-2" />
+                      Sign In
+                    </Button>
+                  )}
                 </motion.div>
               </div>
             </motion.div>
