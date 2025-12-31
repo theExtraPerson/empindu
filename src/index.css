@@ -2,95 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* ============================================
+   CRAFTED UGANDA - African-Inspired Design System
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* ===== Core Colors - African Earth Palette ===== */
+    
+    /* Terracotta Primary - Rich clay tones */
+    --primary: 15 80% 50%;
+    --primary-foreground: 40 30% 98%;
+    --primary-soft: 15 70% 60%;
+    --primary-deep: 15 85% 35%;
+    
+    /* Savanna Gold - Warm accents */
+    --secondary: 38 92% 50%;
+    --secondary-foreground: 25 30% 10%;
+    --secondary-soft: 42 88% 60%;
+    
+    /* Forest Green - Nature accent */
+    --accent: 160 84% 30%;
+    --accent-foreground: 150 40% 98%;
+    --accent-soft: 160 60% 45%;
+    
+    /* Earth Neutrals - Bark & Stone */
+    --background: 40 25% 97%;
+    --foreground: 25 30% 12%;
+    
+    --card: 40 30% 99%;
+    --card-foreground: 25 30% 12%;
+    
+    --popover: 40 30% 99%;
+    --popover-foreground: 25 30% 12%;
+    
+    --muted: 35 20% 92%;
+    --muted-foreground: 25 15% 45%;
+    
+    --border: 35 25% 88%;
+    --input: 35 25% 88%;
+    --ring: 15 80% 50%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* ===== Extended Palette ===== */
+    --warm-cream: 40 40% 95%;
+    --bark-brown: 25 35% 22%;
+    --savanna-sand: 38 45% 85%;
+    --copper: 20 70% 45%;
+    --kente-gold: 45 95% 55%;
+    --mudcloth-black: 30 10% 15%;
+    
+    /* ===== Gradients ===== */
+    --gradient-hero: linear-gradient(135deg, hsl(15 80% 50%) 0%, hsl(38 92% 50%) 50%, hsl(15 85% 35%) 100%);
+    --gradient-warm: linear-gradient(180deg, hsl(40 25% 97%) 0%, hsl(35 30% 92%) 100%);
+    --gradient-sunset: linear-gradient(135deg, hsl(15 85% 35%) 0%, hsl(38 92% 50%) 100%);
+    --gradient-earth: linear-gradient(180deg, hsl(25 35% 22%) 0%, hsl(30 10% 15%) 100%);
+    --gradient-pattern: linear-gradient(45deg, hsl(15 80% 50% / 0.1) 25%, transparent 25%, transparent 50%, hsl(15 80% 50% / 0.1) 50%, hsl(15 80% 50% / 0.1) 75%, transparent 75%);
+    
+    /* ===== Shadows ===== */
+    --shadow-soft: 0 4px 20px hsl(25 35% 22% / 0.08);
+    --shadow-medium: 0 8px 30px hsl(25 35% 22% / 0.12);
+    --shadow-strong: 0 15px 50px hsl(25 35% 22% / 0.18);
+    --shadow-glow: 0 0 40px hsl(15 80% 50% / 0.3);
+    --shadow-gold: 0 4px 20px hsl(38 92% 50% / 0.25);
+    
+    --radius: 0.75rem;
+    
+    /* ===== Sidebar ===== */
+    --sidebar-background: 40 30% 98%;
+    --sidebar-foreground: 25 30% 12%;
+    --sidebar-primary: 15 80% 50%;
+    --sidebar-primary-foreground: 40 30% 98%;
+    --sidebar-accent: 35 20% 92%;
+    --sidebar-accent-foreground: 25 30% 12%;
+    --sidebar-border: 35 25% 88%;
+    --sidebar-ring: 15 80% 50%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 25 25% 8%;
+    --foreground: 40 20% 95%;
+    
+    --card: 25 22% 12%;
+    --card-foreground: 40 20% 95%;
+    
+    --popover: 25 22% 12%;
+    --popover-foreground: 40 20% 95%;
+    
+    --primary: 15 75% 55%;
+    --primary-foreground: 25 30% 8%;
+    
+    --secondary: 38 85% 55%;
+    --secondary-foreground: 25 30% 8%;
+    
+    --accent: 160 70% 40%;
+    --accent-foreground: 25 30% 8%;
+    
+    --muted: 25 20% 18%;
+    --muted-foreground: 35 15% 60%;
+    
+    --border: 25 18% 22%;
+    --input: 25 18% 22%;
+    --ring: 15 75% 55%;
+    
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --sidebar-background: 25 25% 10%;
+    --sidebar-foreground: 40 20% 95%;
+    --sidebar-primary: 15 75% 55%;
+    --sidebar-primary-foreground: 25 30% 8%;
+    --sidebar-accent: 25 20% 18%;
+    --sidebar-accent-foreground: 40 20% 95%;
+    --sidebar-border: 25 18% 22%;
+    --sidebar-ring: 15 75% 55%;
   }
 }
 
@@ -99,7 +128,288 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground;
+  html {
+    scroll-behavior: smooth;
   }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+    @apply font-bold tracking-tight;
+  }
+}
+
+/* ===== Custom Utility Classes ===== */
+@layer utilities {
+  .font-display {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+  
+  .font-body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+
+  /* African Pattern Backgrounds */
+  .pattern-kente {
+    background-image: 
+      linear-gradient(45deg, hsl(var(--primary) / 0.08) 25%, transparent 25%),
+      linear-gradient(-45deg, hsl(var(--primary) / 0.08) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, hsl(var(--secondary) / 0.08) 75%),
+      linear-gradient(-45deg, transparent 75%, hsl(var(--secondary) / 0.08) 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+
+  .pattern-weave {
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        hsl(var(--primary) / 0.05) 0px,
+        hsl(var(--primary) / 0.05) 2px,
+        transparent 2px,
+        transparent 12px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        hsl(var(--secondary) / 0.05) 0px,
+        hsl(var(--secondary) / 0.05) 2px,
+        transparent 2px,
+        transparent 12px
+      );
+  }
+
+  .pattern-mudcloth {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e86e3a' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Gradient Text */
+  .text-gradient-primary {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-hero);
+  }
+
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--kente-gold)) 100%);
+  }
+
+  /* Glassmorphism */
+  .glass {
+    @apply backdrop-blur-md bg-card/80 border border-border/50;
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-md bg-mudcloth-black/80 border border-border/20;
+  }
+
+  /* Hover Effects */
+  .hover-lift {
+    @apply transition-all duration-300 ease-out;
+  }
+  .hover-lift:hover {
+    @apply -translate-y-1;
+    box-shadow: var(--shadow-medium);
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+  .hover-glow:hover {
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Organic Border Radius */
+  .rounded-organic {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+
+  .rounded-organic-alt {
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  }
+
+  /* Section Spacing */
+  .section-padding {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  .container-tight {
+    @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* ===== Animations ===== */
+@layer utilities {
+  /* Weave In Animation - African basket weaving inspired */
+  @keyframes weave-in {
+    0% {
+      opacity: 0;
+      transform: translateY(30px) rotate(-2deg);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) rotate(0);
+    }
+  }
+
+  @keyframes weave-in-left {
+    0% {
+      opacity: 0;
+      transform: translateX(-40px) skewX(2deg);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0) skewX(0);
+    }
+  }
+
+  @keyframes weave-in-right {
+    0% {
+      opacity: 0;
+      transform: translateX(40px) skewX(-2deg);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0) skewX(0);
+    }
+  }
+
+  /* Craft Reveal - Like uncovering a finished piece */
+  @keyframes craft-reveal {
+    0% {
+      opacity: 0;
+      transform: scale(0.95) translateY(20px);
+      filter: blur(4px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  /* Gentle Float - Organic, natural motion */
+  @keyframes gentle-float {
+    0%, 100% {
+      transform: translateY(0) rotate(0);
+    }
+    50% {
+      transform: translateY(-10px) rotate(1deg);
+    }
+  }
+
+  /* Shimmer - Gold reflection effect */
+  @keyframes shimmer {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  /* Pulse Glow */
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px hsl(var(--primary) / 0.5);
+    }
+  }
+
+  /* Spin Slow - For decorative elements */
+  @keyframes spin-slow {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Stagger children animations */
+  .stagger-children > * {
+    animation: weave-in 0.6s ease-out forwards;
+    opacity: 0;
+  }
+  .stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+  .stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+  .stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+  .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+  .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+  .stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+
+  .animate-weave-in {
+    animation: weave-in 0.7s ease-out forwards;
+  }
+
+  .animate-weave-in-left {
+    animation: weave-in-left 0.7s ease-out forwards;
+  }
+
+  .animate-weave-in-right {
+    animation: weave-in-right 0.7s ease-out forwards;
+  }
+
+  .animate-craft-reveal {
+    animation: craft-reveal 0.8s ease-out forwards;
+  }
+
+  .animate-gentle-float {
+    animation: gentle-float 6s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    background-size: 200% auto;
+    animation: shimmer 3s linear infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 20s linear infinite;
+  }
+}
+
+/* ===== Scroll-triggered animations ===== */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-animate.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== Selection Colors ===== */
+::selection {
+  background-color: hsl(var(--primary) / 0.3);
+  color: hsl(var(--foreground));
+}
+
+/* ===== Scrollbar Styling ===== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.4);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.6);
 }
