@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useCartStore } from "@/stores/cartStore";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -27,6 +28,8 @@ export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, role, signOut } = useAuth();
+  const { openCart, getTotalItems } = useCartStore();
+  const cartItemCount = getTotalItems();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -137,11 +140,14 @@ export function Header() {
               variant={isScrolled ? "ghost" : "ghost-light"}
               size="icon-sm"
               className="relative"
+              onClick={openCart}
             >
               <ShoppingBag className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground rounded-full text-xs flex items-center justify-center font-bold">
-                0
-              </span>
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground rounded-full text-xs flex items-center justify-center font-bold">
+                  {cartItemCount > 99 ? '99+' : cartItemCount}
+                </span>
+              )}
             </Button>
             
             {user ? (

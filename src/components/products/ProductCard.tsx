@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Heart, Star, ShoppingBag, Edit, Trash2 } from 'lucide-react';
+import { Heart, ShoppingBag, Edit, Trash2 } from 'lucide-react';
 import { Product } from '@/hooks/useProducts';
+import { useCartStore } from '@/stores/cartStore';
+import { useToast } from '@/hooks/use-toast';
 import heroCrafts from '@/assets/hero-crafts.jpg';
 
 interface ProductCardProps {
@@ -24,6 +26,17 @@ export const ProductCard = ({
   onEdit,
   onDelete 
 }: ProductCardProps) => {
+  const { addItem } = useCartStore();
+  const { toast } = useToast();
+
+  const handleAddToCart = () => {
+    addItem(product);
+    toast({
+      title: "Added to cart",
+      description: `${product.name} has been added to your cart`
+    });
+  };
+
   const primaryImage = product.images?.find(img => img.is_primary)?.image_url 
     || product.images?.[0]?.image_url 
     || heroCrafts;
@@ -130,6 +143,7 @@ export const ProductCard = ({
                 variant="default" 
                 size="sm" 
                 disabled={product.stock_quantity === 0 || !product.is_available}
+                onClick={handleAddToCart}
               >
                 <ShoppingBag className="h-4 w-4 mr-1" />
                 Add
