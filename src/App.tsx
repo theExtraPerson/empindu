@@ -7,12 +7,12 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Artisans from "./pages/Artisans";
 import Marketplace from "./pages/Marketplace";
+import Dashboard from "./pages/Dashboard";
 import Exhibition from "./pages/Exhibition";
 import About from "./pages/About";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
-
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -27,6 +27,7 @@ const App = () => (
             <Route path="/artisans" element={<Artisans />} />
             <Route path="/artisans/:id" element={<Artisans />} />
             <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/exhibition" element={<Exhibition />} />
             <Route path="/about" element={<About />} />
             <Route path="/auth" element={<Auth />} />

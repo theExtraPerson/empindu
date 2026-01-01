@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ShoppingBag, User, Search, LogOut, Settings, Shield, Palette } from "lucide-react";
+import { Menu, X, ShoppingBag, User, Search, LogOut, Settings, Shield, Palette, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -173,6 +173,12 @@ export function Header() {
                     <Settings className="w-4 h-4 mr-2" />
                     Profile Settings
                   </DropdownMenuItem>
+                  {(role === 'artisan' || role === 'admin') && (
+                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                      <Package className="w-4 h-4 mr-2" />
+                      My Products
+                    </DropdownMenuItem>
+                  )}
                   {role === 'admin' && (
                     <DropdownMenuItem onClick={() => navigate('/admin')}>
                       <Shield className="w-4 h-4 mr-2" />
@@ -261,6 +267,16 @@ export function Header() {
                         <Settings className="h-4 w-4 mr-2" />
                         Profile Settings
                       </Button>
+                      {(role === 'artisan' || role === 'admin') && (
+                        <Button 
+                          variant="outline" 
+                          className="w-full justify-start"
+                          onClick={() => navigate('/dashboard')}
+                        >
+                          <Package className="h-4 w-4 mr-2" />
+                          My Products
+                        </Button>
+                      )}
                       <Button 
                         variant="ghost" 
                         className="w-full justify-start text-destructive"
