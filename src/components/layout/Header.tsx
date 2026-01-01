@@ -283,6 +283,16 @@ export function Header() {
                           My Products
                         </Button>
                       )}
+                      {role === 'admin' && (
+                        <Button 
+                          variant="outline" 
+                          className="w-full justify-start"
+                          onClick={() => navigate('/admin')}
+                        >
+                          <Shield className="h-4 w-4 mr-2" />
+                          Admin Dashboard
+                        </Button>
+                      )}
                       <Button 
                         variant="ghost" 
                         className="w-full justify-start text-destructive"
