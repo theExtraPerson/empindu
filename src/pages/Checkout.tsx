@@ -12,6 +12,7 @@ import { ArrowLeft, ShoppingBag, Truck, CreditCard, CheckCircle, Loader2 } from 
 import { useCartStore } from '@/stores/cartStore';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import heroCrafts from '@/assets/hero-crafts.jpg';
 
 const formatPrice = (price: number) => {
@@ -75,20 +76,87 @@ const Checkout = () => {
   };
 
   const handlePayment = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to complete your order",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // In a real app, this would integrate with payment provider
-    toast({
-      title: "Order Placed!",
-      description: "Your order has been placed successfully"
-    });
-    
-    clearCart();
-    setStep('success');
-    setLoading(false);
+    try {
+      // Create order in database
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          buyer_id: user.id,
+          total_amount: totalWithShipping,
+          shipping_address: shippingInfo.address,
+          shipping_city: shippingInfo.city,
+          shipping_country: 'Uganda',
+          shipping_postal_code: null,
+          payment_method: paymentMethod,
+          notes: shippingInfo.notes || null,
+          status: 'pending'
+        })
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Create order items
+      const orderItems = items.map(item => ({
+        order_id: order.id,
+        product_id: item.product.id,
+        quantity: item.quantity,
+        unit_price: item.product.price
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) throw itemsError;
+
+      // Send confirmation email
+      if (shippingInfo.email) {
+        await supabase.functions.invoke('send-order-email', {
+          body: {
+            type: 'confirmation',
+            email: shippingInfo.email,
+            customerName: shippingInfo.fullName,
+            orderId: order.id,
+            orderTotal: totalWithShipping,
+            items: items.map(item => ({
+              name: item.product.name,
+              quantity: item.quantity,
+              price: item.product.price * item.quantity
+            })),
+            shippingAddress: `${shippingInfo.fullName}<br>${shippingInfo.address}<br>${shippingInfo.city}, Uganda<br>${shippingInfo.phone}`
+          }
+        });
+      }
+
+      toast({
+        title: "Order Placed!",
+        description: "Your order has been placed successfully. Check your email for confirmation."
+      });
+      
+      clearCart();
+      setStep('success');
+    } catch (error: any) {
+      console.error('Order error:', error);
+      toast({
+        title: "Order Failed",
+        description: error.message || "Failed to place order. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (step === 'success') {
