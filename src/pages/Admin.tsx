@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Layout } from '@/components/layout/Layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Users, Package, BarChart3, Shield } from 'lucide-react';
+import { Loader2, Users, Package, BarChart3, Shield, ShoppingBag } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdminData } from '@/hooks/useAdminData';
 import { ArtisansManager } from '@/components/admin/ArtisansManager';
 import { ProductsManager } from '@/components/admin/ProductsManager';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
+import { OrdersManager } from '@/components/admin/OrdersManager';
 
 const Admin = () => {
   const { user, role, loading: authLoading } = useAuth();
@@ -79,10 +80,14 @@ const Admin = () => {
       <section className="py-12">
         <div className="container mx-auto px-4">
           <Tabs defaultValue="analytics" className="space-y-6">
-            <TabsList className="grid w-full max-w-md grid-cols-3">
+            <TabsList className="grid w-full max-w-lg grid-cols-4">
               <TabsTrigger value="analytics" className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4" />
                 <span className="hidden sm:inline">Analytics</span>
+              </TabsTrigger>
+              <TabsTrigger value="orders" className="flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4" />
+                <span className="hidden sm:inline">Orders</span>
               </TabsTrigger>
               <TabsTrigger value="artisans" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
@@ -96,6 +101,10 @@ const Admin = () => {
 
             <TabsContent value="analytics">
               <AnalyticsDashboard stats={stats} />
+            </TabsContent>
+
+            <TabsContent value="orders">
+              <OrdersManager />
             </TabsContent>
 
             <TabsContent value="artisans">
