@@ -95,19 +95,52 @@ export const OrdersManager = () => {
         .in('user_id', buyerIds);
       
       if (error) throw error;
-      return Object.fromEntries((data || []).map(p => [p.user_id, p.full_name]));
+      return Object.fromEntries((data || []).map(p => [p.user_id, p]));
+    },
+    enabled: orders.length > 0,
+  });
+
+  const { data: buyerEmails = {} } = useQuery({
+    queryKey: ['buyer-emails'],
+    queryFn: async () => {
+      // We'll store emails from orders shipping info if available
+      const emailMap: Record<string, string> = {};
+      orders.forEach(o => {
+        // Since we don't have direct access to auth.users, we'll need to send email via buyer_id lookup
+        // For now, we'll use the profiles which may have contact info
+      });
+      return emailMap;
     },
     enabled: orders.length > 0,
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: async ({ orderId, status }: { orderId: string; status: OrderStatus }) => {
+    mutationFn: async ({ orderId, status, order }: { orderId: string; status: OrderStatus; order: Order }) => {
       const { error } = await supabase
         .from('orders')
         .update({ status })
         .eq('id', orderId);
       
       if (error) throw error;
+
+      // Send status update email
+      const buyerProfile = buyerProfiles[order.buyer_id];
+      if (buyerProfile) {
+        try {
+          await supabase.functions.invoke('send-order-email', {
+            body: {
+              type: status === 'shipped' ? 'shipped' : 'status_update',
+              email: 'customer@example.com', // In production, get from user profile or order
+              customerName: buyerProfile.full_name || 'Customer',
+              orderId: orderId,
+              newStatus: status,
+              shippingAddress: `${order.shipping_address}<br>${order.shipping_city}, ${order.shipping_country}`
+            }
+          });
+        } catch (emailError) {
+          console.error('Failed to send status email:', emailError);
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
@@ -185,7 +218,7 @@ export const OrdersManager = () => {
                       {order.id.slice(0, 8)}...
                     </TableCell>
                     <TableCell>
-                      {buyerProfiles[order.buyer_id] || 'Unknown'}
+                      {buyerProfiles[order.buyer_id]?.full_name || 'Unknown'}
                     </TableCell>
                     <TableCell>
                       {format(new Date(order.created_at), 'MMM d, yyyy')}
@@ -201,7 +234,7 @@ export const OrdersManager = () => {
                         <Select
                           value={order.status}
                           onValueChange={(value) => 
-                            updateStatusMutation.mutate({ orderId: order.id, status: value as OrderStatus })
+                            updateStatusMutation.mutate({ orderId: order.id, status: value as OrderStatus, order })
                           }
                         >
                           <SelectTrigger className="w-[130px] h-8">
