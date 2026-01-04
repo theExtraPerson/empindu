@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
@@ -169,6 +170,36 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Verify JWT authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.error("Missing authorization header");
+      return new Response(
+        JSON.stringify({ error: "Missing authorization" }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Create Supabase client with user's JWT
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    // Verify user is authenticated
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      console.error("Unauthorized user:", authError?.message);
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    console.log("Authenticated user:", user.id);
+
     const data: OrderEmailRequest = await req.json();
     console.log("Email request data:", { type: data.type, email: data.email, orderId: data.orderId });
 
@@ -179,6 +210,37 @@ const handler = async (req: Request): Promise<Response> => {
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
+
+    // Verify the user has permission to send emails for this order
+    // User must be either the order buyer or an admin
+    const { data: order, error: orderError } = await supabase
+      .from('orders')
+      .select('buyer_id')
+      .eq('id', data.orderId)
+      .single();
+
+    if (orderError || !order) {
+      console.error("Order not found:", orderError?.message);
+      return new Response(
+        JSON.stringify({ error: "Order not found" }),
+        { status: 404, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Check if user is the order owner or has admin role
+    const { data: userRole } = await supabase.rpc('get_user_role', { _user_id: user.id });
+    const isAdmin = userRole === 'admin';
+    const isOrderOwner = order.buyer_id === user.id;
+
+    if (!isOrderOwner && !isAdmin) {
+      console.error("User not authorized for this order");
+      return new Response(
+        JSON.stringify({ error: "Forbidden: You do not have permission to send emails for this order" }),
+        { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    console.log("Authorization passed. isAdmin:", isAdmin, "isOrderOwner:", isOrderOwner);
 
     const { subject, html } = getEmailContent(data);
 
@@ -202,6 +264,8 @@ const handler = async (req: Request): Promise<Response> => {
       console.error("Resend API error:", emailResponse);
       throw new Error(emailResponse.message || "Failed to send email");
     }
+
+    console.log("Email sent successfully:", emailResponse);
 
     return new Response(JSON.stringify({ success: true, data: emailResponse }), {
       status: 200,
