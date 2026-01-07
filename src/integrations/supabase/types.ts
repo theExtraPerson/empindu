@@ -60,9 +60,11 @@ export type Database = {
         Row: {
           buyer_id: string
           created_at: string
+          delivery_method: string
           id: string
           notes: string | null
           payment_method: string
+          pickup_location_id: string | null
           shipping_address: string
           shipping_city: string
           shipping_country: string
@@ -74,9 +76,11 @@ export type Database = {
         Insert: {
           buyer_id: string
           created_at?: string
+          delivery_method?: string
           id?: string
           notes?: string | null
           payment_method?: string
+          pickup_location_id?: string | null
           shipping_address: string
           shipping_city: string
           shipping_country: string
@@ -88,15 +92,108 @@ export type Database = {
         Update: {
           buyer_id?: string
           created_at?: string
+          delivery_method?: string
           id?: string
           notes?: string | null
           payment_method?: string
+          pickup_location_id?: string | null
           shipping_address?: string
           shipping_city?: string
           shipping_country?: string
           shipping_postal_code?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           total_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_pickup_location_id_fkey"
+            columns: ["pickup_location_id"]
+            isOneToOne: false
+            referencedRelation: "pickup_locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      personalization_requests: {
+        Row: {
+          artisan_response: string | null
+          created_at: string
+          description: string
+          id: string
+          order_item_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          artisan_response?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          order_item_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          artisan_response?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          order_item_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personalization_requests_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pickup_locations: {
+        Row: {
+          address: string
+          city: string
+          created_at: string
+          id: string
+          is_active: boolean
+          latitude: number | null
+          longitude: number | null
+          name: string
+          operating_hours: string | null
+          phone: string | null
+          region: string | null
+          updated_at: string
+        }
+        Insert: {
+          address: string
+          city: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          operating_hours?: string | null
+          phone?: string | null
+          region?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          operating_hours?: string | null
+          phone?: string | null
+          region?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -144,10 +241,17 @@ export type Database = {
           description: string | null
           id: string
           is_available: boolean
+          is_personalizable: boolean
+          is_returnable: boolean
+          materials: string | null
           name: string
+          other_skills: string | null
           price: number
+          size_category: string | null
+          size_dimensions: string | null
           stock_quantity: number
           updated_at: string
+          use_case: string | null
         }
         Insert: {
           artisan_id: string
@@ -156,10 +260,17 @@ export type Database = {
           description?: string | null
           id?: string
           is_available?: boolean
+          is_personalizable?: boolean
+          is_returnable?: boolean
+          materials?: string | null
           name: string
+          other_skills?: string | null
           price: number
+          size_category?: string | null
+          size_dimensions?: string | null
           stock_quantity?: number
           updated_at?: string
+          use_case?: string | null
         }
         Update: {
           artisan_id?: string
@@ -168,10 +279,17 @@ export type Database = {
           description?: string | null
           id?: string
           is_available?: boolean
+          is_personalizable?: boolean
+          is_returnable?: boolean
+          materials?: string | null
           name?: string
+          other_skills?: string | null
           price?: number
+          size_category?: string | null
+          size_dimensions?: string | null
           stock_quantity?: number
           updated_at?: string
+          use_case?: string | null
         }
         Relationships: []
       }
@@ -222,6 +340,110 @@ export type Database = {
           years_experience?: number | null
         }
         Relationships: []
+      }
+      return_items: {
+        Row: {
+          condition: string | null
+          created_at: string
+          id: string
+          order_item_id: string
+          quantity: number
+          reason: string | null
+          return_id: string
+        }
+        Insert: {
+          condition?: string | null
+          created_at?: string
+          id?: string
+          order_item_id: string
+          quantity: number
+          reason?: string | null
+          return_id: string
+        }
+        Update: {
+          condition?: string | null
+          created_at?: string
+          id?: string
+          order_item_id?: string
+          quantity?: number
+          reason?: string | null
+          return_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "return_items_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "return_items_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "returns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      returns: {
+        Row: {
+          admin_notes: string | null
+          buyer_id: string
+          created_at: string
+          description: string | null
+          id: string
+          order_id: string
+          pickup_scheduled_at: string | null
+          reason: string
+          received_at: string | null
+          refund_amount: number | null
+          refund_method: string | null
+          refunded_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          buyer_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_id: string
+          pickup_scheduled_at?: string | null
+          reason: string
+          received_at?: string | null
+          refund_amount?: number | null
+          refund_method?: string | null
+          refunded_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          buyer_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_id?: string
+          pickup_scheduled_at?: string | null
+          reason?: string
+          received_at?: string | null
+          refund_amount?: number | null
+          refund_method?: string | null
+          refunded_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "returns_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

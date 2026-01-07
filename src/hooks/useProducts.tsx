@@ -12,12 +12,20 @@ export interface Product {
   category: string;
   stock_quantity: number;
   is_available: boolean;
+  materials: string | null;
+  use_case: string | null;
+  is_personalizable: boolean;
+  other_skills: string | null;
+  size_category: string | null;
+  size_dimensions: string | null;
+  is_returnable: boolean;
   created_at: string;
   updated_at: string;
   images?: ProductImage[];
   artisan?: {
     full_name: string | null;
     location: string | null;
+    craft_specialty: string | null;
   };
 }
 
@@ -36,6 +44,13 @@ export interface CreateProductData {
   category: string;
   stock_quantity: number;
   is_available?: boolean;
+  materials?: string;
+  use_case?: string;
+  is_personalizable?: boolean;
+  other_skills?: string;
+  size_category?: string;
+  size_dimensions?: string;
+  is_returnable?: boolean;
 }
 
 export const useProducts = () => {
@@ -51,17 +66,25 @@ export const useProducts = () => {
         .from('products')
         .select(`
           *,
-          product_images (*),
-          profiles!products_artisan_id_fkey (full_name, location)
+          product_images (*)
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
+      // Fetch artisan profiles separately
+      const artisanIds = [...new Set(data?.map(p => p.artisan_id) || [])];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('user_id, full_name, location, craft_specialty')
+        .in('user_id', artisanIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
+
       const formattedProducts = data?.map((product: any) => ({
         ...product,
         images: product.product_images,
-        artisan: product.profiles
+        artisan: profileMap.get(product.artisan_id) || null
       })) || [];
 
       setProducts(formattedProducts);
@@ -74,6 +97,37 @@ export const useProducts = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchProductById = async (productId: string): Promise<Product | null> => {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          product_images (*)
+        `)
+        .eq('id', productId)
+        .single();
+
+      if (error) throw error;
+
+      // Fetch artisan profile separately
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('user_id, full_name, location, craft_specialty')
+        .eq('user_id', data.artisan_id)
+        .single();
+
+      return {
+        ...data,
+        images: data.product_images,
+        artisan: profile || null
+      } as Product;
+    } catch (error: any) {
+      console.error('Error fetching product:', error);
+      return null;
     }
   };
 
@@ -284,6 +338,7 @@ export const useProducts = () => {
     products,
     loading,
     fetchProducts,
+    fetchProductById,
     fetchArtisanProducts,
     createProduct,
     updateProduct,
@@ -305,3 +360,9 @@ export const PRODUCT_CATEGORIES = [
   'Sculptures',
   'Home Decor'
 ];
+
+export const SIZE_CATEGORIES = [
+  { value: 'small', label: 'Small', description: 'Handheld items, jewelry, small accessories' },
+  { value: 'medium', label: 'Medium', description: 'Bags, baskets, medium decorations' },
+  { value: 'large', label: 'Large', description: 'Furniture, large art pieces, rugs' }
+] as const;

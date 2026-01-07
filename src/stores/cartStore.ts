@@ -5,14 +5,16 @@ import { Product } from '@/hooks/useProducts';
 export interface CartItem {
   product: Product;
   quantity: number;
+  personalizationNote?: string;
 }
 
 interface CartState {
   items: CartItem[];
   isOpen: boolean;
-  addItem: (product: Product, quantity?: number) => void;
+  addItem: (product: Product, quantity?: number, personalizationNote?: string) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
+  updatePersonalization: (productId: string, note: string) => void;
   clearCart: () => void;
   openCart: () => void;
   closeCart: () => void;
@@ -27,20 +29,20 @@ export const useCartStore = create<CartState>()(
       items: [],
       isOpen: false,
 
-      addItem: (product, quantity = 1) => {
+      addItem: (product, quantity = 1, personalizationNote) => {
         set((state) => {
           const existingItem = state.items.find(
-            (item) => item.product.id === product.id
+            (item) => item.product.id === product.id && !item.personalizationNote && !personalizationNote
           );
 
-          if (existingItem) {
+          if (existingItem && !personalizationNote) {
             const newQuantity = Math.min(
               existingItem.quantity + quantity,
               product.stock_quantity
             );
             return {
               items: state.items.map((item) =>
-                item.product.id === product.id
+                item.product.id === product.id && !item.personalizationNote
                   ? { ...item, quantity: newQuantity }
                   : item
               ),
@@ -49,7 +51,11 @@ export const useCartStore = create<CartState>()(
           }
 
           return {
-            items: [...state.items, { product, quantity: Math.min(quantity, product.stock_quantity) }],
+            items: [...state.items, { 
+              product, 
+              quantity: Math.min(quantity, product.stock_quantity),
+              personalizationNote 
+            }],
             isOpen: true,
           };
         });
@@ -66,6 +72,16 @@ export const useCartStore = create<CartState>()(
           items: state.items.map((item) =>
             item.product.id === productId
               ? { ...item, quantity: Math.max(1, Math.min(quantity, item.product.stock_quantity)) }
+              : item
+          ),
+        }));
+      },
+
+      updatePersonalization: (productId, note) => {
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.product.id === productId
+              ? { ...item, personalizationNote: note }
               : item
           ),
         }));
