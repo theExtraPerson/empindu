@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Mail, Phone, MapPin, Palette, Clock, Link2, Save, LogOut, Shield } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Palette, Clock, Link2, Save, LogOut, Shield, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Layout } from '@/components/layout/Layout';
-
+import { OrderHistory } from '@/components/orders/OrderHistory';
 export default function Profile() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -130,16 +131,16 @@ export default function Profile() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-3xl mx-auto"
+            className="max-w-4xl mx-auto"
           >
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
               <div>
                 <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-                  My Profile
+                  My Account
                 </h1>
                 <p className="text-muted-foreground mt-1">
-                  Manage your account and preferences
+                  Manage your profile and view orders
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -147,8 +148,21 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Profile Card */}
-            <div className="bg-card rounded-2xl border shadow-sm p-6 md:p-8">
+            <Tabs defaultValue="profile" className="space-y-6">
+              <TabsList>
+                <TabsTrigger value="profile">Profile</TabsTrigger>
+                <TabsTrigger value="orders">
+                  <Package className="h-4 w-4 mr-2" />
+                  My Orders
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="orders">
+                <OrderHistory />
+              </TabsContent>
+
+              <TabsContent value="profile">
+              <div className="bg-card rounded-2xl border shadow-sm p-6 md:p-8">
               {/* Avatar & Email */}
               <div className="flex flex-col sm:flex-row items-start gap-6 mb-8 pb-8 border-b">
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-2xl font-bold">
@@ -314,7 +328,9 @@ export default function Profile() {
                   Sign Out
                 </Button>
               </div>
-            </div>
+              </div>
+              </TabsContent>
+            </Tabs>
           </motion.div>
         </div>
       </section>
