@@ -15,6 +15,7 @@ import Exhibition from "./pages/Exhibition";
 import About from "./pages/About";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import Resources from "./pages/Resources";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/exhibition" element={<Exhibition />} />
+            <Route path="/resources" element={<Resources />} />
             <Route path="/about" element={<About />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/profile" element={<Profile />} />
