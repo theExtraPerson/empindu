@@ -26,6 +26,8 @@ const navigation = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, role, signOut } = useAuth();
@@ -130,13 +132,60 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <Button
-              variant={isScrolled ? "ghost" : "ghost-light"}
-              size="icon-sm"
-              className="hidden sm:flex"
-            >
-              <Search className="h-5 w-5" />
-            </Button>
+            <div className="hidden sm:flex items-center relative">
+              <AnimatePresence>
+                {isSearchOpen && (
+                  <motion.div
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: 220, opacity: 1 }}
+                    exit={{ width: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="overflow-hidden"
+                  >
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search the talent of Africa's hands..."
+                      className={cn(
+                        "w-full h-9 px-3 pr-2 text-sm rounded-l-full border-y border-l outline-none transition-colors",
+                        isScrolled 
+                          ? "bg-background border-border text-foreground placeholder:text-muted-foreground" 
+                          : "bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/60"
+                      )}
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === 'Escape') {
+                          setIsSearchOpen(false);
+                          setSearchQuery("");
+                        }
+                      }}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <Button
+                variant={isScrolled ? "ghost" : "ghost-light"}
+                size="icon-sm"
+                className={cn(
+                  "transition-all duration-300",
+                  isSearchOpen && "rounded-l-none rounded-r-full"
+                )}
+                onClick={() => {
+                  if (isSearchOpen && searchQuery) {
+                    // Handle search - navigate to resources with query
+                    navigate(`/resources?search=${encodeURIComponent(searchQuery)}`);
+                    setIsSearchOpen(false);
+                    setSearchQuery("");
+                  } else {
+                    setIsSearchOpen(!isSearchOpen);
+                    if (isSearchOpen) setSearchQuery("");
+                  }
+                }}
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+            </div>
             <Button
               variant={isScrolled ? "ghost" : "ghost-light"}
               size="icon-sm"
