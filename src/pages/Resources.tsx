@@ -137,26 +137,32 @@ const trainingResources = {
     {
       id: 1,
       title: "Account Registration Process",
-      steps: 5,
+      steps: ["Visit CraftedUganda website", "Click 'Sign Up' and select your role (Buyer/Artisan)", "Enter email, password, and full name", "Verify your email address", "Complete your profile with location and preferences"],
       estimatedTime: "10 min"
     },
     {
       id: 2,
-      title: "Adding Your First Product",
-      steps: 8,
+      title: "Adding Your First Product (Artisans)",
+      steps: ["Go to Dashboard → My Products", "Click 'Add Product' button", "Enter product name, category, price, and stock quantity", "Add description, materials used, and use case", "Set size category and dimensions", "Toggle personalization and return options", "Upload up to 5 product images", "Save and publish your product"],
       estimatedTime: "15 min"
     },
     {
       id: 3,
-      title: "Order Fulfillment Workflow",
-      steps: 6,
-      estimatedTime: "5 min"
+      title: "Placing an Order (Buyers)",
+      steps: ["Browse the Marketplace and find products you love", "Click on a product to view full details", "Select quantity and add to cart", "Request personalization if available (optional)", "Proceed to Checkout", "Enter shipping details or choose pickup location", "Select payment method (Mobile Money or Cash on Delivery)", "Confirm and place your order"],
+      estimatedTime: "10 min"
     },
     {
       id: 4,
-      title: "Handling Returns & Refunds",
-      steps: 4,
-      estimatedTime: "5 min"
+      title: "Order Fulfillment Workflow",
+      steps: ["Order received notification sent to artisan", "Artisan confirms order and begins preparation", "If personalization requested, artisan reviews and approves", "Product is crafted/packaged for shipping", "Order marked as 'Shipped' with tracking info", "Customer receives delivery or picks up from hub"],
+      estimatedTime: "Varies"
+    },
+    {
+      id: 5,
+      title: "Returns & Refunds Process",
+      steps: ["Go to Dashboard → My Orders", "Find the order and click 'Request Return'", "Select items to return and provide reason", "Indicate item condition (unopened, like new, etc.)", "Submit return request for review", "Once approved, drop off at nearest pickup hub or schedule collection", "Refund processed after item inspection (3-5 business days)"],
+      estimatedTime: "5-10 min"
     }
   ]
 };
@@ -440,27 +446,30 @@ const Resources = () => {
                       variants={containerVariants}
                       initial="hidden"
                       animate="visible"
-                      className="max-w-2xl mx-auto mt-8 space-y-4"
+                      className="max-w-3xl mx-auto mt-8 space-y-6"
                     >
                       {trainingResources.procedures.map((procedure, index) => (
                         <motion.div key={procedure.id} variants={itemVariants}>
                           <Card className="group hover-lift">
-                            <CardContent className="p-6 flex items-center gap-6">
-                              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                <span className="text-xl font-bold text-primary">{index + 1}</span>
-                              </div>
-                              <div className="flex-1">
-                                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                                  {procedure.title}
-                                </h3>
-                                <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                                  <span>{procedure.steps} steps</span>
-                                  <span>~{procedure.estimatedTime}</span>
+                            <CardContent className="p-6">
+                              <div className="flex items-start gap-4 mb-4">
+                                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                  <span className="text-lg font-bold text-primary">{index + 1}</span>
+                                </div>
+                                <div className="flex-1">
+                                  <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                                    {procedure.title}
+                                  </h3>
+                                  <p className="text-sm text-muted-foreground mt-1">
+                                    {procedure.steps.length} steps • ~{procedure.estimatedTime}
+                                  </p>
                                 </div>
                               </div>
-                              <Button variant="ghost" size="sm" className="gap-2">
-                                View <ArrowRight className="w-4 h-4" />
-                              </Button>
+                              <ol className="list-decimal list-inside space-y-2 ml-14 text-sm text-muted-foreground">
+                                {procedure.steps.map((step, stepIndex) => (
+                                  <li key={stepIndex} className="leading-relaxed">{step}</li>
+                                ))}
+                              </ol>
                             </CardContent>
                           </Card>
                         </motion.div>

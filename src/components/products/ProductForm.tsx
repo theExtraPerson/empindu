@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Upload, X, Loader2 } from 'lucide-react';
-import { Product, CreateProductData, PRODUCT_CATEGORIES, useProducts } from '@/hooks/useProducts';
+import { Product, CreateProductData, PRODUCT_CATEGORIES, SIZE_CATEGORIES, useProducts } from '@/hooks/useProducts';
 
 interface ProductFormProps {
   product?: Product;
@@ -34,7 +34,14 @@ export const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) 
     price: product?.price || 0,
     category: product?.category || '',
     stock_quantity: product?.stock_quantity || 0,
-    is_available: product?.is_available ?? true
+    is_available: product?.is_available ?? true,
+    materials: product?.materials || '',
+    use_case: product?.use_case || '',
+    is_personalizable: product?.is_personalizable ?? false,
+    other_skills: product?.other_skills || '',
+    size_category: product?.size_category || undefined,
+    size_dimensions: product?.size_dimensions || '',
+    is_returnable: product?.is_returnable ?? true
   });
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,83 +107,211 @@ export const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) 
     <motion.form
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
+      className="space-y-6 max-h-[70vh] overflow-y-auto pr-2"
       onSubmit={handleSubmit}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <Label htmlFor="name">Product Name *</Label>
-          <Input
-            id="name"
-            value={formData.name}
-            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-            placeholder="e.g., Handwoven Basket"
-            required
-          />
+      {/* Basic Information */}
+      <div className="space-y-4">
+        <h3 className="font-semibold text-lg border-b pb-2">Basic Information</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Product Name *</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              placeholder="e.g., Handwoven Basket"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category">Category *</Label>
+            <Select
+              value={formData.category}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {PRODUCT_CATEGORIES.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="price">Price (UGX) *</Label>
+            <Input
+              id="price"
+              type="number"
+              min="0"
+              step="1000"
+              value={formData.price}
+              onChange={(e) => setFormData(prev => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
+              placeholder="85000"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="stock">Stock Quantity *</Label>
+            <Input
+              id="stock"
+              type="number"
+              min="0"
+              value={formData.stock_quantity}
+              onChange={(e) => setFormData(prev => ({ ...prev, stock_quantity: parseInt(e.target.value) || 0 }))}
+              placeholder="10"
+              required
+            />
+          </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="category">Category *</Label>
-          <Select
-            value={formData.category}
-            onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
-            required
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select a category" />
-            </SelectTrigger>
-            <SelectContent>
-              {PRODUCT_CATEGORIES.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="price">Price (UGX) *</Label>
-          <Input
-            id="price"
-            type="number"
-            min="0"
-            step="1000"
-            value={formData.price}
-            onChange={(e) => setFormData(prev => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
-            placeholder="85000"
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="stock">Stock Quantity *</Label>
-          <Input
-            id="stock"
-            type="number"
-            min="0"
-            value={formData.stock_quantity}
-            onChange={(e) => setFormData(prev => ({ ...prev, stock_quantity: parseInt(e.target.value) || 0 }))}
-            placeholder="10"
-            required
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
+            value={formData.description || ''}
+            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+            placeholder="Describe your product, its story, and crafting techniques..."
+            rows={3}
           />
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea
-          id="description"
-          value={formData.description || ''}
-          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-          placeholder="Describe your product, its materials, crafting techniques, and story..."
-          rows={4}
-        />
+      {/* Product Details */}
+      <div className="space-y-4">
+        <h3 className="font-semibold text-lg border-b pb-2">Product Details</h3>
+        
+        <div className="space-y-2">
+          <Label htmlFor="materials">Materials Used</Label>
+          <Input
+            id="materials"
+            value={formData.materials || ''}
+            onChange={(e) => setFormData(prev => ({ ...prev, materials: e.target.value }))}
+            placeholder="e.g., Banana fiber, natural dyes, sisal"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="use_case">Use Case / Purpose</Label>
+          <Textarea
+            id="use_case"
+            value={formData.use_case || ''}
+            onChange={(e) => setFormData(prev => ({ ...prev, use_case: e.target.value }))}
+            placeholder="What can this product be used for? e.g., Storage, decoration, gift..."
+            rows={2}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="size_category">Size Category</Label>
+            <Select
+              value={formData.size_category || ''}
+              onValueChange={(value) => setFormData(prev => ({ 
+                ...prev, 
+                size_category: value as 'small' | 'medium' | 'large' 
+              }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select size" />
+              </SelectTrigger>
+              <SelectContent>
+                {SIZE_CATEGORIES.map((size) => (
+                  <SelectItem key={size.value} value={size.value}>
+                    <div>
+                      <span className="font-medium">{size.label}</span>
+                      <span className="text-muted-foreground text-xs ml-2">
+                        ({size.description})
+                      </span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="size_dimensions">Dimensions</Label>
+            <Input
+              id="size_dimensions"
+              value={formData.size_dimensions || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, size_dimensions: e.target.value }))}
+              placeholder="e.g., 30cm x 25cm x 15cm"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="other_skills">Other Skills / Products</Label>
+          <Textarea
+            id="other_skills"
+            value={formData.other_skills || ''}
+            onChange={(e) => setFormData(prev => ({ ...prev, other_skills: e.target.value }))}
+            placeholder="What other crafts do you make? e.g., Also available: mats, bags, wall hangings..."
+            rows={2}
+          />
+        </div>
       </div>
 
+      {/* Options */}
+      <div className="space-y-4">
+        <h3 className="font-semibold text-lg border-b pb-2">Options</h3>
+        
+        <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+          <div>
+            <Label htmlFor="is_personalizable" className="cursor-pointer">Can be Personalised</Label>
+            <p className="text-sm text-muted-foreground">
+              Allow buyers to request custom modifications
+            </p>
+          </div>
+          <Switch
+            id="is_personalizable"
+            checked={formData.is_personalizable}
+            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_personalizable: checked }))}
+          />
+        </div>
+
+        <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+          <div>
+            <Label htmlFor="is_returnable" className="cursor-pointer">Returnable</Label>
+            <p className="text-sm text-muted-foreground">
+              Can this product be returned after purchase?
+            </p>
+          </div>
+          <Switch
+            id="is_returnable"
+            checked={formData.is_returnable}
+            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_returnable: checked }))}
+          />
+        </div>
+
+        <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+          <div>
+            <Label htmlFor="is_available" className="cursor-pointer">Available for Sale</Label>
+            <p className="text-sm text-muted-foreground">
+              Show this product in the marketplace
+            </p>
+          </div>
+          <Switch
+            id="is_available"
+            checked={formData.is_available}
+            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_available: checked }))}
+          />
+        </div>
+      </div>
+
+      {/* Images */}
       {!product && (
-        <div className="space-y-2">
-          <Label>Product Images (max 5)</Label>
+        <div className="space-y-4">
+          <h3 className="font-semibold text-lg border-b pb-2">Product Images</h3>
           <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
             <input
               type="file"
@@ -189,7 +324,7 @@ export const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) 
             <label htmlFor="image-upload" className="cursor-pointer">
               <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-2" />
               <p className="text-sm text-muted-foreground">
-                Click to upload images
+                Click to upload images (max 5)
               </p>
             </label>
           </div>
@@ -222,16 +357,7 @@ export const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) 
         </div>
       )}
 
-      <div className="flex items-center space-x-2">
-        <Switch
-          id="is_available"
-          checked={formData.is_available}
-          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_available: checked }))}
-        />
-        <Label htmlFor="is_available">Available for sale</Label>
-      </div>
-
-      <div className="flex gap-3 pt-4">
+      <div className="flex gap-3 pt-4 sticky bottom-0 bg-background pb-2">
         <Button
           type="submit"
           disabled={loading || uploadingImages}
