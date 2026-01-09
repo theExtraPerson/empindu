@@ -34,7 +34,8 @@ const Admin = () => {
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    if (!authLoading && user && role !== 'admin') {
+    // Only redirect if role has been fetched (not null) and user is not admin
+    if (!authLoading && user && role !== null && role !== 'admin') {
       navigate('/');
     }
   }, [user, role, authLoading, navigate]);
