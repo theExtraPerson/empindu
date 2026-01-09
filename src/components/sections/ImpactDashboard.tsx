@@ -127,24 +127,24 @@ export function ImpactDashboard() {
         </motion.div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
           {statCards.map((stat, index) => (
             <motion.div
               key={stat.label}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.05 }}
               className="group"
             >
-              <div className="relative bg-warm-cream/5 backdrop-blur-sm border border-warm-cream/10 rounded-2xl p-6 md:p-8 hover:bg-warm-cream/10 transition-all duration-500 hover:-translate-y-1">
+              <div className="relative bg-warm-cream/10 border border-warm-cream/20 rounded-xl p-4 hover:bg-warm-cream/15 transition-colors duration-300">
                 {/* Icon */}
-                <div className="w-14 h-14 rounded-xl bg-gradient-hero flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                  <stat.icon className="h-7 w-7 text-warm-cream" />
+                <div className="w-10 h-10 rounded-lg bg-primary/80 flex items-center justify-center mb-3">
+                  <stat.icon className="h-5 w-5 text-warm-cream" />
                 </div>
 
                 {/* Value */}
-                <h3 className="font-display text-4xl md:text-5xl font-bold text-warm-cream mb-2">
+                <h3 className="font-display text-2xl font-bold text-warm-cream mb-1">
                   {loading ? (
                     <span className="animate-pulse">--</span>
                   ) : (
@@ -156,15 +156,9 @@ export function ImpactDashboard() {
                 </h3>
 
                 {/* Label */}
-                <p className="text-secondary font-semibold text-lg mb-1">
+                <p className="text-secondary font-medium text-sm">
                   {stat.label}
                 </p>
-                <p className="text-warm-cream/60 text-sm">
-                  {stat.description}
-                </p>
-
-                {/* Decorative line */}
-                <div className="absolute bottom-0 left-6 right-6 h-1 bg-gradient-to-r from-transparent via-secondary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
             </motion.div>
           ))}
