@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Heart, ShoppingBag, Edit, Trash2, Info, RotateCcw, Sparkles, X } from 'lucide-react';
+import { Heart, ShoppingBag, Edit, Trash2, Info, RotateCcw, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product } from '@/hooks/useProducts';
 import { useCartStore } from '@/stores/cartStore';
 import { useToast } from '@/hooks/use-toast';
@@ -36,6 +36,12 @@ export const ProductCard = ({
   const { addItem } = useCartStore();
   const { toast } = useToast();
   const [showDetails, setShowDetails] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Get all images or fallback to default
+  const allImages = product.images?.length 
+    ? product.images.sort((a, b) => a.display_order - b.display_order).map(img => img.image_url)
+    : [heroCrafts];
 
   const handleAddToCart = () => {
     addItem(product);
@@ -44,6 +50,14 @@ export const ProductCard = ({
       description: `${product.name} has been added to your cart`
     });
     setShowDetails(false);
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex(prev => (prev === 0 ? allImages.length - 1 : prev - 1));
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex(prev => (prev === allImages.length - 1 ? 0 : prev + 1));
   };
 
   const primaryImage = product.images?.find(img => img.is_primary)?.image_url 
@@ -195,13 +209,61 @@ export const ProductCard = ({
           </DialogHeader>
           
           <div className="space-y-4">
-            {/* Image */}
-            <div className="aspect-video rounded-lg overflow-hidden">
-              <img 
-                src={primaryImage} 
-                alt={product.name} 
-                className="w-full h-full object-cover"
-              />
+            {/* Image Gallery */}
+            <div className="space-y-2">
+              <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
+                <img 
+                  src={allImages[currentImageIndex]} 
+                  alt={`${product.name} - Image ${currentImageIndex + 1}`} 
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Navigation arrows */}
+                {allImages.length > 1 && (
+                  <>
+                    <button
+                      onClick={handlePrevImage}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-background transition-colors"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={handleNextImage}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-background transition-colors"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                    
+                    {/* Image counter */}
+                    <div className="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-background/80 backdrop-blur-sm text-xs font-medium">
+                      {currentImageIndex + 1} / {allImages.length}
+                    </div>
+                  </>
+                )}
+              </div>
+              
+              {/* Thumbnail strip */}
+              {allImages.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {allImages.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentImageIndex(idx)}
+                      className={`flex-shrink-0 w-14 h-14 rounded-md overflow-hidden border-2 transition-colors ${
+                        idx === currentImageIndex 
+                          ? 'border-primary' 
+                          : 'border-transparent hover:border-muted-foreground/50'
+                      }`}
+                    >
+                      <img 
+                        src={img} 
+                        alt={`Thumbnail ${idx + 1}`} 
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Price */}
