@@ -3,10 +3,11 @@
 @tailwind utilities;
 
 /* ============================================
-   CRAFTED UGANDA - African-Inspired Design System
+   CRAFTED UGANDA - Brutalist African Design System
+   Claymorphic + Minimalist + Artistic
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -29,19 +30,19 @@
     --accent-soft: 160 60% 45%;
     
     /* Earth Neutrals - Bark & Stone */
-    --background: 40 25% 97%;
-    --foreground: 25 30% 12%;
+    --background: 40 20% 96%;
+    --foreground: 25 30% 10%;
     
-    --card: 40 30% 99%;
-    --card-foreground: 25 30% 12%;
+    --card: 40 25% 98%;
+    --card-foreground: 25 30% 10%;
     
-    --popover: 40 30% 99%;
-    --popover-foreground: 25 30% 12%;
+    --popover: 40 25% 98%;
+    --popover-foreground: 25 30% 10%;
     
-    --muted: 35 20% 92%;
+    --muted: 35 15% 90%;
     --muted-foreground: 25 15% 45%;
     
-    --border: 35 25% 88%;
+    --border: 25 30% 10%;
     --input: 35 25% 88%;
     --ring: 15 80% 50%;
     
@@ -54,43 +55,43 @@
     --savanna-sand: 38 45% 85%;
     --copper: 20 70% 45%;
     --kente-gold: 45 95% 55%;
-    --mudcloth-black: 30 10% 15%;
+    --mudcloth-black: 30 10% 8%;
     
-    /* ===== Gradients ===== */
-    --gradient-hero: linear-gradient(135deg, hsl(15 80% 50%) 0%, hsl(38 92% 50%) 50%, hsl(15 85% 35%) 100%);
-    --gradient-warm: linear-gradient(180deg, hsl(40 25% 97%) 0%, hsl(35 30% 92%) 100%);
-    --gradient-sunset: linear-gradient(135deg, hsl(15 85% 35%) 0%, hsl(38 92% 50%) 100%);
-    --gradient-earth: linear-gradient(180deg, hsl(25 35% 22%) 0%, hsl(30 10% 15%) 100%);
-    --gradient-pattern: linear-gradient(45deg, hsl(15 80% 50% / 0.1) 25%, transparent 25%, transparent 50%, hsl(15 80% 50% / 0.1) 50%, hsl(15 80% 50% / 0.1) 75%, transparent 75%);
+    /* ===== Brutalist Shadows - Claymorphic ===== */
+    --shadow-clay: inset 0 -8px 16px rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.1);
+    --shadow-clay-sm: inset 0 -4px 8px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-clay-lg: inset 0 -12px 24px rgba(0,0,0,0.2), 0 16px 48px rgba(0,0,0,0.15);
+    --shadow-brutalist: 4px 4px 0 hsl(var(--foreground));
+    --shadow-brutalist-lg: 8px 8px 0 hsl(var(--foreground));
     
-    /* ===== Shadows ===== */
+    /* Legacy shadows */
     --shadow-soft: 0 4px 20px hsl(25 35% 22% / 0.08);
     --shadow-medium: 0 8px 30px hsl(25 35% 22% / 0.12);
     --shadow-strong: 0 15px 50px hsl(25 35% 22% / 0.18);
     --shadow-glow: 0 0 40px hsl(15 80% 50% / 0.3);
     --shadow-gold: 0 4px 20px hsl(38 92% 50% / 0.25);
     
-    --radius: 0.75rem;
+    --radius: 0rem;
     
     /* ===== Sidebar ===== */
-    --sidebar-background: 40 30% 98%;
-    --sidebar-foreground: 25 30% 12%;
+    --sidebar-background: 40 25% 98%;
+    --sidebar-foreground: 25 30% 10%;
     --sidebar-primary: 15 80% 50%;
     --sidebar-primary-foreground: 40 30% 98%;
-    --sidebar-accent: 35 20% 92%;
-    --sidebar-accent-foreground: 25 30% 12%;
-    --sidebar-border: 35 25% 88%;
+    --sidebar-accent: 35 15% 90%;
+    --sidebar-accent-foreground: 25 30% 10%;
+    --sidebar-border: 25 30% 10%;
     --sidebar-ring: 15 80% 50%;
   }
 
   .dark {
-    --background: 25 25% 8%;
+    --background: 25 20% 6%;
     --foreground: 40 20% 95%;
     
-    --card: 25 22% 12%;
+    --card: 25 18% 10%;
     --card-foreground: 40 20% 95%;
     
-    --popover: 25 22% 12%;
+    --popover: 25 18% 10%;
     --popover-foreground: 40 20% 95%;
     
     --primary: 15 75% 55%;
@@ -102,23 +103,23 @@
     --accent: 160 70% 40%;
     --accent-foreground: 25 30% 8%;
     
-    --muted: 25 20% 18%;
+    --muted: 25 15% 15%;
     --muted-foreground: 35 15% 60%;
     
-    --border: 25 18% 22%;
+    --border: 40 20% 95%;
     --input: 25 18% 22%;
     --ring: 15 75% 55%;
     
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
     
-    --sidebar-background: 25 25% 10%;
+    --sidebar-background: 25 20% 8%;
     --sidebar-foreground: 40 20% 95%;
     --sidebar-primary: 15 75% 55%;
     --sidebar-primary-foreground: 25 30% 8%;
-    --sidebar-accent: 25 20% 18%;
+    --sidebar-accent: 25 15% 15%;
     --sidebar-accent-foreground: 40 20% 95%;
-    --sidebar-border: 25 18% 22%;
+    --sidebar-border: 40 20% 95%;
     --sidebar-ring: 15 75% 55%;
   }
 }
@@ -139,7 +140,12 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', Georgia, serif;
-    @apply font-bold tracking-tight;
+    @apply font-black tracking-tighter;
+  }
+
+  /* Brutalist typography */
+  .font-mono {
+    font-family: 'Space Mono', monospace;
   }
 }
 
@@ -151,6 +157,47 @@
   
   .font-body {
     font-family: 'DM Sans', system-ui, sans-serif;
+  }
+
+  /* ===== Brutalist Components ===== */
+  
+  /* Clay Card - Claymorphic effect */
+  .clay-card {
+    background: linear-gradient(145deg, hsl(var(--card)), hsl(var(--muted)));
+    box-shadow: var(--shadow-clay);
+    border: 2px solid hsl(var(--foreground) / 0.1);
+  }
+
+  .clay-card-dark {
+    background: linear-gradient(145deg, hsl(var(--mudcloth-black)), hsl(25 20% 12%));
+    box-shadow: var(--shadow-clay);
+    border: 2px solid hsl(var(--warm-cream) / 0.1);
+  }
+
+  /* Brutalist Button */
+  .btn-brutal {
+    @apply font-mono uppercase tracking-widest text-xs px-6 py-3;
+    @apply border-2 border-foreground bg-background text-foreground;
+    @apply transition-all duration-150;
+    box-shadow: var(--shadow-brutalist);
+  }
+
+  .btn-brutal:hover {
+    box-shadow: 2px 2px 0 hsl(var(--foreground));
+    transform: translate(2px, 2px);
+  }
+
+  .btn-brutal:active {
+    box-shadow: none;
+    transform: translate(4px, 4px);
+  }
+
+  .btn-brutal-primary {
+    @apply btn-brutal bg-primary text-primary-foreground border-foreground;
+  }
+
+  .btn-brutal-secondary {
+    @apply btn-brutal bg-secondary text-secondary-foreground border-foreground;
   }
 
   /* African Pattern Backgrounds */
@@ -186,10 +233,18 @@
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e86e3a' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
 
+  /* Brutalist Grid Pattern */
+  .pattern-grid {
+    background-image: 
+      linear-gradient(hsl(var(--foreground) / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
   /* Gradient Text */
   .text-gradient-primary {
     @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-hero);
+    background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
   }
 
   .text-gradient-gold {
@@ -199,11 +254,11 @@
 
   /* Glassmorphism */
   .glass {
-    @apply backdrop-blur-md bg-card/80 border border-border/50;
+    @apply backdrop-blur-md bg-card/80 border-2 border-foreground/10;
   }
 
   .glass-dark {
-    @apply backdrop-blur-md bg-mudcloth-black/80 border border-border/20;
+    @apply backdrop-blur-md bg-mudcloth-black/80 border-2 border-warm-cream/10;
   }
 
   /* Hover Effects */
@@ -222,7 +277,16 @@
     box-shadow: var(--shadow-glow);
   }
 
-  /* Organic Border Radius */
+  /* Brutalist hover */
+  .hover-brutal {
+    @apply transition-all duration-150;
+  }
+  .hover-brutal:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-brutalist);
+  }
+
+  /* Organic Border Radius - for claymorphic elements */
   .rounded-organic {
     border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
   }
@@ -238,6 +302,15 @@
 
   .container-tight {
     @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Brutalist Borders */
+  .border-brutal {
+    @apply border-2 border-foreground;
+  }
+
+  .border-brutal-thick {
+    @apply border-4 border-foreground;
   }
 }
 
