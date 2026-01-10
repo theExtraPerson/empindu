@@ -4,123 +4,128 @@
 
 /* ============================================
    CRAFTED UGANDA - Brutalist African Design System
-   Claymorphic + Minimalist + Artistic
+   Lekton + Minimalist + Claymorphic
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lekton:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    /* ===== Core Colors - African Earth Palette ===== */
+    /* ===== Core Colors - Earth Palette from Reference ===== */
     
-    /* Terracotta Primary - Rich clay tones */
-    --primary: 15 80% 50%;
-    --primary-foreground: 40 30% 98%;
-    --primary-soft: 15 70% 60%;
-    --primary-deep: 15 85% 35%;
+    /* Cream - Light background */
+    --primary: 35 25% 85%;
+    --primary-foreground: 25 30% 15%;
+    --primary-soft: 35 20% 90%;
+    --primary-deep: 30 35% 75%;
     
-    /* Savanna Gold - Warm accents */
-    --secondary: 38 92% 50%;
-    --secondary-foreground: 25 30% 10%;
-    --secondary-soft: 42 88% 60%;
+    /* Tan - Medium accent */
+    --secondary: 25 30% 65%;
+    --secondary-foreground: 25 35% 10%;
+    --secondary-soft: 28 25% 72%;
     
-    /* Forest Green - Nature accent */
-    --accent: 160 84% 30%;
-    --accent-foreground: 150 40% 98%;
-    --accent-soft: 160 60% 45%;
+    /* Dark Brown - Strong accent */
+    --accent: 20 35% 30%;
+    --accent-foreground: 35 25% 95%;
+    --accent-soft: 22 30% 40%;
     
-    /* Earth Neutrals - Bark & Stone */
-    --background: 40 20% 96%;
-    --foreground: 25 30% 10%;
+    /* Background & Foreground */
+    --background: 35 25% 92%;
+    --foreground: 20 40% 12%;
     
-    --card: 40 25% 98%;
-    --card-foreground: 25 30% 10%;
+    --card: 35 30% 95%;
+    --card-foreground: 20 40% 12%;
     
-    --popover: 40 25% 98%;
-    --popover-foreground: 25 30% 10%;
+    --popover: 35 30% 95%;
+    --popover-foreground: 20 40% 12%;
     
-    --muted: 35 15% 90%;
-    --muted-foreground: 25 15% 45%;
+    --muted: 30 15% 88%;
+    --muted-foreground: 20 20% 40%;
     
-    --border: 25 30% 10%;
-    --input: 35 25% 88%;
-    --ring: 15 80% 50%;
+    --border: 20 40% 12%;
+    --input: 30 20% 85%;
+    --ring: 25 30% 65%;
     
-    --destructive: 0 84% 60%;
+    --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
     
-    /* ===== Extended Palette ===== */
-    --warm-cream: 40 40% 95%;
-    --bark-brown: 25 35% 22%;
-    --savanna-sand: 38 45% 85%;
-    --copper: 20 70% 45%;
-    --kente-gold: 45 95% 55%;
-    --mudcloth-black: 30 10% 8%;
+    /* ===== Extended Earth Palette ===== */
+    --warm-cream: 40 35% 94%;
+    --bark-brown: 20 40% 15%;
+    --savanna-sand: 32 30% 80%;
+    --copper: 22 45% 50%;
+    --kente-gold: 38 60% 55%;
+    --mudcloth-black: 20 30% 8%;
+    --terracotta: 15 50% 55%;
+    --clay-light: 28 25% 78%;
+    --clay-medium: 25 30% 58%;
+    --clay-dark: 22 35% 38%;
     
     /* ===== Brutalist Shadows - Claymorphic ===== */
-    --shadow-clay: inset 0 -8px 16px rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.1);
-    --shadow-clay-sm: inset 0 -4px 8px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.08);
-    --shadow-clay-lg: inset 0 -12px 24px rgba(0,0,0,0.2), 0 16px 48px rgba(0,0,0,0.15);
+    --shadow-clay: inset 0 -8px 16px rgba(0,0,0,0.1), 0 8px 24px rgba(0,0,0,0.08);
+    --shadow-clay-sm: inset 0 -4px 8px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06);
+    --shadow-clay-lg: inset 0 -12px 24px rgba(0,0,0,0.12), 0 16px 48px rgba(0,0,0,0.1);
     --shadow-brutalist: 4px 4px 0 hsl(var(--foreground));
     --shadow-brutalist-lg: 8px 8px 0 hsl(var(--foreground));
+    --shadow-brutalist-sm: 2px 2px 0 hsl(var(--foreground));
     
-    /* Legacy shadows */
-    --shadow-soft: 0 4px 20px hsl(25 35% 22% / 0.08);
-    --shadow-medium: 0 8px 30px hsl(25 35% 22% / 0.12);
-    --shadow-strong: 0 15px 50px hsl(25 35% 22% / 0.18);
-    --shadow-glow: 0 0 40px hsl(15 80% 50% / 0.3);
-    --shadow-gold: 0 4px 20px hsl(38 92% 50% / 0.25);
+    /* Soft shadows */
+    --shadow-soft: 0 4px 20px hsl(20 40% 15% / 0.06);
+    --shadow-medium: 0 8px 30px hsl(20 40% 15% / 0.1);
+    --shadow-strong: 0 15px 50px hsl(20 40% 15% / 0.15);
+    --shadow-glow: 0 0 40px hsl(25 30% 65% / 0.2);
+    --shadow-gold: 0 4px 20px hsl(38 60% 55% / 0.2);
     
     --radius: 0rem;
     
     /* ===== Sidebar ===== */
-    --sidebar-background: 40 25% 98%;
-    --sidebar-foreground: 25 30% 10%;
-    --sidebar-primary: 15 80% 50%;
-    --sidebar-primary-foreground: 40 30% 98%;
-    --sidebar-accent: 35 15% 90%;
-    --sidebar-accent-foreground: 25 30% 10%;
-    --sidebar-border: 25 30% 10%;
-    --sidebar-ring: 15 80% 50%;
+    --sidebar-background: 35 30% 95%;
+    --sidebar-foreground: 20 40% 12%;
+    --sidebar-primary: 25 30% 65%;
+    --sidebar-primary-foreground: 25 35% 10%;
+    --sidebar-accent: 30 15% 88%;
+    --sidebar-accent-foreground: 20 40% 12%;
+    --sidebar-border: 20 40% 12%;
+    --sidebar-ring: 25 30% 65%;
   }
 
   .dark {
-    --background: 25 20% 6%;
-    --foreground: 40 20% 95%;
+    --background: 20 30% 6%;
+    --foreground: 35 25% 92%;
     
-    --card: 25 18% 10%;
-    --card-foreground: 40 20% 95%;
+    --card: 20 25% 10%;
+    --card-foreground: 35 25% 92%;
     
-    --popover: 25 18% 10%;
-    --popover-foreground: 40 20% 95%;
+    --popover: 20 25% 10%;
+    --popover-foreground: 35 25% 92%;
     
-    --primary: 15 75% 55%;
-    --primary-foreground: 25 30% 8%;
+    --primary: 35 25% 85%;
+    --primary-foreground: 20 40% 12%;
     
-    --secondary: 38 85% 55%;
-    --secondary-foreground: 25 30% 8%;
+    --secondary: 25 30% 55%;
+    --secondary-foreground: 35 25% 95%;
     
-    --accent: 160 70% 40%;
-    --accent-foreground: 25 30% 8%;
+    --accent: 22 30% 45%;
+    --accent-foreground: 35 25% 95%;
     
-    --muted: 25 15% 15%;
-    --muted-foreground: 35 15% 60%;
+    --muted: 20 20% 15%;
+    --muted-foreground: 30 15% 55%;
     
-    --border: 40 20% 95%;
-    --input: 25 18% 22%;
-    --ring: 15 75% 55%;
+    --border: 35 25% 85%;
+    --input: 20 25% 18%;
+    --ring: 25 30% 55%;
     
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
     
-    --sidebar-background: 25 20% 8%;
-    --sidebar-foreground: 40 20% 95%;
-    --sidebar-primary: 15 75% 55%;
-    --sidebar-primary-foreground: 25 30% 8%;
-    --sidebar-accent: 25 15% 15%;
-    --sidebar-accent-foreground: 40 20% 95%;
-    --sidebar-border: 40 20% 95%;
-    --sidebar-ring: 15 75% 55%;
+    --sidebar-background: 20 30% 8%;
+    --sidebar-foreground: 35 25% 92%;
+    --sidebar-primary: 25 30% 55%;
+    --sidebar-primary-foreground: 35 25% 95%;
+    --sidebar-accent: 20 20% 15%;
+    --sidebar-accent-foreground: 35 25% 92%;
+    --sidebar-border: 35 25% 85%;
+    --sidebar-ring: 25 30% 55%;
   }
 }
 
@@ -138,21 +143,23 @@
     font-family: 'DM Sans', system-ui, sans-serif;
   }
 
+  /* Brutalist Typography - Lekton for uppercase headings */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', Georgia, serif;
-    @apply font-black tracking-tighter;
+    font-family: 'Lekton', monospace;
+    @apply font-bold tracking-tight uppercase;
   }
 
-  /* Brutalist typography */
+  /* Mono text styling */
   .font-mono {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Lekton', monospace;
   }
 }
 
 /* ===== Custom Utility Classes ===== */
 @layer utilities {
   .font-display {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Lekton', monospace;
+    @apply uppercase tracking-tight;
   }
   
   .font-body {
@@ -165,25 +172,25 @@
   .clay-card {
     background: linear-gradient(145deg, hsl(var(--card)), hsl(var(--muted)));
     box-shadow: var(--shadow-clay);
-    border: 2px solid hsl(var(--foreground) / 0.1);
+    border: 2px solid hsl(var(--foreground));
   }
 
   .clay-card-dark {
-    background: linear-gradient(145deg, hsl(var(--mudcloth-black)), hsl(25 20% 12%));
+    background: linear-gradient(145deg, hsl(var(--mudcloth-black)), hsl(20 25% 12%));
     box-shadow: var(--shadow-clay);
-    border: 2px solid hsl(var(--warm-cream) / 0.1);
+    border: 2px solid hsl(var(--warm-cream) / 0.2);
   }
 
   /* Brutalist Button */
   .btn-brutal {
-    @apply font-mono uppercase tracking-widest text-xs px-6 py-3;
+    @apply font-display uppercase tracking-widest text-xs px-6 py-3;
     @apply border-2 border-foreground bg-background text-foreground;
     @apply transition-all duration-150;
     box-shadow: var(--shadow-brutalist);
   }
 
   .btn-brutal:hover {
-    box-shadow: 2px 2px 0 hsl(var(--foreground));
+    box-shadow: var(--shadow-brutalist-sm);
     transform: translate(2px, 2px);
   }
 
@@ -193,20 +200,25 @@
   }
 
   .btn-brutal-primary {
-    @apply btn-brutal bg-primary text-primary-foreground border-foreground;
+    @apply btn-brutal bg-primary text-primary-foreground;
   }
 
   .btn-brutal-secondary {
-    @apply btn-brutal bg-secondary text-secondary-foreground border-foreground;
+    @apply btn-brutal bg-secondary text-secondary-foreground;
+  }
+
+  .btn-brutal-dark {
+    @apply btn-brutal bg-foreground text-background;
+    box-shadow: 4px 4px 0 hsl(var(--secondary));
   }
 
   /* African Pattern Backgrounds */
   .pattern-kente {
     background-image: 
-      linear-gradient(45deg, hsl(var(--primary) / 0.08) 25%, transparent 25%),
-      linear-gradient(-45deg, hsl(var(--primary) / 0.08) 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, hsl(var(--secondary) / 0.08) 75%),
-      linear-gradient(-45deg, transparent 75%, hsl(var(--secondary) / 0.08) 75%);
+      linear-gradient(45deg, hsl(var(--secondary) / 0.06) 25%, transparent 25%),
+      linear-gradient(-45deg, hsl(var(--secondary) / 0.06) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, hsl(var(--accent) / 0.06) 75%),
+      linear-gradient(-45deg, transparent 75%, hsl(var(--accent) / 0.06) 75%);
     background-size: 20px 20px;
     background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
   }
@@ -215,22 +227,22 @@
     background-image: 
       repeating-linear-gradient(
         0deg,
-        hsl(var(--primary) / 0.05) 0px,
-        hsl(var(--primary) / 0.05) 2px,
-        transparent 2px,
-        transparent 12px
+        hsl(var(--secondary) / 0.04) 0px,
+        hsl(var(--secondary) / 0.04) 1px,
+        transparent 1px,
+        transparent 16px
       ),
       repeating-linear-gradient(
         90deg,
-        hsl(var(--secondary) / 0.05) 0px,
-        hsl(var(--secondary) / 0.05) 2px,
-        transparent 2px,
-        transparent 12px
+        hsl(var(--accent) / 0.04) 0px,
+        hsl(var(--accent) / 0.04) 1px,
+        transparent 1px,
+        transparent 16px
       );
   }
 
   .pattern-mudcloth {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e86e3a' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23876a4f' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
 
   /* Brutalist Grid Pattern */
@@ -238,18 +250,18 @@
     background-image: 
       linear-gradient(hsl(var(--foreground) / 0.03) 1px, transparent 1px),
       linear-gradient(90deg, hsl(var(--foreground) / 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
+    background-size: 48px 48px;
   }
 
   /* Gradient Text */
   .text-gradient-primary {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+    background-image: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--accent)) 100%);
   }
 
   .text-gradient-gold {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--kente-gold)) 100%);
+    background-image: linear-gradient(135deg, hsl(var(--kente-gold)) 0%, hsl(var(--copper)) 100%);
   }
 
   /* Glassmorphism */
@@ -297,7 +309,7 @@
 
   /* Section Spacing */
   .section-padding {
-    @apply py-16 md:py-24 lg:py-32;
+    @apply py-20 md:py-28 lg:py-36;
   }
 
   .container-tight {
@@ -312,6 +324,11 @@
   .border-brutal-thick {
     @apply border-4 border-foreground;
   }
+
+  /* Divider */
+  .divider-brutal {
+    @apply h-px bg-foreground w-full;
+  }
 }
 
 /* ===== Animations ===== */
@@ -320,33 +337,33 @@
   @keyframes weave-in {
     0% {
       opacity: 0;
-      transform: translateY(30px) rotate(-2deg);
+      transform: translateY(30px);
     }
     100% {
       opacity: 1;
-      transform: translateY(0) rotate(0);
+      transform: translateY(0);
     }
   }
 
   @keyframes weave-in-left {
     0% {
       opacity: 0;
-      transform: translateX(-40px) skewX(2deg);
+      transform: translateX(-40px);
     }
     100% {
       opacity: 1;
-      transform: translateX(0) skewX(0);
+      transform: translateX(0);
     }
   }
 
   @keyframes weave-in-right {
     0% {
       opacity: 0;
-      transform: translateX(40px) skewX(-2deg);
+      transform: translateX(40px);
     }
     100% {
       opacity: 1;
-      transform: translateX(0) skewX(0);
+      transform: translateX(0);
     }
   }
 
@@ -354,23 +371,21 @@
   @keyframes craft-reveal {
     0% {
       opacity: 0;
-      transform: scale(0.95) translateY(20px);
-      filter: blur(4px);
+      transform: scale(0.98) translateY(20px);
     }
     100% {
       opacity: 1;
       transform: scale(1) translateY(0);
-      filter: blur(0);
     }
   }
 
   /* Gentle Float - Organic, natural motion */
   @keyframes gentle-float {
     0%, 100% {
-      transform: translateY(0) rotate(0);
+      transform: translateY(0);
     }
     50% {
-      transform: translateY(-10px) rotate(1deg);
+      transform: translateY(-8px);
     }
   }
 
@@ -387,10 +402,10 @@
   /* Pulse Glow */
   @keyframes pulse-glow {
     0%, 100% {
-      box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+      box-shadow: 0 0 20px hsl(var(--secondary) / 0.2);
     }
     50% {
-      box-shadow: 0 0 40px hsl(var(--primary) / 0.5);
+      box-shadow: 0 0 40px hsl(var(--secondary) / 0.4);
     }
   }
 
@@ -464,14 +479,14 @@
 
 /* ===== Selection Colors ===== */
 ::selection {
-  background-color: hsl(var(--primary) / 0.3);
+  background-color: hsl(var(--secondary) / 0.3);
   color: hsl(var(--foreground));
 }
 
 /* ===== Scrollbar Styling ===== */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -479,10 +494,19 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--primary) / 0.4);
-  border-radius: 5px;
+  background: hsl(var(--secondary) / 0.5);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary) / 0.6);
+  background: hsl(var(--secondary) / 0.7);
+}
+
+/* ===== Brutalist Form Inputs ===== */
+input, textarea, select {
+  @apply border-2 border-foreground bg-background;
+}
+
+input:focus, textarea:focus, select:focus {
+  @apply outline-none ring-0;
+  box-shadow: var(--shadow-brutalist-sm);
 }
