@@ -83,26 +83,17 @@ serve(async (req) => {
     // 2. Initiate payment to /merchant/v1/payments/
     // 3. Check status from /standard/v1/payments/{id}
 
-    let apiResponse;
+    let apiResponse = {
+      success: true,
+      message: 'Payment request sent to your phone. Please enter your PIN to confirm.',
+      referenceId: transactionRef,
+      provider: provider === 'mtn' ? 'MTN Mobile Money' : 'Airtel Money'
+    };
     
     if (provider === 'mtn') {
-      // MTN MoMo integration placeholder
       console.log('MTN MoMo payment request initiated');
-      apiResponse = {
-        success: true,
-        message: 'Payment request sent to your phone. Please enter your PIN to confirm.',
-        referenceId: transactionRef,
-        provider: 'MTN Mobile Money'
-      };
     } else if (provider === 'airtel') {
-      // Airtel Money integration placeholder
       console.log('Airtel Money payment request initiated');
-      apiResponse = {
-        success: true,
-        message: 'Payment request sent to your phone. Please enter your PIN to confirm.',
-        referenceId: transactionRef,
-        provider: 'Airtel Money'
-      };
     }
 
     // Update payment status to processing
@@ -113,7 +104,7 @@ serve(async (req) => {
 
     // Simulate successful payment after a delay (for demo purposes)
     // In production, this would be handled by a webhook from the payment provider
-    EdgeRuntime.waitUntil((async () => {
+    const backgroundTask = async () => {
       await new Promise(resolve => setTimeout(resolve, 5000)); // 5 second delay
       
       // Update payment to completed
@@ -132,7 +123,10 @@ serve(async (req) => {
         .eq('id', orderId);
 
       console.log(`Payment ${transactionRef} completed successfully`);
-    })());
+    };
+
+    // Run background task without blocking the response
+    backgroundTask().catch(console.error);
 
     return new Response(
       JSON.stringify({
@@ -145,10 +139,11 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Payment processing error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ success: false, error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, ShoppingBag, Truck, CreditCard, CheckCircle, Loader2, MapPin, Building2 } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Truck, CreditCard, CheckCircle, Loader2, MapPin, Building2, Smartphone, Banknote } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { useAuth } from '@/hooks/useAuth';
 import { usePickupLocations } from '@/hooks/usePickupLocations';
@@ -28,11 +28,14 @@ const Checkout = () => {
   const { locations, loading: locationsLoading } = usePickupLocations();
   const { toast } = useToast();
   
-  const [step, setStep] = useState<'shipping' | 'payment' | 'success'>('shipping');
+  const [step, setStep] = useState<'shipping' | 'payment' | 'processing' | 'success'>('shipping');
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('mobile-money');
+  const [momoProvider, setMomoProvider] = useState<'mtn' | 'airtel'>('mtn');
   const [deliveryMethod, setDeliveryMethod] = useState<'delivery' | 'pickup'>('delivery');
   const [selectedPickupLocation, setSelectedPickupLocation] = useState<string>('');
+  const [paymentStatus, setPaymentStatus] = useState<string>('');
+  const [transactionRef, setTransactionRef] = useState<string>('');
   
   const [shippingInfo, setShippingInfo] = useState({
     fullName: profile?.full_name || '',
@@ -116,7 +119,7 @@ const Checkout = () => {
     
     try {
       // Create order in database
-      const orderData: any = {
+      const orderData = {
         buyer_id: user.id,
         total_amount: totalWithShipping,
         shipping_address: deliveryMethod === 'pickup' 
@@ -127,11 +130,11 @@ const Checkout = () => {
           : shippingInfo.city,
         shipping_country: 'Uganda',
         shipping_postal_code: null,
-        payment_method: paymentMethod,
+        payment_method: paymentMethod === 'mobile-money' ? momoProvider : 'cash',
         delivery_method: deliveryMethod,
         pickup_location_id: deliveryMethod === 'pickup' ? selectedPickupLocation : null,
         notes: shippingInfo.notes || null,
-        status: 'pending'
+        status: 'pending' as const
       };
 
       const { data: order, error: orderError } = await supabase
@@ -171,49 +174,142 @@ const Checkout = () => {
         }
       }
 
-      // Send confirmation email
-      if (shippingInfo.email) {
-        const shippingAddressText = deliveryMethod === 'pickup'
-          ? `Pickup at: ${selectedLocation?.name}<br>${selectedLocation?.address}<br>${selectedLocation?.city}`
-          : `${shippingInfo.fullName}<br>${shippingInfo.address}<br>${shippingInfo.city}, Uganda<br>${shippingInfo.phone}`;
-
-        await supabase.functions.invoke('send-order-email', {
+      // Process payment based on method
+      if (paymentMethod === 'mobile-money') {
+        setStep('processing');
+        setPaymentStatus('Sending payment request to your phone...');
+        
+        const { data: paymentResponse, error: paymentError } = await supabase.functions.invoke('process-momo-payment', {
           body: {
-            type: 'confirmation',
-            email: shippingInfo.email,
-            customerName: shippingInfo.fullName,
             orderId: order.id,
-            orderTotal: totalWithShipping,
-            items: items.map(item => ({
-              name: item.product.name,
-              quantity: item.quantity,
-              price: item.product.price * item.quantity
-            })),
-            shippingAddress: shippingAddressText
+            amount: totalWithShipping,
+            phoneNumber: shippingInfo.phone,
+            provider: momoProvider,
+            customerName: shippingInfo.fullName
           }
         });
+
+        if (paymentError) throw paymentError;
+        
+        if (paymentResponse?.success) {
+          setTransactionRef(paymentResponse.transactionRef);
+          setPaymentStatus(paymentResponse.message);
+          
+          // Wait for simulated payment completion
+          setTimeout(() => {
+            handlePaymentSuccess(order.id);
+          }, 6000);
+        } else {
+          throw new Error(paymentResponse?.error || 'Payment failed');
+        }
+      } else {
+        // Cash on delivery/pickup
+        const { data: cashResponse, error: cashError } = await supabase.functions.invoke('process-cash-payment', {
+          body: {
+            orderId: order.id,
+            amount: totalWithShipping,
+            customerName: shippingInfo.fullName,
+            customerPhone: shippingInfo.phone,
+            deliveryMethod: deliveryMethod,
+            pickupLocationId: selectedPickupLocation || undefined
+          }
+        });
+
+        if (cashError) throw cashError;
+
+        if (cashResponse?.success) {
+          setTransactionRef(cashResponse.transactionRef);
+          handlePaymentSuccess(order.id);
+        } else {
+          throw new Error(cashResponse?.error || 'Payment processing failed');
+        }
       }
 
-      toast({
-        title: "Order Placed!",
-        description: deliveryMethod === 'pickup' 
-          ? "Your order has been placed. We'll notify you when it's ready for pickup."
-          : "Your order has been placed successfully. Check your email for confirmation."
-      });
-      
-      clearCart();
-      setStep('success');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Order error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to place order. Please try again.';
       toast({
         title: "Order Failed",
-        description: error.message || "Failed to place order. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
+      setStep('payment');
     } finally {
       setLoading(false);
     }
   };
+
+  const handlePaymentSuccess = async (orderId: string) => {
+    // Send confirmation email
+    if (shippingInfo.email) {
+      const shippingAddressText = deliveryMethod === 'pickup'
+        ? `Pickup at: ${selectedLocation?.name}<br>${selectedLocation?.address}<br>${selectedLocation?.city}`
+        : `${shippingInfo.fullName}<br>${shippingInfo.address}<br>${shippingInfo.city}, Uganda<br>${shippingInfo.phone}`;
+
+      await supabase.functions.invoke('send-order-email', {
+        body: {
+          type: 'confirmation',
+          email: shippingInfo.email,
+          customerName: shippingInfo.fullName,
+          orderId: orderId,
+          orderTotal: totalWithShipping,
+          items: items.map(item => ({
+            name: item.product.name,
+            quantity: item.quantity,
+            price: item.product.price * item.quantity
+          })),
+          shippingAddress: shippingAddressText
+        }
+      });
+    }
+
+    toast({
+      title: "Order Placed!",
+      description: paymentMethod === 'mobile-money' 
+        ? "Payment received! Your order has been confirmed."
+        : deliveryMethod === 'pickup' 
+          ? "Your order has been placed. We'll notify you when it's ready for pickup."
+          : "Your order has been placed. Please have cash ready for the delivery."
+    });
+    
+    clearCart();
+    setStep('success');
+  };
+
+  // Processing state (for mobile money)
+  if (step === 'processing') {
+    return (
+      <Layout>
+        <section className="min-h-screen flex items-center justify-center bg-background">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center max-w-md mx-auto px-4"
+          >
+            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+              <Loader2 className="h-10 w-10 text-primary animate-spin" />
+            </div>
+            <h2 className="font-display text-2xl font-bold mb-4">Processing Payment</h2>
+            <p className="text-muted-foreground mb-4">{paymentStatus}</p>
+            {transactionRef && (
+              <p className="text-sm text-muted-foreground mb-6">
+                Reference: <span className="font-mono font-medium">{transactionRef}</span>
+              </p>
+            )}
+            <div className="bg-muted/50 rounded-xl p-4 text-left">
+              <h4 className="font-medium mb-2 flex items-center gap-2">
+                <Smartphone className="h-4 w-4" />
+                {momoProvider === 'mtn' ? 'MTN Mobile Money' : 'Airtel Money'}
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                Check your phone for a payment prompt. Enter your PIN to complete the payment.
+              </p>
+            </div>
+          </motion.div>
+        </section>
+      </Layout>
+    );
+  }
 
   if (step === 'success') {
     return (
@@ -228,6 +324,11 @@ const Checkout = () => {
               <CheckCircle className="h-10 w-10 text-accent" />
             </div>
             <h2 className="font-display text-3xl font-bold mb-4">Order Confirmed!</h2>
+            {transactionRef && (
+              <p className="text-sm text-muted-foreground mb-2">
+                Transaction: <span className="font-mono font-medium">{transactionRef}</span>
+              </p>
+            )}
             <p className="text-muted-foreground mb-8">
               Thank you for supporting Ugandan artisans. You'll receive a confirmation 
               message shortly with your order details.
@@ -474,52 +575,119 @@ const Checkout = () => {
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="bg-card rounded-2xl p-6 md:p-8 border border-border"
+                  className="space-y-6"
                 >
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <CreditCard className="h-5 w-5 text-primary" />
+                  <div className="bg-card rounded-2xl p-6 md:p-8 border border-border">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <CreditCard className="h-5 w-5 text-primary" />
+                      </div>
+                      <h2 className="font-display text-xl font-bold">Payment Method</h2>
                     </div>
-                    <h2 className="font-display text-xl font-bold">Payment Method</h2>
+
+                    <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-3">
+                      <div className={`flex items-center space-x-3 p-4 rounded-xl border-2 transition-colors cursor-pointer ${paymentMethod === 'mobile-money' ? 'border-primary bg-primary/5' : 'border-border'}`}>
+                        <RadioGroupItem value="mobile-money" id="mobile-money" />
+                        <Label htmlFor="mobile-money" className="flex-1 cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <Smartphone className="h-4 w-4" />
+                            <span className="font-medium">Mobile Money</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">MTN MoMo, Airtel Money</p>
+                        </Label>
+                      </div>
+                      <div className={`flex items-center space-x-3 p-4 rounded-xl border-2 transition-colors cursor-pointer ${paymentMethod === 'cash' ? 'border-primary bg-primary/5' : 'border-border'}`}>
+                        <RadioGroupItem value="cash" id="cash" />
+                        <Label htmlFor="cash" className="flex-1 cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <Banknote className="h-4 w-4" />
+                            <span className="font-medium">Cash on {deliveryMethod === 'pickup' ? 'Pickup' : 'Delivery'}</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">Pay when you receive your order</p>
+                        </Label>
+                      </div>
+                    </RadioGroup>
                   </div>
 
-                  <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-3">
-                    <div className={`flex items-center space-x-3 p-4 rounded-xl border-2 transition-colors cursor-pointer ${paymentMethod === 'mobile-money' ? 'border-primary bg-primary/5' : 'border-border'}`}>
-                      <RadioGroupItem value="mobile-money" id="mobile-money" />
-                      <Label htmlFor="mobile-money" className="flex-1 cursor-pointer">
-                        <span className="font-medium">Mobile Money</span>
-                        <p className="text-sm text-muted-foreground">MTN MoMo, Airtel Money</p>
-                      </Label>
-                    </div>
-                    <div className={`flex items-center space-x-3 p-4 rounded-xl border-2 transition-colors cursor-pointer ${paymentMethod === 'cash' ? 'border-primary bg-primary/5' : 'border-border'}`}>
-                      <RadioGroupItem value="cash" id="cash" />
-                      <Label htmlFor="cash" className="flex-1 cursor-pointer">
-                        <span className="font-medium">Cash on {deliveryMethod === 'pickup' ? 'Pickup' : 'Delivery'}</span>
-                        <p className="text-sm text-muted-foreground">Pay when you receive</p>
-                      </Label>
-                    </div>
-                  </RadioGroup>
+                  {/* Mobile Money Provider Selection */}
+                  {paymentMethod === 'mobile-money' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="bg-card rounded-2xl p-6 md:p-8 border border-border"
+                    >
+                      <h3 className="font-display text-lg font-bold mb-4">Select Mobile Money Provider</h3>
+                      <RadioGroup 
+                        value={momoProvider} 
+                        onValueChange={(value) => setMomoProvider(value as 'mtn' | 'airtel')} 
+                        className="grid grid-cols-2 gap-4"
+                      >
+                        <div className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-colors cursor-pointer ${momoProvider === 'mtn' ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20' : 'border-border'}`}>
+                          <RadioGroupItem value="mtn" id="mtn" className="sr-only" />
+                          <Label htmlFor="mtn" className="cursor-pointer text-center">
+                            <div className="w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center mx-auto mb-2">
+                              <span className="font-bold text-black text-xs">MTN</span>
+                            </div>
+                            <span className="font-medium">MTN MoMo</span>
+                          </Label>
+                        </div>
+                        <div className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-colors cursor-pointer ${momoProvider === 'airtel' ? 'border-red-500 bg-red-50 dark:bg-red-950/20' : 'border-border'}`}>
+                          <RadioGroupItem value="airtel" id="airtel" className="sr-only" />
+                          <Label htmlFor="airtel" className="cursor-pointer text-center">
+                            <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center mx-auto mb-2">
+                              <span className="font-bold text-white text-xs">Airtel</span>
+                            </div>
+                            <span className="font-medium">Airtel Money</span>
+                          </Label>
+                        </div>
+                      </RadioGroup>
+                      <p className="text-sm text-muted-foreground mt-4">
+                        A payment request will be sent to: <strong>{shippingInfo.phone}</strong>
+                      </p>
+                    </motion.div>
+                  )}
 
-                  <Separator className="my-6" />
+                  {/* Cash Payment Info */}
+                  {paymentMethod === 'cash' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="bg-card rounded-2xl p-6 md:p-8 border border-border"
+                    >
+                      <div className="flex items-start gap-3">
+                        <Banknote className="h-5 w-5 text-accent mt-0.5" />
+                        <div>
+                          <h3 className="font-medium mb-1">Cash Payment</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {deliveryMethod === 'pickup' 
+                              ? `Please have ${formatPrice(totalWithShipping)} ready when you collect your order at the pickup location.`
+                              : `Please have ${formatPrice(totalWithShipping)} ready when the delivery arrives.`
+                            }
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
 
-                  <div className="bg-muted/50 rounded-xl p-4 mb-6">
-                    <h4 className="font-medium mb-2">
-                      {deliveryMethod === 'pickup' ? 'Pickup Location:' : 'Shipping to:'}
+                  {/* Delivery Summary */}
+                  <div className="bg-card rounded-2xl p-6 md:p-8 border border-border">
+                    <h4 className="font-medium mb-3">
+                      {deliveryMethod === 'pickup' ? 'Pickup Location:' : 'Delivery Address:'}
                     </h4>
                     {deliveryMethod === 'pickup' ? (
-                      <p className="text-sm text-muted-foreground">
-                        {selectedLocation?.name}<br />
-                        {selectedLocation?.address}<br />
-                        {selectedLocation?.city}
-                        {selectedLocation?.operating_hours && <><br />Hours: {selectedLocation?.operating_hours}</>}
-                      </p>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <p className="font-medium text-foreground">{selectedLocation?.name}</p>
+                        <p>{selectedLocation?.address}</p>
+                        <p>{selectedLocation?.city}</p>
+                        {selectedLocation?.operating_hours && <p>Hours: {selectedLocation?.operating_hours}</p>}
+                      </div>
                     ) : (
-                      <p className="text-sm text-muted-foreground">
-                        {shippingInfo.fullName}<br />
-                        {shippingInfo.address}<br />
-                        {shippingInfo.city}<br />
-                        {shippingInfo.phone}
-                      </p>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <p className="font-medium text-foreground">{shippingInfo.fullName}</p>
+                        <p>{shippingInfo.address}</p>
+                        <p>{shippingInfo.city}, Uganda</p>
+                        <p>{shippingInfo.phone}</p>
+                      </div>
                     )}
                   </div>
 
@@ -527,14 +695,23 @@ const Checkout = () => {
                     onClick={handlePayment} 
                     className="w-full"
                     disabled={loading}
+                    size="lg"
                   >
                     {loading ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                         Processing...
                       </>
+                    ) : paymentMethod === 'mobile-money' ? (
+                      <>
+                        <Smartphone className="h-4 w-4 mr-2" />
+                        Pay {formatPrice(totalWithShipping)} with {momoProvider === 'mtn' ? 'MTN MoMo' : 'Airtel Money'}
+                      </>
                     ) : (
-                      <>Place Order - {formatPrice(totalWithShipping)}</>
+                      <>
+                        <Banknote className="h-4 w-4 mr-2" />
+                        Place Order - {formatPrice(totalWithShipping)} (Pay on {deliveryMethod === 'pickup' ? 'Pickup' : 'Delivery'})
+                      </>
                     )}
                   </Button>
                 </motion.div>
