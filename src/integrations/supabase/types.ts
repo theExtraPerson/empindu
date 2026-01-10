@@ -115,6 +115,56 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount: number
+          completed_at: string | null
+          created_at: string
+          customer_name: string | null
+          id: string
+          order_id: string
+          phone_number: string | null
+          provider: string
+          status: string
+          transaction_ref: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          completed_at?: string | null
+          created_at?: string
+          customer_name?: string | null
+          id?: string
+          order_id: string
+          phone_number?: string | null
+          provider: string
+          status?: string
+          transaction_ref: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          completed_at?: string | null
+          created_at?: string
+          customer_name?: string | null
+          id?: string
+          order_id?: string
+          phone_number?: string | null
+          provider?: string
+          status?: string
+          transaction_ref?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       personalization_requests: {
         Row: {
           artisan_response: string | null

@@ -33,7 +33,6 @@ serve(async (req) => {
       customerName, 
       customerPhone,
       deliveryMethod,
-      deliveryAddress,
       pickupLocationId
     }: CashPaymentRequest = await req.json();
 
@@ -103,10 +102,11 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Cash payment processing error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ success: false, error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
