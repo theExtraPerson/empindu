@@ -482,6 +482,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_artisan_for_order: { Args: { order_uuid: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "artisan" | "buyer"
