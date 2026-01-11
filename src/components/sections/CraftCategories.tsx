@@ -1,111 +1,142 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import heroCrafts from "@/assets/hero-crafts.jpg";
+import artisanPortrait from "@/assets/artisan-portrait.jpg";
+import patternBg from "@/assets/pattern-bg.jpg";
 
 const categories = [
   {
     id: "basketry",
-    name: "Basketry",
-    description: "Hand-woven baskets with intricate patterns",
+    name: "BASKETRY",
+    description: "Hand-woven with intricate patterns",
     count: 340,
-    color: "from-primary to-copper",
+    image: heroCrafts,
   },
   {
     id: "barkcloth",
-    name: "Barkcloth",
+    name: "BARKCLOTH",
     description: "Traditional Ugandan textile art",
     count: 156,
-    color: "from-bark-brown to-mudcloth-black",
+    image: patternBg,
   },
   {
     id: "woodcarving",
-    name: "Woodcarving",
+    name: "WOODCARVING",
     description: "Sculptural art from local hardwoods",
     count: 278,
-    color: "from-accent to-accent-soft",
+    image: artisanPortrait,
   },
   {
     id: "pottery",
-    name: "Pottery",
-    description: "Handcrafted clay vessels and decor",
+    name: "POTTERY",
+    description: "Handcrafted clay vessels & decor",
     count: 189,
-    color: "from-secondary to-kente-gold",
+    image: heroCrafts,
   },
   {
     id: "jewelry",
-    name: "Jewelry",
-    description: "Beaded and metalwork adornments",
+    name: "JEWELRY",
+    description: "Beaded & metalwork adornments",
     count: 412,
-    color: "from-copper to-primary",
+    image: patternBg,
   },
   {
     id: "textiles",
-    name: "Textiles",
-    description: "Woven fabrics and embroidery",
+    name: "TEXTILES",
+    description: "Woven fabrics & embroidery",
     count: 223,
-    color: "from-primary-deep to-bark-brown",
+    image: artisanPortrait,
   },
 ];
 
 export function CraftCategories() {
   return (
-    <section className="section-padding bg-card">
+    <section className="py-16 md:py-24 bg-mudcloth-black">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+        {/* Brutalist Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center max-w-2xl mx-auto mb-12"
+          className="mb-12 md:mb-16"
         >
-          <span className="text-primary font-medium uppercase tracking-wider text-sm mb-2 block">
-            Explore By Category
-          </span>
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Traditional <span className="text-primary">Craft</span> Types
-          </h2>
-          <p className="text-muted-foreground">
-            Discover the diverse world of Ugandan craftsmanship, from centuries-old 
-            barkcloth making to intricate basket weaving techniques.
-          </p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <span className="font-display text-xs tracking-[0.3em] text-warm-cream/40 mb-3 block">
+                [ EXPLORE BY CATEGORY ]
+              </span>
+              <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-warm-cream tracking-tight leading-none">
+                CRAFT
+                <br />
+                <span className="text-primary">TYPES</span>
+              </h2>
+            </div>
+            <p className="font-mono text-sm text-warm-cream/60 max-w-sm">
+              Discover centuries-old techniques passed down through generations of Ugandan craftspeople.
+            </p>
+          </div>
         </motion.div>
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Categories Grid with Image Backgrounds */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           {categories.map((category, index) => (
             <motion.div
               key={category.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.08 }}
             >
               <Link
                 to={`/marketplace?category=${category.id}`}
-                className="group block"
+                className="group block relative overflow-hidden border-2 border-warm-cream/20 hover:border-primary transition-all duration-500"
               >
-                <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${category.color} p-6 md:p-8 h-full min-h-[200px] transition-all duration-500 hover:-translate-y-2 hover:shadow-strong`}>
-                  {/* Pattern Overlay */}
-                  <div className="absolute inset-0 pattern-kente opacity-20" />
+                {/* Background Image */}
+                <div className="aspect-[4/5] md:aspect-[4/3] relative overflow-hidden">
+                  <img
+                    src={category.image}
+                    alt={category.name}
+                    className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 scale-105 group-hover:scale-110 transition-all duration-700"
+                  />
+                  
+                  {/* Dark Overlay */}
+                  <div className="absolute inset-0 bg-mudcloth-black/70 group-hover:bg-mudcloth-black/50 transition-colors duration-500" />
+                  
+                  {/* Animated Corner Lines */}
+                  <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   {/* Content */}
-                  <div className="relative z-10 h-full flex flex-col justify-between">
-                    <div>
-                      <h3 className="font-display text-2xl md:text-3xl font-bold text-warm-cream mb-2">
-                        {category.name}
-                      </h3>
-                      <p className="text-warm-cream/80 text-sm">
-                        {category.description}
-                      </p>
+                  <div className="absolute inset-0 p-4 md:p-6 flex flex-col justify-between">
+                    {/* Top - Count Badge */}
+                    <div className="flex justify-between items-start">
+                      <span className="font-mono text-[10px] md:text-xs text-warm-cream/60 tracking-wider">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span className="bg-warm-cream/10 backdrop-blur-sm px-2 py-1 font-mono text-[10px] md:text-xs text-warm-cream border border-warm-cream/20">
+                        {category.count}+
+                      </span>
                     </div>
                     
-                    <div className="flex items-center justify-between mt-6">
-                      <span className="text-warm-cream/70 text-sm">
-                        {category.count} products
-                      </span>
-                      <span className="w-10 h-10 rounded-full bg-warm-cream/20 backdrop-blur-sm flex items-center justify-center text-warm-cream group-hover:bg-warm-cream group-hover:text-primary transition-all duration-300">
-                        <ArrowRight className="h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
-                      </span>
+                    {/* Bottom - Title & Description */}
+                    <div>
+                      <h3 className="font-display text-xl md:text-2xl lg:text-3xl font-bold text-warm-cream mb-1 md:mb-2 tracking-tight group-hover:text-primary transition-colors duration-300">
+                        {category.name}
+                      </h3>
+                      <p className="font-mono text-[10px] md:text-xs text-warm-cream/60 mb-3 md:mb-4 line-clamp-2">
+                        {category.description}
+                      </p>
+                      
+                      {/* Arrow Button */}
+                      <div className="flex items-center gap-2">
+                        <span className="font-display text-[10px] md:text-xs tracking-wider text-warm-cream/40 group-hover:text-primary transition-colors">
+                          EXPLORE
+                        </span>
+                        <span className="w-8 h-8 md:w-10 md:h-10 border border-warm-cream/30 flex items-center justify-center text-warm-cream group-hover:bg-primary group-hover:border-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:rotate-45">
+                          <ArrowUpRight className="h-4 w-4 md:h-5 md:w-5" />
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
