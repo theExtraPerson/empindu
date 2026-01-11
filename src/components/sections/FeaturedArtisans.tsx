@@ -1,154 +1,143 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, MapPin, Hammer } from "lucide-react";
 import artisanPortrait from "@/assets/artisan-portrait.jpg";
 
 const featuredArtisans = [
   {
     id: 1,
-    name: "Sarah Nakato",
-    craft: "Basket Weaving",
+    name: "SARAH NAKATO",
+    craft: "BASKET WEAVING",
     region: "Kampala",
     image: artisanPortrait,
     products: 47,
-    experience: "15+ years",
+    experience: "15+",
   },
   {
     id: 2,
-    name: "James Okello",
-    craft: "Woodcarving",
+    name: "JAMES OKELLO",
+    craft: "WOODCARVING",
     region: "Gulu",
     image: artisanPortrait,
     products: 32,
-    experience: "20+ years",
+    experience: "20+",
   },
   {
     id: 3,
-    name: "Grace Auma",
-    craft: "Barkcloth",
+    name: "GRACE AUMA",
+    craft: "BARKCLOTH",
     region: "Masaka",
     image: artisanPortrait,
     products: 28,
-    experience: "12+ years",
+    experience: "12+",
   },
   {
     id: 4,
-    name: "Peter Mutebi",
-    craft: "Pottery",
+    name: "PETER MUTEBI",
+    craft: "POTTERY",
     region: "Mbarara",
     image: artisanPortrait,
     products: 55,
-    experience: "25+ years",
+    experience: "25+",
   },
 ];
 
 export function FeaturedArtisans() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % featuredArtisans.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + featuredArtisans.length) % featuredArtisans.length);
-  };
-
   return (
-    <section className="section-padding bg-gradient-warm pattern-weave">
+    <section className="py-16 md:py-24 bg-warm-cream">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        {/* Brutalist Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <span className="text-primary font-medium uppercase tracking-wider text-sm mb-2 block">
-              Meet Our Makers
+            <span className="font-display text-xs tracking-[0.3em] text-bark-brown/60 mb-3 block">
+              [ MEET THE MAKERS ]
             </span>
-            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-              Featured <span className="text-primary">Artisans</span>
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-mudcloth-black tracking-tight leading-none">
+              FEATURED
+              <br />
+              <span className="text-primary">ARTISANS</span>
             </h2>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="flex items-center gap-4"
           >
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={prevSlide}
-                className="rounded-full"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={nextSlide}
-                className="rounded-full"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </Button>
-            </div>
-            <Button variant="default" asChild>
-              <Link to="/artisans">
-                View All Artisans
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Link>
-            </Button>
+            <Link 
+              to="/artisans"
+              className="group inline-flex items-center gap-3 px-6 py-3 bg-mudcloth-black text-warm-cream font-display text-sm tracking-wider border-2 border-mudcloth-black hover:bg-transparent hover:text-mudcloth-black transition-all duration-300"
+            >
+              VIEW ALL
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </motion.div>
         </div>
 
-        {/* Artisan Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Floating Artisan Cards - Mobile Optimized */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           {featuredArtisans.map((artisan, index) => (
             <motion.div
               key={artisan.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 40, rotate: -2 }}
+              whileInView={{ opacity: 1, y: 0, rotate: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
               className="group"
+              style={{ 
+                transform: `rotate(${index % 2 === 0 ? -1 : 1}deg)`,
+              }}
             >
               <Link to={`/artisans/${artisan.id}`}>
-                <div className="relative overflow-hidden rounded-2xl bg-card shadow-soft hover:shadow-medium transition-all duration-500 hover:-translate-y-2">
-                  {/* Image */}
-                  <div className="aspect-[3/4] overflow-hidden">
+                <div className="relative bg-white border-2 border-mudcloth-black shadow-brutal hover:shadow-brutal-lg transition-all duration-300 hover:-translate-y-2 hover:rotate-0">
+                  {/* Floating Tag */}
+                  <div className="absolute -top-2 -right-2 z-10 bg-primary text-primary-foreground px-2 py-1 font-display text-[10px] md:text-xs tracking-wider border border-mudcloth-black">
+                    {artisan.experience} YRS
+                  </div>
+
+                  {/* Image Container */}
+                  <div className="aspect-[3/4] overflow-hidden relative">
                     <img
                       src={artisan.image}
                       alt={artisan.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-mudcloth-black/80 via-mudcloth-black/20 to-transparent" />
+                    {/* Overlay Pattern */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-mudcloth-black/90 via-mudcloth-black/20 to-transparent" />
+                    
+                    {/* Craft Badge - Bottom Left */}
+                    <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
+                      <div className="flex items-center gap-1 text-warm-cream/80 mb-1">
+                        <Hammer className="h-3 w-3" />
+                        <span className="font-display text-[10px] md:text-xs tracking-wider">
+                          {artisan.craft}
+                        </span>
+                      </div>
+                      <h3 className="font-display text-sm md:text-lg font-bold text-warm-cream leading-tight">
+                        {artisan.name}
+                      </h3>
+                      <div className="flex items-center gap-1 text-warm-cream/60 mt-1">
+                        <MapPin className="h-3 w-3" />
+                        <span className="font-mono text-[10px] md:text-xs">
+                          {artisan.region}
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <span className="inline-block px-3 py-1 rounded-full bg-secondary/90 text-secondary-foreground text-xs font-semibold mb-3">
-                      {artisan.craft}
+                  {/* Bottom Stats Bar */}
+                  <div className="p-2 md:p-3 border-t-2 border-mudcloth-black bg-warm-cream flex items-center justify-between">
+                    <span className="font-mono text-[10px] md:text-xs text-bark-brown">
+                      {artisan.products} ITEMS
                     </span>
-                    <h3 className="font-display text-xl font-bold text-warm-cream mb-1">
-                      {artisan.name}
-                    </h3>
-                    <p className="text-warm-cream/70 text-sm mb-3">
-                      {artisan.region} · {artisan.experience}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-warm-cream/60 text-sm">
-                        {artisan.products} products
-                      </span>
-                      <span className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-300">
-                        <ArrowRight className="h-4 w-4" />
-                      </span>
-                    </div>
+                    <span className="w-6 h-6 md:w-8 md:h-8 bg-mudcloth-black text-warm-cream flex items-center justify-center group-hover:bg-primary transition-colors duration-300">
+                      <ArrowRight className="h-3 w-3 md:h-4 md:w-4" />
+                    </span>
                   </div>
                 </div>
               </Link>
