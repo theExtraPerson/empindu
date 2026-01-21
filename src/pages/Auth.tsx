@@ -141,7 +141,7 @@ export default function Auth() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
+        <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent" />
       </div>
     );
   }
@@ -154,10 +154,10 @@ export default function Auth() {
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
-            className="mb-8 -ml-4 text-muted-foreground hover:text-foreground"
+            className="mb-8 -ml-4 text-muted-foreground hover:text-foreground font-display text-xs tracking-widest"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
+            BACK TO HOME
           </Button>
 
           <motion.div
@@ -165,10 +165,10 @@ export default function Auth() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-3xl font-display font-bold text-foreground mb-2">
-              {mode === 'login' ? 'Welcome Back' : mode === 'artisan-register' ? 'Join as an Artisan' : 'Create Account'}
+            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-2">
+              {mode === 'login' ? 'WELCOME BACK' : mode === 'artisan-register' ? 'JOIN AS ARTISAN' : 'CREATE ACCOUNT'}
             </h1>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground mb-8 font-body">
               {mode === 'login' 
                 ? 'Sign in to access your account' 
                 : mode === 'artisan-register'
@@ -186,65 +186,65 @@ export default function Auth() {
                     exit={{ opacity: 0, height: 0 }}
                     className="space-y-2"
                   >
-                    <Label htmlFor="fullName">Full Name</Label>
+                    <Label htmlFor="fullName" className="font-display text-xs tracking-widest">FULL NAME</Label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                       <Input
                         id="fullName"
                         type="text"
                         placeholder="Enter your full name"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        className="pl-11"
+                        className="pl-12 h-12 border-2 border-foreground font-body"
                       />
                     </div>
                     {errors.fullName && (
-                      <p className="text-sm text-destructive">{errors.fullName}</p>
+                      <p className="text-sm text-destructive font-body">{errors.fullName}</p>
                     )}
                   </motion.div>
                 )}
               </AnimatePresence>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="font-display text-xs tracking-widest">EMAIL</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-11"
+                    className="pl-12 h-12 border-2 border-foreground font-body"
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-sm text-destructive">{errors.email}</p>
+                  <p className="text-sm text-destructive font-body">{errors.email}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="font-display text-xs tracking-widest">PASSWORD</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-11 pr-11"
+                    className="pl-12 pr-12 h-12 border-2 border-foreground font-body"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-sm text-destructive">{errors.password}</p>
+                  <p className="text-sm text-destructive font-body">{errors.password}</p>
                 )}
               </div>
 
@@ -258,16 +258,16 @@ export default function Auth() {
                       exit={{ opacity: 0, height: 0 }}
                       className="space-y-2"
                     >
-                      <Label htmlFor="location">Location (Optional)</Label>
+                      <Label htmlFor="location" className="font-display text-xs tracking-widest">LOCATION (OPTIONAL)</Label>
                       <div className="relative">
-                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input
                           id="location"
                           type="text"
                           placeholder="e.g., Kampala, Uganda"
                           value={location}
                           onChange={(e) => setLocation(e.target.value)}
-                          className="pl-11"
+                          className="pl-12 h-12 border-2 border-foreground font-body"
                         />
                       </div>
                     </motion.div>
@@ -279,16 +279,16 @@ export default function Auth() {
                       exit={{ opacity: 0, height: 0 }}
                       className="space-y-2"
                     >
-                      <Label htmlFor="craft">Craft Specialty (Optional)</Label>
+                      <Label htmlFor="craft" className="font-display text-xs tracking-widest">CRAFT SPECIALTY (OPTIONAL)</Label>
                       <div className="relative">
-                        <Palette className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <Palette className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input
                           id="craft"
                           type="text"
                           placeholder="e.g., Bark Cloth, Basket Weaving"
                           value={craftSpecialty}
                           onChange={(e) => setCraftSpecialty(e.target.value)}
-                          className="pl-11"
+                          className="pl-12 h-12 border-2 border-foreground font-body"
                         />
                       </div>
                     </motion.div>
@@ -298,17 +298,16 @@ export default function Auth() {
 
               <Button
                 type="submit"
-                variant="hero"
-                className="w-full"
+                className="w-full h-12 font-display text-sm tracking-widest border-2 border-foreground"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
-                    <span className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
-                    {mode === 'login' ? 'Signing in...' : 'Creating account...'}
+                    <span className="animate-spin h-4 w-4 border-2 border-current border-t-transparent" />
+                    {mode === 'login' ? 'SIGNING IN...' : 'CREATING ACCOUNT...'}
                   </span>
                 ) : (
-                  mode === 'login' ? 'Sign In' : 'Create Account'
+                  mode === 'login' ? 'SIGN IN' : 'CREATE ACCOUNT'
                 )}
               </Button>
             </form>
@@ -316,7 +315,7 @@ export default function Auth() {
             <div className="mt-8 space-y-4">
               {mode === 'login' ? (
                 <>
-                  <p className="text-center text-muted-foreground">
+                  <p className="text-center text-muted-foreground font-body">
                     Don't have an account?{' '}
                     <button
                       onClick={() => setMode('register')}
@@ -327,24 +326,24 @@ export default function Auth() {
                   </p>
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
+                      <span className="w-full border-t-2 border-foreground/20" />
                     </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">Or</span>
+                    <div className="relative flex justify-center">
+                      <span className="bg-background px-4 text-xs font-display tracking-widest text-muted-foreground">OR</span>
                     </div>
                   </div>
                   <Button
                     variant="outline"
-                    className="w-full"
+                    className="w-full h-12 border-2 border-foreground font-display text-xs tracking-widest"
                     onClick={() => setMode('artisan-register')}
                   >
                     <Palette className="w-4 h-4 mr-2" />
-                    Register as an Artisan
+                    REGISTER AS AN ARTISAN
                   </Button>
                 </>
               ) : (
                 <>
-                  <p className="text-center text-muted-foreground">
+                  <p className="text-center text-muted-foreground font-body">
                     Already have an account?{' '}
                     <button
                       onClick={() => setMode('login')}
@@ -356,21 +355,21 @@ export default function Auth() {
                   {mode === 'register' && (
                     <Button
                       variant="outline"
-                      className="w-full"
+                      className="w-full h-12 border-2 border-foreground font-display text-xs tracking-widest"
                       onClick={() => setMode('artisan-register')}
                     >
                       <Palette className="w-4 h-4 mr-2" />
-                      Register as an Artisan instead
+                      REGISTER AS AN ARTISAN INSTEAD
                     </Button>
                   )}
                   {mode === 'artisan-register' && (
                     <Button
                       variant="outline"
-                      className="w-full"
+                      className="w-full h-12 border-2 border-foreground font-display text-xs tracking-widest"
                       onClick={() => setMode('register')}
                     >
                       <User className="w-4 h-4 mr-2" />
-                      Register as a Buyer instead
+                      REGISTER AS A BUYER INSTEAD
                     </Button>
                   )}
                 </>
@@ -389,41 +388,48 @@ export default function Auth() {
           backgroundPosition: 'center'
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/70 to-accent/80" />
-        <div className="relative z-10 flex flex-col justify-center items-center p-12 text-white text-center">
+        <div className="absolute inset-0 bg-primary/90" />
+        <div className="absolute inset-0 pattern-grid opacity-10" />
+        <div className="relative z-10 flex flex-col justify-center items-center p-12 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <div className="mb-8">
-              <span className="text-6xl font-display font-bold tracking-tight">
-                Crafted<span className="text-accent-foreground/80">Uganda</span>
+              <span className="font-display text-5xl md:text-6xl font-bold tracking-tight text-primary-foreground">
+                CRAFTED
+                <br />
+                <span className="text-secondary">UGANDA</span>
               </span>
             </div>
-            <h2 className="text-2xl font-medium mb-4 max-w-md">
-              Connecting Ugandan artisans with the world
+            <div className="w-24 h-0.5 bg-secondary mx-auto mb-8" />
+            <h2 className="font-display text-xl tracking-wider text-primary-foreground mb-4 max-w-md">
+              CONNECTING UGANDAN ARTISANS WITH THE WORLD
             </h2>
-            <p className="text-white/80 max-w-sm">
+            <p className="text-primary-foreground/70 max-w-sm font-body">
               Join our community of skilled craftspeople preserving traditional techniques while reaching global markets.
             </p>
             
-            <div className="mt-12 grid grid-cols-3 gap-6 text-center">
-              <div>
-                <div className="text-3xl font-bold">500+</div>
-                <div className="text-sm text-white/70">Artisans</div>
+            <div className="mt-16 grid grid-cols-3 gap-8 text-center">
+              <div className="border-2 border-primary-foreground/30 p-4">
+                <div className="font-display text-3xl font-bold text-primary-foreground">500+</div>
+                <div className="text-xs font-display tracking-widest text-primary-foreground/70 mt-1">ARTISANS</div>
               </div>
-              <div>
-                <div className="text-3xl font-bold">2,000+</div>
-                <div className="text-sm text-white/70">Products</div>
+              <div className="border-2 border-primary-foreground/30 p-4">
+                <div className="font-display text-3xl font-bold text-primary-foreground">2,000+</div>
+                <div className="text-xs font-display tracking-widest text-primary-foreground/70 mt-1">PRODUCTS</div>
               </div>
-              <div>
-                <div className="text-3xl font-bold">50+</div>
-                <div className="text-sm text-white/70">Communities</div>
+              <div className="border-2 border-primary-foreground/30 p-4">
+                <div className="font-display text-3xl font-bold text-primary-foreground">50+</div>
+                <div className="text-xs font-display tracking-widest text-primary-foreground/70 mt-1">COMMUNITIES</div>
               </div>
             </div>
           </motion.div>
         </div>
+
+        {/* Decorative corner */}
+        <div className="absolute bottom-0 right-0 w-40 h-40 border-l-4 border-t-4 border-secondary" />
       </div>
     </div>
   );
