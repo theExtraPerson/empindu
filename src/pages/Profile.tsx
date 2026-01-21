@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Layout } from '@/components/layout/Layout';
 import { OrderHistory } from '@/components/orders/OrderHistory';
+
 export default function Profile() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -89,7 +90,7 @@ export default function Profile() {
     return (
       <Layout>
         <div className="min-h-[60vh] flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
+          <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent" />
         </div>
       </Layout>
     );
@@ -99,26 +100,26 @@ export default function Profile() {
     switch (role) {
       case 'admin':
         return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-destructive/10 text-destructive text-sm font-medium">
+          <span className="inline-flex items-center gap-2 px-4 py-2 border-2 border-destructive text-destructive font-display text-xs tracking-widest">
             <Shield className="w-4 h-4" />
-            Administrator
+            ADMINISTRATOR
           </span>
         );
       case 'artisan':
         return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+          <span className="inline-flex items-center gap-2 px-4 py-2 border-2 border-primary text-primary font-display text-xs tracking-widest">
             <Palette className="w-4 h-4" />
-            Artisan
+            ARTISAN
             {profile?.is_verified && (
-              <span className="ml-1 text-xs bg-accent text-accent-foreground px-1.5 py-0.5 rounded">Verified</span>
+              <span className="ml-1 px-2 py-0.5 bg-primary text-primary-foreground text-[10px]">VERIFIED</span>
             )}
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-muted text-muted-foreground text-sm font-medium">
+          <span className="inline-flex items-center gap-2 px-4 py-2 border-2 border-foreground text-foreground font-display text-xs tracking-widest">
             <User className="w-4 h-4" />
-            Buyer
+            BUYER
           </span>
         );
     }
@@ -126,7 +127,7 @@ export default function Profile() {
 
   return (
     <Layout>
-      <section className="py-16 md:py-24 bg-muted/30">
+      <section className="py-24 md:py-32 bg-muted border-b-2 border-foreground">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -134,26 +135,28 @@ export default function Profile() {
             className="max-w-4xl mx-auto"
           >
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
               <div>
-                <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-                  My Account
+                <span className="font-display text-xs tracking-widest text-muted-foreground mb-2 block">
+                  [ ACCOUNT ]
+                </span>
+                <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+                  MY ACCOUNT
                 </h1>
-                <p className="text-muted-foreground mt-1">
-                  Manage your profile and view orders
-                </p>
               </div>
               <div className="flex items-center gap-3">
                 {getRoleBadge()}
               </div>
             </div>
 
-            <Tabs defaultValue="profile" className="space-y-6">
-              <TabsList>
-                <TabsTrigger value="profile">Profile</TabsTrigger>
-                <TabsTrigger value="orders">
+            <Tabs defaultValue="profile" className="space-y-8">
+              <TabsList className="bg-background border-2 border-foreground p-1">
+                <TabsTrigger value="profile" className="font-display text-xs tracking-widest data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  PROFILE
+                </TabsTrigger>
+                <TabsTrigger value="orders" className="font-display text-xs tracking-widest data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <Package className="h-4 w-4 mr-2" />
-                  My Orders
+                  MY ORDERS
                 </TabsTrigger>
               </TabsList>
 
@@ -162,173 +165,190 @@ export default function Profile() {
               </TabsContent>
 
               <TabsContent value="profile">
-              <div className="bg-card rounded-2xl border shadow-sm p-6 md:p-8">
-              {/* Avatar & Email */}
-              <div className="flex flex-col sm:flex-row items-start gap-6 mb-8 pb-8 border-b">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-2xl font-bold">
-                  {fullName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase()}
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-xl font-semibold text-foreground">
-                    {fullName || 'Your Name'}
-                  </h2>
-                  <div className="flex items-center gap-2 text-muted-foreground mt-1">
-                    <Mail className="w-4 h-4" />
-                    {user?.email}
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Member since {new Date(user?.created_at || '').toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long'
-                    })}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  {!isEditing ? (
-                    <Button onClick={() => setIsEditing(true)}>
-                      Edit Profile
-                    </Button>
-                  ) : (
-                    <>
-                      <Button variant="outline" onClick={() => setIsEditing(false)}>
-                        Cancel
-                      </Button>
-                      <Button onClick={handleSave} disabled={isSaving}>
-                        <Save className="w-4 h-4 mr-2" />
-                        {isSaving ? 'Saving...' : 'Save'}
-                      </Button>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {/* Form Fields */}
-              <div className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input
-                        id="fullName"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        disabled={!isEditing}
-                        className="pl-11"
-                      />
+                <div className="bg-background border-2 border-foreground p-6 md:p-10 shadow-brutal">
+                  {/* Avatar & Email */}
+                  <div className="flex flex-col sm:flex-row items-start gap-6 mb-10 pb-10 border-b-2 border-foreground">
+                    <div className="w-20 h-20 border-2 border-foreground flex items-center justify-center text-foreground text-2xl font-display font-bold bg-primary text-primary-foreground">
+                      {fullName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase()}
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="font-display text-2xl font-bold text-foreground tracking-wider uppercase">
+                        {fullName || 'YOUR NAME'}
+                      </h2>
+                      <div className="flex items-center gap-2 text-muted-foreground mt-2 font-body">
+                        <Mail className="w-4 h-4" />
+                        {user?.email}
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2 font-body">
+                        Member since {new Date(user?.created_at || '').toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long'
+                        })}
+                      </p>
+                    </div>
+                    <div className="flex gap-3">
+                      {!isEditing ? (
+                        <Button 
+                          onClick={() => setIsEditing(true)}
+                          className="border-2 border-foreground font-display text-xs tracking-widest"
+                        >
+                          EDIT PROFILE
+                        </Button>
+                      ) : (
+                        <>
+                          <Button 
+                            variant="outline" 
+                            onClick={() => setIsEditing(false)}
+                            className="border-2 border-foreground font-display text-xs tracking-widest"
+                          >
+                            CANCEL
+                          </Button>
+                          <Button 
+                            onClick={handleSave} 
+                            disabled={isSaving}
+                            className="border-2 border-foreground font-display text-xs tracking-widest"
+                          >
+                            <Save className="w-4 h-4 mr-2" />
+                            {isSaving ? 'SAVING...' : 'SAVE'}
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input
-                        id="phone"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        disabled={!isEditing}
-                        placeholder="+256 xxx xxx xxx"
-                        className="pl-11"
-                      />
-                    </div>
-                  </div>
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <Input
-                      id="location"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      disabled={!isEditing}
-                      placeholder="City, Region"
-                      className="pl-11"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    disabled={!isEditing}
-                    placeholder="Tell us about yourself..."
-                    rows={4}
-                  />
-                </div>
-
-                {/* Artisan-specific fields */}
-                {role === 'artisan' && (
-                  <>
-                    <div className="pt-6 border-t">
-                      <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                        <Palette className="w-5 h-5 text-primary" />
-                        Artisan Details
-                      </h3>
-                      
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="craftSpecialty">Craft Specialty</Label>
+                  {/* Form Fields */}
+                  <div className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="fullName" className="font-display text-xs tracking-widest">FULL NAME</Label>
+                        <div className="relative">
+                          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                           <Input
-                            id="craftSpecialty"
-                            value={craftSpecialty}
-                            onChange={(e) => setCraftSpecialty(e.target.value)}
+                            id="fullName"
+                            value={fullName}
+                            onChange={(e) => setFullName(e.target.value)}
                             disabled={!isEditing}
-                            placeholder="e.g., Bark Cloth, Basket Weaving"
+                            className="pl-12 h-12 border-2 border-foreground font-body"
                           />
                         </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="yearsExperience">Years of Experience</Label>
-                          <div className="relative">
-                            <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                            <Input
-                              id="yearsExperience"
-                              type="number"
-                              value={yearsExperience}
-                              onChange={(e) => setYearsExperience(e.target.value)}
-                              disabled={!isEditing}
-                              placeholder="0"
-                              className="pl-11"
-                              min="0"
-                            />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="phone" className="font-display text-xs tracking-widest">PHONE NUMBER</Label>
+                        <div className="relative">
+                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                          <Input
+                            id="phone"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            disabled={!isEditing}
+                            placeholder="+256 xxx xxx xxx"
+                            className="pl-12 h-12 border-2 border-foreground font-body"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="location" className="font-display text-xs tracking-widest">LOCATION</Label>
+                      <div className="relative">
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <Input
+                          id="location"
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
+                          disabled={!isEditing}
+                          placeholder="City, Region"
+                          className="pl-12 h-12 border-2 border-foreground font-body"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="bio" className="font-display text-xs tracking-widest">BIO</Label>
+                      <Textarea
+                        id="bio"
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
+                        disabled={!isEditing}
+                        placeholder="Tell us about yourself..."
+                        rows={4}
+                        className="border-2 border-foreground font-body resize-none"
+                      />
+                    </div>
+
+                    {/* Artisan-specific fields */}
+                    {role === 'artisan' && (
+                      <>
+                        <div className="pt-8 border-t-2 border-foreground">
+                          <h3 className="font-display text-xl font-bold text-foreground tracking-wider mb-6 flex items-center gap-2">
+                            <Palette className="w-5 h-5 text-primary" />
+                            ARTISAN DETAILS
+                          </h3>
+                          
+                          <div className="grid md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <Label htmlFor="craftSpecialty" className="font-display text-xs tracking-widest">CRAFT SPECIALTY</Label>
+                              <Input
+                                id="craftSpecialty"
+                                value={craftSpecialty}
+                                onChange={(e) => setCraftSpecialty(e.target.value)}
+                                disabled={!isEditing}
+                                placeholder="e.g., Bark Cloth, Basket Weaving"
+                                className="h-12 border-2 border-foreground font-body"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="yearsExperience" className="font-display text-xs tracking-widest">YEARS OF EXPERIENCE</Label>
+                              <div className="relative">
+                                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                                <Input
+                                  id="yearsExperience"
+                                  type="number"
+                                  value={yearsExperience}
+                                  onChange={(e) => setYearsExperience(e.target.value)}
+                                  disabled={!isEditing}
+                                  placeholder="0"
+                                  className="pl-12 h-12 border-2 border-foreground font-body"
+                                  min="0"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mt-6 space-y-2">
+                            <Label htmlFor="portfolioUrl" className="font-display text-xs tracking-widest">PORTFOLIO URL</Label>
+                            <div className="relative">
+                              <Link2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                              <Input
+                                id="portfolioUrl"
+                                type="url"
+                                value={portfolioUrl}
+                                onChange={(e) => setPortfolioUrl(e.target.value)}
+                                disabled={!isEditing}
+                                placeholder="https://..."
+                                className="pl-12 h-12 border-2 border-foreground font-body"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </>
+                    )}
+                  </div>
 
-                      <div className="mt-6 space-y-2">
-                        <Label htmlFor="portfolioUrl">Portfolio URL</Label>
-                        <div className="relative">
-                          <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                          <Input
-                            id="portfolioUrl"
-                            type="url"
-                            value={portfolioUrl}
-                            onChange={(e) => setPortfolioUrl(e.target.value)}
-                            disabled={!isEditing}
-                            placeholder="https://..."
-                            className="pl-11"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* Sign Out */}
-              <div className="mt-8 pt-6 border-t">
-                <Button variant="outline" onClick={handleSignOut} className="text-destructive hover:text-destructive">
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
-                </Button>
-              </div>
-              </div>
+                  {/* Sign Out */}
+                  <div className="mt-10 pt-8 border-t-2 border-foreground">
+                    <Button 
+                      variant="outline" 
+                      onClick={handleSignOut} 
+                      className="border-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground font-display text-xs tracking-widest"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      SIGN OUT
+                    </Button>
+                  </div>
+                </div>
               </TabsContent>
             </Tabs>
           </motion.div>

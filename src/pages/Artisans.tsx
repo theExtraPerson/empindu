@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { 
@@ -9,7 +8,6 @@ import {
   MapPin, 
   Loader2, 
   ArrowRight, 
-  Star,
   CheckCircle,
   Users
 } from "lucide-react";
@@ -30,20 +28,20 @@ interface Artisan {
 }
 
 const craftTypes = [
-  "All Crafts",
-  "Basketry",
-  "Barkcloth",
-  "Woodcarving",
-  "Pottery",
-  "Jewelry",
-  "Textiles",
+  "ALL CRAFTS",
+  "BASKETRY",
+  "BARKCLOTH",
+  "WOODCARVING",
+  "POTTERY",
+  "JEWELRY",
+  "TEXTILES",
 ];
 
 const Artisans = () => {
   const [artisans, setArtisans] = useState<Artisan[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCraft, setSelectedCraft] = useState('All Crafts');
+  const [selectedCraft, setSelectedCraft] = useState('ALL CRAFTS');
 
   useEffect(() => {
     fetchArtisans();
@@ -110,7 +108,7 @@ const Artisans = () => {
       artisan.location?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesCraft = 
-      selectedCraft === 'All Crafts' || 
+      selectedCraft === 'ALL CRAFTS' || 
       artisan.craft_specialty?.toLowerCase().includes(selectedCraft.toLowerCase());
     
     return matchesSearch && matchesCraft;
@@ -119,18 +117,31 @@ const Artisans = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="bg-gradient-earth pt-32 pb-16 relative overflow-hidden">
-        <div className="absolute inset-0 pattern-mudcloth opacity-5" />
+      <section className="relative bg-foreground pt-32 pb-20 overflow-hidden border-b-2 border-foreground">
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0 pattern-mudcloth" />
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center max-w-3xl mx-auto"
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-4xl mx-auto"
           >
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-warm-cream mb-6">
-              Meet Our <span className="text-secondary">Artisans</span>
+            <motion.span
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1 }}
+              className="inline-block px-4 py-2 border-2 border-background/30 text-background font-display text-xs tracking-widest mb-6"
+            >
+              MASTER CRAFTSPEOPLE OF UGANDA
+            </motion.span>
+            <h1 className="font-display text-5xl md:text-6xl lg:text-8xl font-bold text-background tracking-tight leading-[0.9] mb-6">
+              MEET OUR
+              <br />
+              <span className="text-secondary">ARTISANS</span>
             </h1>
-            <p className="text-warm-cream/80 text-lg mb-8">
+            <p className="text-background/70 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-body">
               Connect with skilled craftspeople from across Uganda. 
               Each artisan brings generations of expertise and unique cultural heritage.
             </p>
@@ -138,23 +149,26 @@ const Artisans = () => {
             {/* Search Bar */}
             <div className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-background/50" />
                 <Input
                   placeholder="Search artisans by name, craft, or location..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12 h-12 bg-warm-cream/10 border-warm-cream/20 text-warm-cream placeholder:text-warm-cream/50"
+                  className="pl-12 h-14 bg-background/10 border-2 border-background/30 text-background placeholder:text-background/50 font-body text-lg focus:border-background"
                 />
               </div>
             </div>
           </motion.div>
         </div>
+
+        {/* Decorative corner */}
+        <div className="absolute bottom-0 right-0 w-32 h-32 border-l-4 border-t-4 border-secondary hidden lg:block" />
       </section>
 
       {/* Craft Type Filter */}
-      <section className="py-6 border-b border-border bg-card sticky top-16 z-30">
+      <section className="py-6 border-b-2 border-foreground bg-background sticky top-16 z-30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {craftTypes.map((type, index) => (
               <motion.button
                 key={type}
@@ -162,10 +176,10 @@ const Artisans = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => setSelectedCraft(type)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                className={`px-5 py-2.5 font-display text-xs tracking-widest whitespace-nowrap transition-all border-2 ${
                   selectedCraft === type
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-transparent text-foreground border-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary"
                 }`}
               >
                 {type}
@@ -176,10 +190,10 @@ const Artisans = () => {
       </section>
 
       {/* Artisans Grid */}
-      <section className="section-padding bg-background pattern-weave">
+      <section className="py-16 md:py-24 bg-muted">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <p className="text-muted-foreground">
+          <div className="flex items-center justify-between mb-10 pb-6 border-b-2 border-foreground">
+            <p className="text-muted-foreground font-body">
               {loading ? 'Loading...' : (
                 <>Showing <span className="font-semibold text-foreground">{filteredArtisans.length}</span> artisans</>
               )}
@@ -187,28 +201,28 @@ const Artisans = () => {
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            <div className="flex items-center justify-center py-24">
+              <Loader2 className="h-12 w-12 animate-spin text-primary" />
             </div>
           ) : filteredArtisans.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-20"
+              className="text-center py-24 border-2 border-dashed border-foreground/30"
             >
               <Users className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="font-display text-xl font-bold text-foreground mb-2">
-                No artisans found
+              <h3 className="font-display text-2xl font-bold text-foreground mb-2 tracking-wider">
+                NO ARTISANS FOUND
               </h3>
-              <p className="text-muted-foreground">
-                {searchTerm || selectedCraft !== 'All Crafts'
+              <p className="text-muted-foreground font-body">
+                {searchTerm || selectedCraft !== 'ALL CRAFTS'
                   ? 'Try adjusting your search or filters'
                   : 'Check back soon for new artisans'
                 }
               </p>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredArtisans.map((artisan, index) => (
                 <motion.div
                   key={artisan.user_id}
@@ -219,58 +233,53 @@ const Artisans = () => {
                   className="group"
                 >
                   <Link to={`/artisans/${artisan.user_id}`}>
-                    <div className="bg-card rounded-2xl overflow-hidden shadow-soft hover:shadow-medium transition-all duration-500 hover:-translate-y-2 border border-border">
+                    <div className="bg-background border-2 border-foreground overflow-hidden transition-all duration-500 hover:-translate-y-2 shadow-brutal hover:shadow-brutal-lg">
                       {/* Image */}
                       <div className="aspect-[4/3] overflow-hidden relative">
                         <img
                           src={artisan.avatar_url || artisanPortrait}
                           alt={artisan.full_name || 'Artisan'}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
                         />
                         {artisan.is_verified && (
-                          <div className="absolute top-4 left-4 flex items-center gap-1 px-3 py-1 rounded-full bg-accent text-accent-foreground text-xs font-semibold">
+                          <div className="absolute top-4 left-4 flex items-center gap-1 px-3 py-1 bg-primary text-primary-foreground font-display text-xs tracking-wider border-2 border-foreground">
                             <CheckCircle className="h-3 w-3" />
-                            Verified
+                            VERIFIED
+                          </div>
+                        )}
+                        {artisan.years_experience && (
+                          <div className="absolute bottom-4 right-4 px-3 py-1 bg-background text-foreground font-display text-xs tracking-wider border-2 border-foreground">
+                            {artisan.years_experience}+ YEARS
                           </div>
                         )}
                       </div>
 
                       {/* Content */}
-                      <div className="p-5">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h3 className="font-display text-xl font-bold text-foreground group-hover:text-primary transition-colors">
-                              {artisan.full_name || 'Unknown Artisan'}
-                            </h3>
-                            {artisan.craft_specialty && (
-                              <span className="inline-block px-2 py-0.5 rounded bg-primary/10 text-primary text-xs font-medium mt-1">
-                                {artisan.craft_specialty}
-                              </span>
-                            )}
+                      <div className="p-6 border-t-2 border-foreground">
+                        <div className="mb-4">
+                          <h3 className="font-display text-xl font-bold text-foreground tracking-wider group-hover:text-primary transition-colors uppercase">
+                            {artisan.full_name || 'Unknown Artisan'}
+                          </h3>
+                          {artisan.craft_specialty && (
+                            <span className="inline-block px-3 py-1 bg-muted text-foreground font-display text-xs tracking-wider mt-2 border border-foreground">
+                              {artisan.craft_specialty.toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+
+                        {artisan.location && (
+                          <div className="flex items-center gap-2 text-muted-foreground text-sm mb-4 font-body">
+                            <MapPin className="h-4 w-4" />
+                            {artisan.location}
                           </div>
-                        </div>
+                        )}
 
-                        <div className="flex items-center gap-2 text-muted-foreground text-sm mb-4">
-                          {artisan.location && (
-                            <>
-                              <MapPin className="h-4 w-4" />
-                              {artisan.location}
-                            </>
-                          )}
-                          {artisan.years_experience && (
-                            <>
-                              <span className="text-border">•</span>
-                              {artisan.years_experience}+ years
-                            </>
-                          )}
-                        </div>
-
-                        <div className="flex items-center justify-between pt-4 border-t border-border">
-                          <span className="text-muted-foreground text-sm">
+                        <div className="flex items-center justify-between pt-4 border-t border-foreground/20">
+                          <span className="text-muted-foreground text-sm font-body">
                             {artisan.productCount} products
                           </span>
-                          <span className="flex items-center gap-1 text-primary font-medium text-sm group-hover:gap-2 transition-all">
-                            View Profile
+                          <span className="flex items-center gap-1 text-primary font-display text-xs tracking-wider group-hover:gap-2 transition-all">
+                            VIEW PROFILE
                             <ArrowRight className="h-4 w-4" />
                           </span>
                         </div>
