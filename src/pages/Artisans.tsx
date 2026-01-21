@@ -16,8 +16,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import artisanPortrait from "@/assets/artisan-portrait.jpg";
 
+// Interface matches public_profiles view (excludes sensitive PII like phone, bio)
 interface Artisan {
-  id: string;
   user_id: string;
   full_name: string | null;
   craft_specialty: string | null;
@@ -25,7 +25,7 @@ interface Artisan {
   avatar_url: string | null;
   is_verified: boolean | null;
   years_experience: number | null;
-  bio: string | null;
+  portfolio_url: string | null;
   productCount?: number;
 }
 
@@ -68,9 +68,9 @@ const Artisans = () => {
 
       const artisanUserIds = artisanRoles.map(r => r.user_id);
 
-      // Fetch profiles for these artisans
+      // Fetch profiles for these artisans using public_profiles view (excludes PII like phone)
       const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
+        .from('public_profiles')
         .select('*')
         .in('user_id', artisanUserIds);
 
@@ -211,7 +211,7 @@ const Artisans = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredArtisans.map((artisan, index) => (
                 <motion.div
-                  key={artisan.id}
+                  key={artisan.user_id}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}

@@ -28,9 +28,9 @@ export const usePlatformStats = () => {
       
       const artisanIds = artisanRoles?.map(r => r.user_id) || [];
       
-      // Get verified artisans
+      // Get verified artisans using public_profiles view (excludes PII like phone)
       const { data: verifiedProfiles } = await supabase
-        .from('profiles')
+        .from('public_profiles')
         .select('user_id')
         .in('user_id', artisanIds.length > 0 ? artisanIds : ['none'])
         .eq('is_verified', true);
