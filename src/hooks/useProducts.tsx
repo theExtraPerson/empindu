@@ -72,10 +72,10 @@ export const useProducts = () => {
 
       if (error) throw error;
 
-      // Fetch artisan profiles separately
+      // Fetch artisan profiles separately using public_profiles view (excludes PII like phone)
       const artisanIds = [...new Set(data?.map(p => p.artisan_id) || [])];
       const { data: profiles } = await supabase
-        .from('profiles')
+        .from('public_profiles')
         .select('user_id, full_name, location, craft_specialty')
         .in('user_id', artisanIds);
 
@@ -113,9 +113,9 @@ export const useProducts = () => {
 
       if (error) throw error;
 
-      // Fetch artisan profile separately
+      // Fetch artisan profile separately using public_profiles view (excludes PII like phone)
       const { data: profile } = await supabase
-        .from('profiles')
+        .from('public_profiles')
         .select('user_id, full_name, location, craft_specialty')
         .eq('user_id', data.artisan_id)
         .single();

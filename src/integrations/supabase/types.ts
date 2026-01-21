@@ -518,7 +518,42 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          avatar_url: string | null
+          craft_specialty: string | null
+          created_at: string | null
+          full_name: string | null
+          is_verified: boolean | null
+          location: string | null
+          portfolio_url: string | null
+          user_id: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          craft_specialty?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          is_verified?: boolean | null
+          location?: string | null
+          portfolio_url?: string | null
+          user_id?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          craft_specialty?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          is_verified?: boolean | null
+          location?: string | null
+          portfolio_url?: string | null
+          user_id?: string | null
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_user_role: {
