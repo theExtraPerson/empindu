@@ -6,6 +6,7 @@ import { Heart, ShoppingBag, Edit, Trash2, Info, RotateCcw, Sparkles, X, Chevron
 import { Product } from '@/hooks/useProducts';
 import { useCartStore } from '@/stores/cartStore';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +14,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import heroCrafts from '@/assets/hero-crafts.jpg';
-
 interface ProductCardProps {
   product: Product;
   index?: number;
@@ -35,6 +35,7 @@ export const ProductCard = ({
 }: ProductCardProps) => {
   const { addItem } = useCartStore();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [showDetails, setShowDetails] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -70,98 +71,100 @@ export const ProductCard = ({
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ delay: index * 0.1 }}
+        transition={{ delay: index * 0.05 }}
         className="group"
       >
-        <div className="bg-card rounded-2xl overflow-hidden shadow-soft hover:shadow-medium transition-all duration-500 hover:-translate-y-2 border border-border">
+        <div className="bg-background overflow-hidden border-2 border-foreground shadow-brutal hover:shadow-brutal-lg transition-all duration-300 hover:-translate-y-1 sm:hover:-translate-y-2">
           {/* Image */}
           <div className="aspect-square overflow-hidden relative">
             <img
               src={primaryImage}
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className={`w-full h-full object-cover transition-all duration-500 ${
+                isMobile ? '' : 'grayscale group-hover:grayscale-0 group-hover:scale-105'
+              }`}
             />
             
             {!isOwner && (
-              <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-card transition-all">
-                <Heart className="h-5 w-5" />
+              <button className="absolute top-2 right-2 sm:top-4 sm:right-4 w-8 h-8 sm:w-10 sm:h-10 border-2 border-foreground bg-background flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-background transition-all">
+                <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
             )}
 
             {isOwner && (
-              <div className="absolute top-4 right-4 flex gap-2">
+              <div className="absolute top-2 right-2 sm:top-4 sm:right-4 flex gap-1 sm:gap-2">
                 <button 
                   onClick={() => onEdit?.(product)}
-                  className="w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-card transition-all"
+                  className="w-8 h-8 sm:w-10 sm:h-10 border-2 border-foreground bg-background flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-all"
                 >
-                  <Edit className="h-5 w-5" />
+                  <Edit className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
                 <button 
                   onClick={() => onDelete?.(product)}
-                  className="w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-card transition-all"
+                  className="w-8 h-8 sm:w-10 sm:h-10 border-2 border-foreground bg-background flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-background transition-all"
                 >
-                  <Trash2 className="h-5 w-5" />
+                  <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
               </div>
             )}
 
             {!product.is_available && (
-              <div className="absolute inset-0 bg-mudcloth-black/60 flex items-center justify-center">
-                <span className="px-4 py-2 bg-card rounded-lg font-semibold">
-                  Unavailable
+              <div className="absolute inset-0 bg-foreground/80 flex items-center justify-center">
+                <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-background border-2 border-foreground font-display text-xs sm:text-sm tracking-wider">
+                  UNAVAILABLE
                 </span>
               </div>
             )}
 
             {product.stock_quantity === 0 && product.is_available && (
-              <div className="absolute inset-0 bg-mudcloth-black/60 flex items-center justify-center">
-                <span className="px-4 py-2 bg-card rounded-lg font-semibold">
-                  Out of Stock
+              <div className="absolute inset-0 bg-foreground/80 flex items-center justify-center">
+                <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-background border-2 border-foreground font-display text-xs sm:text-sm tracking-wider">
+                  OUT OF STOCK
                 </span>
               </div>
             )}
 
-            <span className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-primary/90 text-primary-foreground text-xs font-semibold">
-              {product.category}
+            <span className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 px-2 py-0.5 sm:px-3 sm:py-1 bg-primary border-2 border-foreground text-primary-foreground font-display text-[10px] sm:text-xs tracking-wider">
+              {product.category.toUpperCase()}
             </span>
 
             {/* Feature badges */}
-            <div className="absolute bottom-4 right-4 flex gap-1">
+            <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 flex gap-1">
               {product.is_returnable && (
-                <span className="w-7 h-7 rounded-full bg-accent/90 flex items-center justify-center" title="Returnable">
-                  <RotateCcw className="h-3.5 w-3.5 text-accent-foreground" />
+                <span className="w-6 h-6 sm:w-7 sm:h-7 border-2 border-foreground bg-accent flex items-center justify-center" title="Returnable">
+                  <RotateCcw className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-accent-foreground" />
                 </span>
               )}
               {product.is_personalizable && (
-                <span className="w-7 h-7 rounded-full bg-secondary/90 flex items-center justify-center" title="Personalizable">
-                  <Sparkles className="h-3.5 w-3.5 text-secondary-foreground" />
+                <span className="w-6 h-6 sm:w-7 sm:h-7 border-2 border-foreground bg-secondary flex items-center justify-center" title="Personalizable">
+                  <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-secondary-foreground" />
                 </span>
               )}
             </div>
           </div>
 
           {/* Content */}
-          <div className="p-4">
+          <div className="p-2.5 sm:p-4 border-t-2 border-foreground">
             <Link to={`/marketplace/${product.id}`}>
-              <h3 className="font-display text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+              <h3 className="font-display text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1 tracking-wide uppercase">
                 {product.name}
               </h3>
             </Link>
             
             {product.artisan && (
-              <p className="text-muted-foreground text-sm mt-1">
+              <p className="text-muted-foreground text-xs sm:text-sm mt-0.5 sm:mt-1 font-body line-clamp-1">
                 by {product.artisan.full_name || 'Unknown Artisan'}
               </p>
             )}
 
             {product.description && (
-              <p className="text-muted-foreground text-sm mt-2 line-clamp-2">
+              <p className="text-muted-foreground text-xs sm:text-sm mt-1 sm:mt-2 line-clamp-2 font-body hidden sm:block">
                 {product.description}
               </p>
             )}
 
             {isOwner && (
-              <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1 sm:gap-2 mt-1.5 sm:mt-2 text-xs sm:text-sm text-muted-foreground font-body">
                 <span className={product.stock_quantity > 0 ? 'text-accent' : 'text-destructive'}>
                   {product.stock_quantity} in stock
                 </span>
@@ -172,27 +175,30 @@ export const ProductCard = ({
               </div>
             )}
 
-            <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
-              <span className="font-display text-xl font-bold text-primary">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mt-2.5 sm:mt-4 pt-2.5 sm:pt-4 border-t-2 border-foreground">
+              <span className="font-display text-base sm:text-xl font-bold text-primary">
                 {formatPrice(product.price)}
               </span>
               {!isOwner && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
                   <Button 
                     variant="outline" 
                     size="sm"
                     onClick={() => setShowDetails(true)}
+                    className="flex-1 sm:flex-none border-2 border-foreground h-8 sm:h-9 text-xs sm:text-sm"
                   >
-                    <Info className="h-4 w-4" />
+                    <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
                   <Button 
                     variant="default" 
                     size="sm" 
                     disabled={product.stock_quantity === 0 || !product.is_available}
                     onClick={() => setShowDetails(true)}
+                    className="flex-1 sm:flex-none border-2 border-foreground h-8 sm:h-9 text-xs sm:text-sm"
                   >
-                    <ShoppingBag className="h-4 w-4 mr-1" />
-                    Add
+                    <ShoppingBag className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
+                    <span className="hidden sm:inline">Add</span>
+                    <span className="sm:hidden">+</span>
                   </Button>
                 </div>
               )}

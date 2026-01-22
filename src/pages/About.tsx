@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -9,11 +10,12 @@ import {
   Users, 
   ArrowRight,
   Award,
-  Handshake
+  Handshake,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import artisanPortrait from "@/assets/artisan-portrait.jpg";
 import heroCrafts from "@/assets/hero-crafts.jpg";
-
 const values = [
   {
     icon: Heart,
@@ -37,7 +39,142 @@ const values = [
   },
 ];
 
-const team = [
+// Team data moved inside component for carousel
+
+// Team Carousel Component
+const TeamCarouselSection = ({ team }: { team: typeof teamData }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const extendedTeam = [...team, ...team, ...team]; // Triple for infinite loop effect
+  const visibleCount = 4;
+
+  const startAutoPlay = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      if (!isPaused) {
+        setCurrentIndex(prev => (prev + 1) % team.length);
+      }
+    }, 3000);
+  };
+
+  useEffect(() => {
+    startAutoPlay();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isPaused, team.length]);
+
+  const handlePrev = () => {
+    setCurrentIndex(prev => (prev - 1 + team.length) % team.length);
+  };
+
+  const handleNext = () => {
+    setCurrentIndex(prev => (prev + 1) % team.length);
+  };
+
+  return (
+    <section 
+      className="py-20 md:py-32 bg-background border-b-2 border-foreground"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
+          <span className="font-display text-xs tracking-widest text-muted-foreground mb-4 block">
+            [ 03 — TEAM ]
+          </span>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-4">
+            THE PEOPLE BEHIND<br />
+            <span className="text-primary">CRAFTEDUGANDA</span>
+          </h2>
+          <p className="text-muted-foreground font-body text-lg">
+            A dedicated team of craft enthusiasts, technologists, and 
+            community builders working to transform Uganda's artisan economy.
+          </p>
+        </motion.div>
+
+        {/* Carousel Container */}
+        <div className="relative">
+          {/* Navigation Buttons */}
+          <button
+            onClick={handlePrev}
+            className="absolute -left-4 lg:-left-12 top-1/2 -translate-y-1/2 z-10 w-12 h-12 border-2 border-foreground bg-background flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shadow-brutal"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <button
+            onClick={handleNext}
+            className="absolute -right-4 lg:-right-12 top-1/2 -translate-y-1/2 z-10 w-12 h-12 border-2 border-foreground bg-background flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shadow-brutal"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
+
+          {/* Carousel Track */}
+          <div className="overflow-hidden">
+            <motion.div 
+              className="flex"
+              animate={{ 
+                x: `-${currentIndex * (100 / visibleCount)}%` 
+              }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 300, 
+                damping: 30 
+              }}
+            >
+              {extendedTeam.map((member, index) => (
+                <div
+                  key={`${member.name}-${index}`}
+                  className="w-full sm:w-1/2 lg:w-1/4 flex-shrink-0 px-3"
+                >
+                  <div className="group">
+                    <div className="aspect-[3/4] overflow-hidden mb-4 relative border-2 border-foreground shadow-brutal">
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-colors duration-300" />
+                    </div>
+                    <h3 className="font-display text-base lg:text-lg font-bold text-foreground tracking-wider">
+                      {member.name}
+                    </h3>
+                    <p className="text-muted-foreground font-body text-sm">{member.role}</p>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Dots Indicator */}
+          <div className="flex justify-center gap-2 mt-8">
+            {team.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-3 h-3 border-2 border-foreground transition-all ${
+                  index === currentIndex % team.length 
+                    ? 'bg-primary' 
+                    : 'bg-background hover:bg-muted'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Rename team to teamData for the component
+const teamData = [
   {
     name: "DR. GRACE NAKALEMA",
     role: "Executive Director",
@@ -228,54 +365,7 @@ const About = () => {
       </section>
 
       {/* Team Section */}
-      <section className="py-20 md:py-32 bg-background border-b-2 border-foreground">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-3xl mx-auto mb-16"
-          >
-            <span className="font-display text-xs tracking-widest text-muted-foreground mb-4 block">
-              [ 03 — TEAM ]
-            </span>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-4">
-              THE PEOPLE BEHIND<br />
-              <span className="text-primary">CRAFTEDUGANDA</span>
-            </h2>
-            <p className="text-muted-foreground font-body text-lg">
-              A dedicated team of craft enthusiasts, technologists, and 
-              community builders working to transform Uganda's artisan economy.
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {team.map((member, index) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group"
-              >
-                <div className="aspect-[3/4] overflow-hidden mb-4 relative border-2 border-foreground">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-colors duration-300" />
-                </div>
-                <h3 className="font-display text-lg font-bold text-foreground tracking-wider">
-                  {member.name}
-                </h3>
-                <p className="text-muted-foreground font-body text-sm">{member.role}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TeamCarouselSection team={teamData} />
 
       {/* CTA Section */}
       <section className="py-20 md:py-32 bg-primary border-b-2 border-foreground">
