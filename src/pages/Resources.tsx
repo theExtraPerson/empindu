@@ -2,9 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   BookOpen, 
   Play, 
@@ -239,18 +238,19 @@ const Resources = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden pattern-mudcloth">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary-deep/95" />
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-primary">
+        <div className="absolute inset-0 pattern-kente opacity-10" />
+        <div className="absolute bottom-0 left-0 w-full h-4 bg-foreground" />
         <div className="relative z-10 container mx-auto px-4 text-center py-32">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <Badge className="mb-6 bg-secondary/20 text-secondary border-secondary/30">
+            <Badge className="mb-6 bg-secondary text-foreground border-2 border-foreground uppercase tracking-wider">
               Learn & Discover
             </Badge>
-            <h1 className="font-display text-4xl md:text-6xl font-bold text-primary-foreground mb-6">
+            <h1 className="font-display text-5xl md:text-7xl uppercase tracking-wider text-primary-foreground mb-6">
               Resources & Stories
             </h1>
             <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto">
@@ -265,16 +265,25 @@ const Resources = () => {
       <section className="section-padding bg-background">
         <div className="container mx-auto px-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-12">
-              <TabsTrigger value="blogs" className="gap-2">
+            <TabsList className="grid w-full max-w-lg mx-auto grid-cols-3 mb-12 bg-transparent gap-2">
+              <TabsTrigger 
+                value="blogs" 
+                className="gap-2 border-2 border-foreground data-[state=active]:bg-foreground data-[state=active]:text-background uppercase tracking-wider font-display shadow-brutal data-[state=active]:shadow-none"
+              >
                 <BookOpen className="w-4 h-4" />
                 <span className="hidden sm:inline">Blogs</span>
               </TabsTrigger>
-              <TabsTrigger value="training" className="gap-2">
+              <TabsTrigger 
+                value="training" 
+                className="gap-2 border-2 border-foreground data-[state=active]:bg-foreground data-[state=active]:text-background uppercase tracking-wider font-display shadow-brutal data-[state=active]:shadow-none"
+              >
                 <Play className="w-4 h-4" />
                 <span className="hidden sm:inline">Training</span>
               </TabsTrigger>
-              <TabsTrigger value="stories" className="gap-2">
+              <TabsTrigger 
+                value="stories" 
+                className="gap-2 border-2 border-foreground data-[state=active]:bg-foreground data-[state=active]:text-background uppercase tracking-wider font-display shadow-brutal data-[state=active]:shadow-none"
+              >
                 <Heart className="w-4 h-4" />
                 <span className="hidden sm:inline">Stories</span>
               </TabsTrigger>
@@ -290,19 +299,19 @@ const Resources = () => {
               >
                 {blogs.map((blog) => (
                   <motion.div key={blog.id} variants={itemVariants}>
-                    <Card className="group overflow-hidden hover-lift border-border/50">
+                    <div className="group border-2 border-foreground bg-card shadow-brutal hover:shadow-brutal-lg transition-all overflow-hidden">
                       <div className="relative aspect-video overflow-hidden">
                         <img
                           src={blog.image}
                           alt={blog.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
-                        <Badge className="absolute top-4 left-4 bg-primary/90">
+                        <Badge className="absolute top-4 left-4 bg-secondary text-foreground border-2 border-foreground uppercase tracking-wider">
                           {blog.category}
                         </Badge>
                       </div>
-                      <CardHeader>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
+                      <div className="p-6">
+                        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-3">
                           <span className="flex items-center gap-1">
                             <User className="w-4 h-4" />
                             {blog.author}
@@ -316,25 +325,23 @@ const Resources = () => {
                             {blog.readTime}
                           </span>
                         </div>
-                        <CardTitle className="text-xl group-hover:text-primary transition-colors line-clamp-2">
+                        <h3 className="font-display text-xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors line-clamp-2">
                           {blog.title}
-                        </CardTitle>
-                        <CardDescription className="line-clamp-2">
+                        </h3>
+                        <p className="text-muted-foreground line-clamp-2 mb-4">
                           {blog.excerpt}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex items-center justify-between">
+                        </p>
+                        <div className="flex items-center justify-between pt-4 border-t-2 border-muted">
                           <span className="text-sm text-muted-foreground flex items-center gap-1">
                             <Eye className="w-4 h-4" />
                             {blog.views.toLocaleString()} views
                           </span>
-                          <Button variant="ghost" size="sm" className="gap-2 group-hover:text-primary">
+                          <Button variant="ghost" size="sm" className="gap-2 uppercase tracking-wider font-display group-hover:text-primary">
                             Read More <ArrowRight className="w-4 h-4" />
                           </Button>
                         </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   </motion.div>
                 ))}
               </motion.div>
@@ -346,15 +353,24 @@ const Resources = () => {
                 {/* Training Sub-tabs */}
                 <Tabs value={trainingTab} onValueChange={setTrainingTab}>
                   <TabsList className="flex flex-wrap justify-center gap-2 bg-transparent">
-                    <TabsTrigger value="videos" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                    <TabsTrigger 
+                      value="videos" 
+                      className="gap-2 border-2 border-foreground data-[state=active]:bg-foreground data-[state=active]:text-background uppercase tracking-wider font-display"
+                    >
                       <Video className="w-4 h-4" />
                       Video Sessions
                     </TabsTrigger>
-                    <TabsTrigger value="guides" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                    <TabsTrigger 
+                      value="guides" 
+                      className="gap-2 border-2 border-foreground data-[state=active]:bg-foreground data-[state=active]:text-background uppercase tracking-wider font-display"
+                    >
                       <FileText className="w-4 h-4" />
                       Guides & Manuals
                     </TabsTrigger>
-                    <TabsTrigger value="procedures" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                    <TabsTrigger 
+                      value="procedures" 
+                      className="gap-2 border-2 border-foreground data-[state=active]:bg-foreground data-[state=active]:text-background uppercase tracking-wider font-display"
+                    >
                       <BookOpen className="w-4 h-4" />
                       Procedures
                     </TabsTrigger>
@@ -370,35 +386,33 @@ const Resources = () => {
                     >
                       {trainingResources.videos.map((video) => (
                         <motion.div key={video.id} variants={itemVariants}>
-                          <Card className="group overflow-hidden hover-lift">
+                          <div className="group border-2 border-foreground bg-card shadow-brutal hover:shadow-brutal-lg transition-all overflow-hidden">
                             <div className="relative aspect-video overflow-hidden">
                               <img
                                 src={video.thumbnail}
                                 alt={video.title}
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                               />
-                              <div className="absolute inset-0 bg-mudcloth-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Button variant="hero" size="icon" className="rounded-full w-14 h-14">
-                                  <Play className="w-6 h-6" />
+                              <div className="absolute inset-0 bg-foreground/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Button className="w-16 h-16 border-2 border-background bg-background text-foreground hover:bg-secondary">
+                                  <Play className="w-8 h-8" />
                                 </Button>
                               </div>
-                              <Badge className="absolute top-3 right-3 bg-mudcloth-black/80">
+                              <Badge className="absolute top-3 right-3 bg-foreground text-background border-0 uppercase tracking-wider">
                                 {video.duration}
                               </Badge>
                             </div>
-                            <CardHeader>
-                              <Badge variant="outline" className="w-fit mb-2">
+                            <div className="p-6">
+                              <Badge variant="outline" className="w-fit mb-3 border-2 border-foreground uppercase tracking-wider">
                                 {video.level}
                               </Badge>
-                              <CardTitle className="text-lg line-clamp-2">{video.title}</CardTitle>
-                              <CardDescription className="line-clamp-2">{video.description}</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                              <p className="text-sm text-muted-foreground">
-                                Instructor: <span className="text-foreground">{video.instructor}</span>
+                              <h3 className="font-display text-lg uppercase tracking-wider mb-2 line-clamp-2">{video.title}</h3>
+                              <p className="text-muted-foreground text-sm line-clamp-2 mb-4">{video.description}</p>
+                              <p className="text-sm text-muted-foreground border-t-2 border-muted pt-4">
+                                Instructor: <span className="text-foreground font-display uppercase">{video.instructor}</span>
                               </p>
-                            </CardContent>
-                          </Card>
+                            </div>
+                          </div>
                         </motion.div>
                       ))}
                     </motion.div>
@@ -414,27 +428,27 @@ const Resources = () => {
                     >
                       {trainingResources.guides.map((guide) => (
                         <motion.div key={guide.id} variants={itemVariants}>
-                          <Card className="group hover-lift flex">
-                            <div className="w-24 md:w-32 bg-gradient-to-br from-primary to-primary-deep flex items-center justify-center flex-shrink-0 rounded-l-lg">
+                          <div className="group border-2 border-foreground bg-card shadow-brutal hover:shadow-brutal-lg transition-all flex overflow-hidden">
+                            <div className="w-24 md:w-32 bg-primary flex items-center justify-center flex-shrink-0 border-r-2 border-foreground">
                               <FileText className="w-10 h-10 text-primary-foreground" />
                             </div>
                             <div className="flex-1 p-6">
-                              <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
+                              <h3 className="font-display text-lg uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
                                 {guide.title}
                               </h3>
                               <p className="text-sm text-muted-foreground mb-4">{guide.description}</p>
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                   <span>{guide.pages} pages</span>
-                                  <span>{guide.format}</span>
+                                  <span className="font-display">{guide.format}</span>
                                 </div>
-                                <Button variant="outline" size="sm" className="gap-2">
+                                <Button variant="outline" size="sm" className="gap-2 border-2 border-foreground uppercase tracking-wider shadow-brutal hover:shadow-none">
                                   <Download className="w-4 h-4" />
                                   Download
                                 </Button>
                               </div>
                             </div>
-                          </Card>
+                          </div>
                         </motion.div>
                       ))}
                     </motion.div>
@@ -450,14 +464,14 @@ const Resources = () => {
                     >
                       {trainingResources.procedures.map((procedure, index) => (
                         <motion.div key={procedure.id} variants={itemVariants}>
-                          <Card className="group hover-lift">
-                            <CardContent className="p-6">
-                              <div className="flex items-start gap-4 mb-4">
-                                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                  <span className="text-lg font-bold text-primary">{index + 1}</span>
+                          <div className="group border-2 border-foreground bg-card shadow-brutal hover:shadow-brutal-lg transition-all">
+                            <div className="p-6">
+                              <div className="flex items-start gap-4 mb-6 pb-4 border-b-2 border-muted">
+                                <div className="w-12 h-12 border-2 border-foreground flex items-center justify-center flex-shrink-0 bg-secondary">
+                                  <span className="text-xl font-display font-bold text-foreground">{index + 1}</span>
                                 </div>
                                 <div className="flex-1">
-                                  <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                                  <h3 className="font-display text-lg uppercase tracking-wider group-hover:text-primary transition-colors">
                                     {procedure.title}
                                   </h3>
                                   <p className="text-sm text-muted-foreground mt-1">
@@ -465,13 +479,13 @@ const Resources = () => {
                                   </p>
                                 </div>
                               </div>
-                              <ol className="list-decimal list-inside space-y-2 ml-14 text-sm text-muted-foreground">
+                              <ol className="list-decimal list-inside space-y-2 ml-16 text-sm text-muted-foreground">
                                 {procedure.steps.map((step, stepIndex) => (
                                   <li key={stepIndex} className="leading-relaxed">{step}</li>
                                 ))}
                               </ol>
-                            </CardContent>
-                          </Card>
+                            </div>
+                          </div>
                         </motion.div>
                       ))}
                     </motion.div>
@@ -491,7 +505,7 @@ const Resources = () => {
                 {/* Featured Story */}
                 {featureStories.filter(s => s.featured).map((story) => (
                   <motion.div key={story.id} variants={itemVariants}>
-                    <Card className="overflow-hidden border-0 shadow-strong">
+                    <div className="border-2 border-foreground shadow-brutal-lg overflow-hidden">
                       <div className="grid lg:grid-cols-2">
                         <div className="relative aspect-square lg:aspect-auto overflow-hidden">
                           <img
@@ -500,48 +514,48 @@ const Resources = () => {
                             className="w-full h-full object-cover"
                           />
                           {story.video && (
-                            <div className="absolute inset-0 bg-mudcloth-black/40 flex items-center justify-center">
-                              <Button variant="hero" size="lg" className="gap-2 rounded-full">
+                            <div className="absolute inset-0 bg-foreground/60 flex items-center justify-center">
+                              <Button className="gap-2 border-2 border-background bg-background text-foreground hover:bg-secondary uppercase tracking-wider">
                                 <Play className="w-6 h-6" />
                                 Watch Story
                               </Button>
                             </div>
                           )}
-                          <Badge className="absolute top-4 left-4 bg-secondary text-secondary-foreground">
+                          <Badge className="absolute top-4 left-4 bg-secondary text-foreground border-2 border-foreground uppercase tracking-wider">
                             Featured {story.type.charAt(0).toUpperCase() + story.type.slice(1)}
                           </Badge>
                         </div>
-                        <div className="p-8 lg:p-12 flex flex-col justify-center bg-card">
-                          <Badge variant="outline" className="w-fit mb-4 capitalize">
+                        <div className="p-8 lg:p-12 flex flex-col justify-center bg-card border-l-0 lg:border-l-2 border-t-2 lg:border-t-0 border-foreground">
+                          <Badge variant="outline" className="w-fit mb-4 capitalize border-2 border-foreground uppercase tracking-wider">
                             {story.type}
                           </Badge>
-                          <h2 className="font-display text-2xl lg:text-3xl font-bold mb-2">
+                          <h2 className="font-display text-2xl lg:text-4xl uppercase tracking-wider mb-2">
                             {story.title}
                           </h2>
-                          <p className="text-primary font-medium mb-4">{story.subtitle}</p>
+                          <p className="text-primary font-display uppercase tracking-wider mb-4">{story.subtitle}</p>
                           <p className="text-muted-foreground mb-6">{story.description}</p>
                           <p className="text-foreground mb-6">{story.content}</p>
                           <div className="flex flex-wrap gap-2 mb-6">
                             {story.tags.map((tag) => (
-                              <Badge key={tag} variant="secondary" className="bg-muted">
+                              <Badge key={tag} variant="secondary" className="bg-muted border-2 border-muted-foreground/30 uppercase tracking-wider text-xs">
                                 {tag}
                               </Badge>
                             ))}
                           </div>
-                          <div className="flex items-center gap-4">
-                            <Button variant="hero" className="gap-2">
+                          <div className="flex items-center gap-4 pt-4 border-t-2 border-muted">
+                            <Button className="gap-2 border-2 border-foreground shadow-brutal hover:shadow-none uppercase tracking-wider">
                               Read Full Story <ArrowRight className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="icon">
+                            <Button variant="ghost" size="icon" className="border-2 border-foreground">
                               <Share2 className="w-5 h-5" />
                             </Button>
-                            <Button variant="ghost" size="icon">
+                            <Button variant="ghost" size="icon" className="border-2 border-foreground">
                               <Heart className="w-5 h-5" />
                             </Button>
                           </div>
                         </div>
                       </div>
-                    </Card>
+                    </div>
                   </motion.div>
                 ))}
 
@@ -549,39 +563,37 @@ const Resources = () => {
                 <div className="grid md:grid-cols-2 gap-8">
                   {featureStories.filter(s => !s.featured).map((story) => (
                     <motion.div key={story.id} variants={itemVariants}>
-                      <Card className="group overflow-hidden hover-lift h-full">
+                      <div className="group border-2 border-foreground bg-card shadow-brutal hover:shadow-brutal-lg transition-all overflow-hidden h-full">
                         <div className="relative aspect-video overflow-hidden">
                           <img
                             src={story.image}
                             alt={story.title}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
-                          <Badge className="absolute top-4 left-4 bg-primary/90 capitalize">
+                          <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground border-2 border-foreground capitalize uppercase tracking-wider">
                             {story.type}
                           </Badge>
                         </div>
-                        <CardHeader>
-                          <CardTitle className="text-xl group-hover:text-primary transition-colors line-clamp-2">
+                        <div className="p-6">
+                          <h3 className="font-display text-xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors line-clamp-2">
                             {story.title}
-                          </CardTitle>
-                          <p className="text-sm text-primary">{story.subtitle}</p>
-                          <CardDescription className="line-clamp-3">
+                          </h3>
+                          <p className="text-sm text-primary font-display uppercase tracking-wider mb-3">{story.subtitle}</p>
+                          <p className="text-muted-foreground line-clamp-3 mb-4">
                             {story.description}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
+                          </p>
                           <div className="flex flex-wrap gap-2 mb-4">
                             {story.tags.slice(0, 2).map((tag) => (
-                              <Badge key={tag} variant="outline" className="text-xs">
+                              <Badge key={tag} variant="outline" className="text-xs border-2 border-foreground uppercase tracking-wider">
                                 {tag}
                               </Badge>
                             ))}
                           </div>
-                          <Button variant="ghost" size="sm" className="gap-2 -ml-2 group-hover:text-primary">
+                          <Button variant="ghost" size="sm" className="gap-2 -ml-2 uppercase tracking-wider font-display group-hover:text-primary">
                             Explore Story <ArrowRight className="w-4 h-4" />
                           </Button>
-                        </CardContent>
-                      </Card>
+                        </div>
+                      </div>
                     </motion.div>
                   ))}
                 </div>
@@ -592,22 +604,28 @@ const Resources = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-gradient-earth text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
+      <section className="section-padding bg-foreground text-background relative overflow-hidden">
+        <div className="absolute inset-0 pattern-grid opacity-10" />
+        <div className="absolute top-0 left-0 w-full h-4 bg-secondary" />
+        <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="font-display text-4xl md:text-5xl uppercase tracking-wider mb-6">
               Have a Story to Share?
             </h2>
-            <p className="text-primary-foreground/80 max-w-xl mx-auto mb-8">
+            <p className="text-background/80 max-w-xl mx-auto mb-8">
               We're always looking for inspiring stories about Ugandan artisans, 
               traditional crafts, and cultural heritage.
             </p>
-            <Button variant="gold" size="lg" className="gap-2">
+            <Button 
+              variant="secondary" 
+              size="lg" 
+              className="gap-2 border-2 border-background shadow-brutal hover:shadow-brutal-lg uppercase tracking-wider"
+            >
               Submit Your Story <ArrowRight className="w-5 h-5" />
             </Button>
           </motion.div>
