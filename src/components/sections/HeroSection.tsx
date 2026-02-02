@@ -31,7 +31,7 @@ export function HeroSection() {
         >
           {/* Giant Headline */}
           <h1 className="font-display text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[9vw] leading-[0.9] text-warm-cream">
-            HANDCRAFTED
+            THRIVE WITH
           </h1>
         </motion.div>
 
@@ -41,7 +41,7 @@ export function HeroSection() {
           transition={{ duration: 1, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <h1 className="font-display text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[9vw] leading-[0.9] text-secondary">
-            HERITAGE
+            NATURE
           </h1>
         </motion.div>
       </div>
@@ -57,13 +57,13 @@ export function HeroSection() {
           {/* Stat 1 */}
           <div className="p-4 md:p-6 lg:p-8 group hover:bg-warm-cream/5 transition-colors">
             <p className="font-display text-[10px] tracking-widest text-warm-cream/50 mb-2">ARTISANS</p>
-            <p className="font-display text-3xl md:text-4xl text-warm-cream">1,000+</p>
+            <p className="font-display text-3xl md:text-4xl text-warm-cream">430+</p>
           </div>
 
           {/* Stat 2 */}
           <div className="p-4 md:p-6 lg:p-8 group hover:bg-warm-cream/5 transition-colors">
             <p className="font-display text-[10px] tracking-widest text-warm-cream/50 mb-2">PRODUCTS</p>
-            <p className="font-display text-3xl md:text-4xl text-warm-cream">5,000+</p>
+            <p className="font-display text-3xl md:text-4xl text-warm-cream">200+</p>
           </div>
 
           {/* Tagline */}
@@ -132,8 +132,8 @@ export function HeroSection() {
         className="absolute top-24 right-4 md:right-8 z-10"
       >
         <div className="px-4 py-3 border-2 border-warm-cream/30 bg-bark-brown/80 backdrop-blur-sm">
-          <p className="font-display text-[10px] tracking-widest text-secondary">NOW OPEN</p>
-          <p className="font-display text-sm text-warm-cream">UGANDA CRAFTS WEEK 2025</p>
+          <p className="font-display text-[10px] tracking-widest text-secondary">COMING SOON</p>
+          <p className="font-display text-sm text-warm-cream">EMPINDU FESTIVAL 2026</p>
         </div>
       </motion.div>
     </section>

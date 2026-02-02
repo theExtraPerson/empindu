@@ -1,8 +1,9 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "empindu dot com",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": "imagineDreams",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

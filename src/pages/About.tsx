@@ -29,14 +29,9 @@ const values = [
   },
   {
     icon: Globe,
-    title: "SUSTAINABLE IMPACT",
-    description: "We promote eco-friendly practices and sustainable materials, supporting both communities and the environment.",
-  },
-  {
-    icon: Handshake,
-    title: "FAIR TRADE",
-    description: "We ensure transparent, equitable relationships between artisans, buyers, and all stakeholders.",
-  },
+    title: "ENVIRONMENT CONSERVATION",
+    description: "We promote eco-friendly practices and sustainable solutions, protecting environment upon whic we thrive.",
+  }
 ];
 
 // Team data moved inside component for carousel
@@ -92,11 +87,11 @@ const TeamCarouselSection = ({ team }: { team: typeof teamData }) => {
           </span>
           <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-4">
             THE PEOPLE BEHIND<br />
-            <span className="text-primary">CRAFTEDUGANDA</span>
+            <span className="text-primary">EMPINDU</span>
           </h2>
           <p className="text-muted-foreground font-body text-lg">
-            A dedicated team of craft enthusiasts, technologists, and 
-            community builders working to transform Uganda's artisan economy.
+            A dedicated team of cultural enthusiasts, technologists, and 
+            community builders working to transform Uganda's heritage.
           </p>
         </motion.div>
 
@@ -176,7 +171,7 @@ const TeamCarouselSection = ({ team }: { team: typeof teamData }) => {
 // Rename team to teamData for the component
 const teamData = [
   {
-    name: "DR. GRACE NAKALEMA",
+    name: "AKAIHURA KAHUGUKA",
     role: "Executive Director",
     image: artisanPortrait,
   },
@@ -191,7 +186,7 @@ const teamData = [
     image: artisanPortrait,
   },
   {
-    name: "PETER OCHIENG",
+    name: "OKENY EMMANUEL",
     role: "Technology Director",
     image: artisanPortrait,
   },
@@ -232,9 +227,8 @@ const About = () => {
               <span className="text-secondary">STORY</span>
             </h1>
             <p className="text-background/80 text-lg md:text-xl max-w-xl font-body">
-              Building Africa's most comprehensive craft ecosystem, empowering 
-              artisans, preserving heritage, and connecting the world to 
-              Uganda's extraordinary craftsmanship.
+              Building Africa's most diverse cultural ecosystem, empowering 
+              artisans, preserving heritage, and conserving nature.
             </p>
           </motion.div>
         </div>
@@ -257,19 +251,19 @@ const About = () => {
                 [ 01 — MISSION ]
               </span>
               <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[0.9] mb-8">
-                CRAFTING A<br />
-                BETTER <span className="text-primary">FUTURE</span>
+                THRIVING<br />
+                WITH <span className="text-primary">NATURE</span>
               </h2>
               <p className="text-muted-foreground text-lg mb-6 font-body leading-relaxed">
-                CraftedUganda exists to serve as the digital infrastructure for 
+                Empindu exists to serve as the digital infrastructure for 
                 Uganda's craft renaissance. We're building a comprehensive platform 
                 that connects artisans with global markets while driving economic 
                 empowerment and cultural preservation.
               </p>
               <p className="text-muted-foreground mb-10 font-body leading-relaxed">
-                From the intricate barkcloth of Masaka to the fine basketry of 
-                Kampala, from the carved masterpieces of Gulu to the vibrant 
-                beadwork of the East—we celebrate and champion every thread, 
+                From the intricate barkcloth of Buganda to the fine basketry of 
+                Ankole, from the carved masterpieces of Teso to the vibrant 
+                beadwork of the Karimajong—we celebrate and champion every thread, 
                 every weave, every stroke of Ugandan creativity.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-4">
@@ -389,7 +383,7 @@ const About = () => {
               JOIN THE<br />MOVEMENT
             </h2>
             <p className="text-primary-foreground/80 text-lg mb-10 font-body max-w-xl mx-auto">
-              Whether you're an artisan, buyer, partner, or supporter, there's 
+              Whether you're an artisan, interior designer, environmentalist, there's 
               a place for you in Uganda's craft renaissance.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">

@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useCartStore } from "@/stores/cartStore";
+import Image from 'next/image'
 
 const navigation = [
   { name: "ARTISANS", href: "/artisans" },
@@ -121,13 +122,13 @@ export function Header() {
                 "font-display text-xl md:text-2xl tracking-[0.2em] transition-colors",
                 isScrolled ? "text-foreground" : "text-background"
               )}>
-                CRAFTED
+                EMPINDU
               </span>
               <span className={cn(
                 "font-display text-[10px] tracking-[0.4em] transition-colors -mt-1",
                 isScrolled ? "text-muted-foreground" : "text-background/70"
               )}>
-                UGANDA
+                THRIVE WITH NATURE
               </span>
             </motion.div>
           </Link>

@@ -16,7 +16,7 @@ const footerLinks = {
   discover: [
     { name: "ARTISAN DIRECTORY", href: "/artisans" },
     { name: "MARKETPLACE", href: "/marketplace" },
-    { name: "EXHIBITION 2025", href: "/exhibition" },
+    { name: "EMPINDU FESTIVAL", href: "/exhibition" },
     { name: "CRAFT CATEGORIES", href: "/categories" },
   ],
   support: [
@@ -95,10 +95,10 @@ export function Footer() {
             <Link to="/" className="inline-block mb-8">
               <div className="flex flex-col">
                 <span className="font-display text-2xl tracking-[0.2em] text-warm-cream">
-                  CRAFTED
+                  EMPINDU.
                 </span>
                 <span className="font-display text-xs tracking-[0.4em] text-warm-cream/60 -mt-1">
-                  UGANDA
+                  THRIVE WITH NATURE
                 </span>
               </div>
             </Link>
@@ -112,14 +112,14 @@ export function Footer() {
                 className="flex items-center gap-3 text-warm-cream/60 hover:text-secondary transition-colors font-body text-sm"
               >
                 <Mail className="h-4 w-4" />
-                hello@crafteduganda.com
+                shop@empindu.com
               </a>
               <a 
-                href="tel:+256700000000" 
+                href="tel:+256752508000" 
                 className="flex items-center gap-3 text-warm-cream/60 hover:text-secondary transition-colors font-body text-sm"
               >
                 <Phone className="h-4 w-4" />
-                +256 700 000 000
+                +256 752 508 000
               </a>
               <div className="flex items-start gap-3 text-warm-cream/60 font-body text-sm">
                 <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
@@ -184,7 +184,7 @@ export function Footer() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-warm-cream/40 text-xs font-display tracking-wider">
-              © {new Date().getFullYear()} CRAFTEDUGANDA. ALL RIGHTS RESERVED.
+              © {new Date().getFullYear()} EMPINDU. ALL RIGHTS RESERVED.
             </p>
             <div className="flex items-center gap-4">
               {socialLinks.map((social) => (
