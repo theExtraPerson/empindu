@@ -12,7 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useCartStore } from "@/stores/cartStore";
-import Image from 'next/image'
+
 
 const navigation = [
   { name: "ARTISANS", href: "/artisans" },
