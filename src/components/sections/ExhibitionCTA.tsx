@@ -1,30 +1,37 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Calendar, MapPin, Clock, ArrowRight, Users, Ticket } from "lucide-react";
+import { Calendar, MapPin, Users, Ticket, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import patternBg from "@/assets/pattern-bg.jpg";
 
 export function ExhibitionCTA() {
-  const exhibitionDate = new Date("2025-06-15");
+  const festivalDate = new Date("2025-08-20");
   const today = new Date();
-  const diffTime = Math.abs(exhibitionDate.getTime() - today.getTime());
+  const diffTime = Math.abs(festivalDate.getTime() - today.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   return (
-    <section className="section-padding relative overflow-hidden">
+    <section className="py-16 md:py-24 relative overflow-hidden border-y-2 border-foreground">
       {/* Background */}
       <div className="absolute inset-0">
         <img
           src={patternBg}
           alt=""
-          className="w-full h-full object-cover opacity-20"
+          className="w-full h-full object-cover opacity-10"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-deep to-bark-brown opacity-95" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-accent to-secondary opacity-90" />
       </div>
 
-      {/* Decorative circles */}
-      <div className="absolute -top-20 -right-20 w-96 h-96 border border-warm-cream/10 rounded-full" />
-      <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] border border-warm-cream/10 rounded-full" />
+      {/* Pattern overlay */}
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: `repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 20px,
+          rgba(0,0,0,0.1) 20px,
+          rgba(0,0,0,0.1) 40px
+        )`
+      }} />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -34,66 +41,74 @@ export function ExhibitionCTA() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/20 border border-secondary/30 backdrop-blur-sm mb-6">
-              <span className="w-2 h-2 bg-secondary rounded-full animate-pulse" />
-              <span className="text-secondary text-sm font-medium">Save the Date</span>
-            </span>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-background border-2 border-foreground mb-6"
+            >
+              <Sparkles className="w-4 h-4 text-primary" />
+              <span className="font-display text-xs tracking-widest text-foreground">AUGUST 20-27, 2025</span>
+            </motion.div>
 
-            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-warm-cream mb-6 leading-tight">
-              Uganda Crafts Week
+            <h2 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold text-background tracking-tight leading-[0.9] mb-6">
+              EMPINDU
               <br />
-              <span className="text-secondary">2025 Exhibition</span>
+              <span className="text-foreground bg-background px-2 inline-block">FESTIVAL</span>
+              <br />
+              <span className="text-secondary">2025</span>
             </h2>
 
-            <p className="text-warm-cream/80 text-lg mb-8 max-w-lg">
-              Join us for Uganda's premier celebration of traditional craftsmanship. 
+            <p className="text-background/90 text-lg mb-8 max-w-lg font-body leading-relaxed">
+              Uganda's premier celebration of traditional craftsmanship. 
               Experience live demonstrations, meet master artisans, and discover 
-              unique handcrafted treasures.
+              unique handcrafted treasures that tell our story.
             </p>
 
-            {/* Event Details */}
-            <div className="space-y-4 mb-8">
-              <div className="flex items-center gap-4 text-warm-cream/80">
-                <div className="w-10 h-10 rounded-lg bg-warm-cream/10 flex items-center justify-center">
-                  <Calendar className="h-5 w-5 text-secondary" />
+            {/* Event Details - Brutalist Cards */}
+            <div className="space-y-3 mb-8">
+              <div className="flex items-center gap-4 p-3 bg-background/10 border border-background/30 backdrop-blur-sm">
+                <div className="w-10 h-10 bg-background flex items-center justify-center border-2 border-foreground">
+                  <Calendar className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="font-semibold text-warm-cream">June 15-22, 2025</p>
-                  <p className="text-sm text-warm-cream/60">One week of craft celebration</p>
+                  <p className="font-display text-sm tracking-wider text-background font-bold">AUGUST 20-27, 2025</p>
+                  <p className="text-xs text-background/70 font-body">One week of craft celebration</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 text-warm-cream/80">
-                <div className="w-10 h-10 rounded-lg bg-warm-cream/10 flex items-center justify-center">
-                  <MapPin className="h-5 w-5 text-secondary" />
+              <div className="flex items-center gap-4 p-3 bg-background/10 border border-background/30 backdrop-blur-sm">
+                <div className="w-10 h-10 bg-background flex items-center justify-center border-2 border-foreground">
+                  <MapPin className="h-5 w-5 text-accent" />
                 </div>
                 <div>
-                  <p className="font-semibold text-warm-cream">Uganda Museum, Kampala</p>
-                  <p className="text-sm text-warm-cream/60">Kira Road, Kamwokya</p>
+                  <p className="font-display text-sm tracking-wider text-background font-bold">KAMPALA SERENA HOTEL</p>
+                  <p className="text-xs text-background/70 font-body">Kintu Road, Central Division</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 text-warm-cream/80">
-                <div className="w-10 h-10 rounded-lg bg-warm-cream/10 flex items-center justify-center">
+              <div className="flex items-center gap-4 p-3 bg-background/10 border border-background/30 backdrop-blur-sm">
+                <div className="w-10 h-10 bg-background flex items-center justify-center border-2 border-foreground">
                   <Users className="h-5 w-5 text-secondary" />
                 </div>
                 <div>
-                  <p className="font-semibold text-warm-cream">200+ Exhibiting Artisans</p>
-                  <p className="text-sm text-warm-cream/60">From all regions of Uganda</p>
+                  <p className="font-display text-sm tracking-wider text-background font-bold">250+ EXHIBITING ARTISANS</p>
+                  <p className="text-xs text-background/70 font-body">From all regions of Uganda</p>
                 </div>
               </div>
             </div>
 
             <div className="flex flex-wrap gap-4">
-              <Button variant="gold" size="xl" asChild>
+              <Button variant="secondary" size="xl" className="border-2 border-foreground shadow-brutal" asChild>
                 <Link to="/exhibition">
                   <Ticket className="h-5 w-5 mr-2" />
-                  Get Tickets
+                  GET TICKETS
                 </Link>
               </Button>
-              <Button variant="outline-light" size="xl" asChild>
-                <Link to="/exhibition/exhibitors">
-                  Apply as Exhibitor
+              <Button variant="outline" size="xl" className="border-2 border-background text-background hover:bg-background hover:text-foreground" asChild>
+                <Link to="/exhibition">
+                  LEARN MORE
                   <ArrowRight className="h-5 w-5 ml-2" />
                 </Link>
               </Button>
@@ -108,17 +123,20 @@ export function ExhibitionCTA() {
             transition={{ delay: 0.2 }}
             className="relative"
           >
-            <div className="bg-warm-cream/5 backdrop-blur-md border border-warm-cream/10 rounded-3xl p-8 md:p-12">
-              <h3 className="font-display text-2xl font-bold text-warm-cream text-center mb-8">
-                Countdown to Exhibition
-              </h3>
+            <div className="bg-background border-2 border-foreground p-8 md:p-12 shadow-brutal-lg">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-3 h-3 bg-primary" />
+                <h3 className="font-display text-xl font-bold text-foreground tracking-wider">
+                  COUNTDOWN TO FESTIVAL
+                </h3>
+              </div>
 
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-4 gap-3">
                 {[
-                  { value: Math.floor(diffDays / 30), label: "Months" },
-                  { value: diffDays % 30, label: "Days" },
-                  { value: 12, label: "Hours" },
-                  { value: 45, label: "Minutes" },
+                  { value: Math.floor(diffDays / 30), label: "MONTHS" },
+                  { value: diffDays % 30, label: "DAYS" },
+                  { value: 12, label: "HOURS" },
+                  { value: 45, label: "MINS" },
                 ].map((item, index) => (
                   <motion.div
                     key={item.label}
@@ -128,35 +146,42 @@ export function ExhibitionCTA() {
                     transition={{ delay: 0.3 + index * 0.1 }}
                     className="text-center"
                   >
-                    <div className="bg-gradient-sunset rounded-xl p-4 mb-2">
-                      <span className="font-display text-3xl md:text-4xl font-bold text-warm-cream">
+                    <div className={`p-4 mb-2 border-2 border-foreground ${
+                      index === 0 ? "bg-primary text-primary-foreground" :
+                      index === 1 ? "bg-secondary text-secondary-foreground" :
+                      index === 2 ? "bg-accent text-accent-foreground" :
+                      "bg-foreground text-background"
+                    }`}>
+                      <span className="font-display text-2xl md:text-3xl font-bold">
                         {item.value}
                       </span>
                     </div>
-                    <span className="text-warm-cream/60 text-sm">{item.label}</span>
+                    <span className="font-display text-[10px] tracking-wider text-muted-foreground">{item.label}</span>
                   </motion.div>
                 ))}
               </div>
 
-              <div className="mt-8 pt-8 border-t border-warm-cream/10 text-center">
-                <p className="text-warm-cream/60 mb-4">Early bird tickets available now</p>
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-warm-cream/40 line-through">UGX 50,000</span>
-                  <span className="font-display text-2xl font-bold text-secondary">UGX 35,000</span>
+              <div className="mt-8 pt-8 border-t-2 border-muted">
+                <p className="font-display text-xs tracking-widest text-muted-foreground text-center mb-4">
+                  EARLY BIRD TICKETS AVAILABLE NOW
+                </p>
+                <div className="flex items-center justify-center gap-4">
+                  <span className="text-muted-foreground line-through font-display">UGX 50,000</span>
+                  <span className="font-display text-3xl font-bold text-primary">UGX 35,000</span>
                 </div>
               </div>
             </div>
 
             {/* Floating badge */}
             <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0, rotate: -15 }}
+              whileInView={{ opacity: 1, scale: 1, rotate: -12 }}
               viewport={{ once: true }}
               transition={{ delay: 0.6, type: "spring" }}
-              className="absolute -top-4 -right-4 w-24 h-24 bg-secondary rounded-full flex flex-col items-center justify-center text-secondary-foreground shadow-gold animate-gentle-float"
+              className="absolute -top-6 -right-6 w-24 h-24 bg-secondary border-2 border-foreground flex flex-col items-center justify-center text-secondary-foreground shadow-brutal"
             >
-              <span className="text-xs font-semibold">SAVE</span>
-              <span className="font-display text-xl font-bold">30%</span>
+              <span className="font-display text-xs font-bold">SAVE</span>
+              <span className="font-display text-2xl font-bold">30%</span>
             </motion.div>
           </motion.div>
         </div>
