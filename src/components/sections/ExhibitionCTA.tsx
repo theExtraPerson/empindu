@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Calendar, MapPin, Users, Ticket, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import patternBg from "@/assets/pattern-bg.jpg";
+import patternBg from "/facemasks.jpg";
 
 export function ExhibitionCTA() {
   const festivalDate = new Date("2025-08-20");

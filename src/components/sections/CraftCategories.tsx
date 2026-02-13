@@ -5,48 +5,55 @@ import heroCrafts from "@/assets/hero-crafts.jpg";
 import artisanPortrait from "@/assets/artisan-portrait.jpg";
 import patternBg from "@/assets/pattern-bg.jpg";
 
+import basketryImg from "/ebitemere.jpg";
+import barkclothImg from "/barkcloth.jpg";
+import woodworkImg from "/woodworking.jpg";
+import potteryImg from "/pottery.jpg";
+import beadworkImg from "/beadwork.jpg";
+import textilesImg from "/textiles.jpg";
+
 const categories = [
   {
     id: "basketry",
     name: "BASKETRY",
     description: "Hand-woven with intricate patterns",
     count: 340,
-    image: heroCrafts,
+    image: basketryImg,
   },
   {
     id: "barkcloth",
     name: "BARKCLOTH",
     description: "Traditional Ugandan textile art",
     count: 156,
-    image: patternBg,
+    image: barkclothImg,
   },
   {
     id: "woodcarving",
     name: "WOODCARVING",
     description: "Sculptural art from local hardwoods",
     count: 278,
-    image: artisanPortrait,
+    image: woodworkImg,
   },
   {
     id: "pottery",
     name: "POTTERY",
     description: "Handcrafted clay vessels & decor",
     count: 189,
-    image: heroCrafts,
+    image: potteryImg,
   },
   {
     id: "jewelry",
     name: "JEWELRY",
     description: "Beaded & metalwork adornments",
     count: 412,
-    image: patternBg,
+    image: beadworkImg,
   },
   {
     id: "textiles",
     name: "TEXTILES",
     description: "Woven fabrics & embroidery",
     count: 223,
-    image: artisanPortrait,
+    image: textilesImg,
   },
 ];
 

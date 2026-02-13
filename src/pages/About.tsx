@@ -16,6 +16,10 @@ import {
 } from "lucide-react";
 import artisanPortrait from "@/assets/artisan-portrait.jpg";
 import heroCrafts from "@/assets/hero-crafts.jpg";
+
+import visionImage from "/facemasks.jpg";
+import rawNature from "/rawnature.jpg";
+
 const values = [
   {
     icon: Heart,
@@ -26,6 +30,11 @@ const values = [
     icon: Users,
     title: "ARTISAN EMPOWERMENT",
     description: "We provide artisans with market access, training, and fair compensation for their exceptional work.",
+  },
+  {
+    icon: Globe,
+    title: "ENVIRONMENT CONSERVATION",
+    description: "We promote eco-friendly practices and sustainable solutions, protecting environment upon which we thrive.",
   },
   {
     icon: Globe,
@@ -199,9 +208,9 @@ const About = () => {
       <section className="relative min-h-[70vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src={heroCrafts}
+            src={rawNature}
             alt="Ugandan crafts"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-fit"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/95 via-foreground/80 to-transparent" />
         </div>
@@ -226,9 +235,13 @@ const About = () => {
               <br />
               <span className="text-secondary">STORY</span>
             </h1>
-            <p className="text-background/80 text-lg md:text-xl max-w-xl font-body">
-              Building Africa's most diverse cultural ecosystem, empowering 
-              artisans, preserving heritage, and conserving nature.
+            <p className="text-background/80 text-lg md:text-xl max-w-xl mb-6 font-body leading-relaxed">
+              As I watched the old woman artistically weave the basket meant for the wedding gift, I realised the African home was, day by day, 
+              occupied with artificial, foreign and cancerous items. I worried we were rushing into the modern future, yet leaving behind our culture.
+              A culture that nourished us, united us, and humanised us. What a bleak future it would be!
+            </p>
+            <p className="text-background/80 text-lg md:text-xl max-w-xl mb-5 font-body leading-relaxed">
+              I started Empindu to halt such a rush; and save such a culture.
             </p>
           </motion.div>
         </div>
@@ -251,14 +264,11 @@ const About = () => {
                 [ 01 — MISSION ]
               </span>
               <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[0.9] mb-8">
-                THRIVING<br />
-                WITH <span className="text-primary">NATURE</span>
+                WE CONNECT THE HANDS THAT MAKE<br />
+                WITH <span className="text-secondary">THE HOMES THAT CARE</span>
               </h2>
               <p className="text-muted-foreground text-lg mb-6 font-body leading-relaxed">
-                Empindu exists to serve as the digital infrastructure for 
-                Uganda's craft renaissance. We're building a comprehensive platform 
-                that connects artisans with global markets while driving economic 
-                empowerment and cultural preservation.
+                Empindu is not just a craft shop, but a cultural shift through premium African design, ethical sourcing, and real community impact.
               </p>
               <p className="text-muted-foreground mb-10 font-body leading-relaxed">
                 From the intricate barkcloth of Buganda to the fine basketry of 
@@ -288,7 +298,7 @@ const About = () => {
             >
               <div className="aspect-[4/5] overflow-hidden border-2 border-foreground">
                 <img
-                  src={artisanPortrait}
+                  src={visionImage}
                   alt="Ugandan artisan at work"
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                 />
@@ -307,7 +317,7 @@ const About = () => {
                   </span>
                 </div>
                 <p className="text-primary-foreground/90 text-sm font-body">
-                  To position Uganda as Africa's premier craft excellence hub by 2030.
+                  An Africa where culture is intrisically weaved into the intricate fabric of our daily lives.
                 </p>
               </motion.div>
             </motion.div>

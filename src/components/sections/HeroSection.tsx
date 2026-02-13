@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowDown, ArrowRight } from "lucide-react";
-import heroCrafts from "@/assets/hero-crafts.jpg";
+import heroCrafts from "/empinduu.jpg";
 
 export function HeroSection() {
   const { scrollY } = useScroll();

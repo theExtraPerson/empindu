@@ -16,7 +16,7 @@ import {
   Palette,
   ShoppingBag
 } from "lucide-react";
-import patternBg from "@/assets/pattern-bg.jpg";
+import patternBg from "/enkyeka.jpg";
 
 const events = [
   {
@@ -110,7 +110,7 @@ const Exhibition = () => {
           <img
             src={patternBg}
             alt=""
-            className="w-full h-full object-cover"
+            className="w-full h-full object-fit"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-accent to-secondary opacity-95" />
         </div>

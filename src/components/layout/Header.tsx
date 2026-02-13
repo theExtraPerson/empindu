@@ -256,11 +256,11 @@ export function Header() {
                 <div className="grid grid-cols-2 gap-8">
                   <div>
                     <p className="font-display text-xs tracking-widest text-muted-foreground mb-2">CONTACT</p>
-                    <p className="font-body text-sm">hello@crafteduganda.com</p>
+                    <p className="font-body text-sm">shop@empindu.com</p>
                   </div>
                   <div>
                     <p className="font-display text-xs tracking-widest text-muted-foreground mb-2">LOCATION</p>
-                    <p className="font-body text-sm">Kampala, Uganda</p>
+                    <p className="font-body text-sm">Kampala, Pearl of Africa</p>
                   </div>
                 </div>
               </motion.div>

@@ -103,8 +103,8 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-warm-cream/60 mb-8 max-w-sm font-body text-sm leading-relaxed">
-              Connecting Ugandan artisans with global markets, preserving cultural 
-              heritage while driving economic empowerment.
+              Empowering Ugandan artisans, preserving cultural 
+              heritage while protecting the nature upon which we thrive.
             </p>
             <div className="space-y-4">
               <a 
