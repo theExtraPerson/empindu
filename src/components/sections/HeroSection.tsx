@@ -16,7 +16,7 @@ export function HeroSection() {
         <img
           src={heroCrafts}
           alt="Ugandan crafts collection"
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-fit opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-bark-brown/40 via-transparent to-bark-brown/80" />
       </motion.div>
