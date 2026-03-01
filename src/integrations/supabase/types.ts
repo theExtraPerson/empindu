@@ -14,6 +14,196 @@ export type Database = {
   }
   public: {
     Tables: {
+      artisan_reviews: {
+        Row: {
+          artisan_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          order_id: string | null
+          rating: number
+          reviewer_id: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          artisan_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          rating: number
+          reviewer_id: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          artisan_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          rating?: number
+          reviewer_id?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artisan_reviews_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      corporate_gift_items: {
+        Row: {
+          created_at: string
+          gift_order_id: string
+          id: string
+          personalization: string | null
+          product_id: string
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          gift_order_id: string
+          id?: string
+          personalization?: string | null
+          product_id: string
+          quantity?: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          gift_order_id?: string
+          id?: string
+          personalization?: string | null
+          product_id?: string
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "corporate_gift_items_gift_order_id_fkey"
+            columns: ["gift_order_id"]
+            isOneToOne: false
+            referencedRelation: "corporate_gift_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "corporate_gift_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      corporate_gift_orders: {
+        Row: {
+          branding_notes: string | null
+          budget_range: string | null
+          company_name: string
+          contact_email: string
+          contact_name: string
+          contact_phone: string | null
+          created_at: string
+          delivery_date: string | null
+          gift_message: string | null
+          id: string
+          notes: string | null
+          occasion: string | null
+          recipient_count: number
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          branding_notes?: string | null
+          budget_range?: string | null
+          company_name: string
+          contact_email: string
+          contact_name: string
+          contact_phone?: string | null
+          created_at?: string
+          delivery_date?: string | null
+          gift_message?: string | null
+          id?: string
+          notes?: string | null
+          occasion?: string | null
+          recipient_count?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          branding_notes?: string | null
+          budget_range?: string | null
+          company_name?: string
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string | null
+          created_at?: string
+          delivery_date?: string | null
+          gift_message?: string | null
+          id?: string
+          notes?: string | null
+          occasion?: string | null
+          recipient_count?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      corporate_gift_recipients: {
+        Row: {
+          address: string | null
+          city: string | null
+          created_at: string
+          email: string | null
+          gift_order_id: string
+          id: string
+          name: string
+          personal_message: string | null
+          phone: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          created_at?: string
+          email?: string | null
+          gift_order_id: string
+          id?: string
+          name: string
+          personal_message?: string | null
+          phone?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          created_at?: string
+          email?: string | null
+          gift_order_id?: string
+          id?: string
+          name?: string
+          personal_message?: string | null
+          phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "corporate_gift_recipients_gift_order_id_fkey"
+            columns: ["gift_order_id"]
+            isOneToOne: false
+            referencedRelation: "corporate_gift_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string
@@ -283,6 +473,38 @@ export type Database = {
           },
         ]
       }
+      product_views: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          product_id: string
+          user_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          product_id: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          product_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_views_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           artisan_id: string
@@ -494,6 +716,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      search_history: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          search_term: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          search_term: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          search_term?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
