@@ -13,6 +13,8 @@ import {
 import { Search, Filter, Loader2, Package, ArrowRight } from 'lucide-react';
 import { useProducts, PRODUCT_CATEGORIES } from '@/hooks/useProducts';
 import { ProductCard } from '@/components/products/ProductCard';
+import { useRecommendations } from '@/hooks/useRecommendations';
+import { YouMightAlsoLike } from '@/components/recommendations/YouMightAlsoLike';
 
 const Marketplace = () => {
   const { products, loading } = useProducts();
