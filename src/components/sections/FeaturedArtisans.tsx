@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, MapPin, Hammer, CheckCircle, Package, ShoppingBag, Loader2 } from "lucide-react";
+import { ArrowRight, MapPin, Hammer, CheckCircle, Package, ShoppingBag, Loader2, Star } from "lucide-react";
 import { useFeaturedArtisans } from "@/hooks/useFeaturedArtisans";
 import artisanPortrait from "@/assets/artisan-portrait.jpg";
 
