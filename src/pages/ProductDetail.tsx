@@ -383,6 +383,9 @@ const ProductDetail = () => {
         </div>
       </section>
 
+      {/* Recommendations */}
+      <YouMightAlsoLike currentProductId={product.id} />
+
       {/* Personalization Modal */}
       <Dialog open={showPersonalizationModal} onOpenChange={setShowPersonalizationModal}>
         <DialogContent className="border-2 border-foreground">

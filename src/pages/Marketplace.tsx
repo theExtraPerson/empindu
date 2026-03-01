@@ -191,6 +191,9 @@ const Marketplace = () => {
           )}
         </div>
       </section>
+
+      {/* Recommendations */}
+      <YouMightAlsoLike title="RECOMMENDED FOR YOU" limit={4} />
     </Layout>
   );
 };
