@@ -12,6 +12,8 @@ export interface FeaturedArtisan {
   is_verified: boolean;
   product_count: number;
   total_sales: number;
+  review_count: number;
+  avg_rating: number;
 }
 
 export const useFeaturedArtisans = (limit: number = 4) => {
