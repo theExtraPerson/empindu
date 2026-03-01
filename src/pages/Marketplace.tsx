@@ -93,7 +93,7 @@ const Marketplace = () => {
                 <Input
                   placeholder="Search products, artisans..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className="pl-12 h-14 bg-primary-foreground/10 border-2 border-primary-foreground/30 text-primary-foreground placeholder:text-primary-foreground/50 font-body text-lg focus:border-primary-foreground"
                 />
               </div>
