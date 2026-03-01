@@ -41,6 +41,7 @@ const ProductDetail = () => {
   const { fetchProductById } = useProducts();
   const { addItem } = useCartStore();
   const { toast } = useToast();
+  const { trackProductView } = useRecommendations(id);
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
