@@ -21,6 +21,16 @@ const Marketplace = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('newest');
+  const { trackSearch } = useRecommendations();
+
+  // Debounced search tracking
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    if (value.length > 2) {
+      const timeout = setTimeout(() => trackSearch(value, selectedCategory !== 'all' ? selectedCategory : undefined), 1000);
+      return () => clearTimeout(timeout);
+    }
+  };
 
   const filteredProducts = products
     .filter(product => {
