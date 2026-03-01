@@ -56,6 +56,9 @@ const ProductDetail = () => {
       setLoading(true);
       const productData = await fetchProductById(id);
       setProduct(productData);
+      if (productData) {
+        trackProductView(productData.id, productData.category);
+      }
       setLoading(false);
     };
     loadProduct();
