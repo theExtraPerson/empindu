@@ -13,12 +13,24 @@ import {
 import { Search, Filter, Loader2, Package, ArrowRight } from 'lucide-react';
 import { useProducts, PRODUCT_CATEGORIES } from '@/hooks/useProducts';
 import { ProductCard } from '@/components/products/ProductCard';
+import { useRecommendations } from '@/hooks/useRecommendations';
+import { YouMightAlsoLike } from '@/components/recommendations/YouMightAlsoLike';
 
 const Marketplace = () => {
   const { products, loading } = useProducts();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('newest');
+  const { trackSearch } = useRecommendations();
+
+  // Debounced search tracking
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    if (value.length > 2) {
+      const timeout = setTimeout(() => trackSearch(value, selectedCategory !== 'all' ? selectedCategory : undefined), 1000);
+      return () => clearTimeout(timeout);
+    }
+  };
 
   const filteredProducts = products
     .filter(product => {
@@ -81,7 +93,7 @@ const Marketplace = () => {
                 <Input
                   placeholder="Search products, artisans..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className="pl-12 h-14 bg-primary-foreground/10 border-2 border-primary-foreground/30 text-primary-foreground placeholder:text-primary-foreground/50 font-body text-lg focus:border-primary-foreground"
                 />
               </div>
@@ -179,6 +191,9 @@ const Marketplace = () => {
           )}
         </div>
       </section>
+
+      {/* Recommendations */}
+      <YouMightAlsoLike title="RECOMMENDED FOR YOU" limit={4} />
     </Layout>
   );
 };

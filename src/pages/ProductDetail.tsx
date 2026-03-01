@@ -27,6 +27,8 @@ import {
 import { useProducts, Product } from '@/hooks/useProducts';
 import { useCartStore } from '@/stores/cartStore';
 import { useToast } from '@/hooks/use-toast';
+import { useRecommendations } from '@/hooks/useRecommendations';
+import { YouMightAlsoLike } from '@/components/recommendations/YouMightAlsoLike';
 import heroCrafts from '@/assets/hero-crafts.jpg';
 
 const formatPrice = (price: number) => {
@@ -39,6 +41,7 @@ const ProductDetail = () => {
   const { fetchProductById } = useProducts();
   const { addItem } = useCartStore();
   const { toast } = useToast();
+  const { trackProductView } = useRecommendations(id);
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,6 +56,9 @@ const ProductDetail = () => {
       setLoading(true);
       const productData = await fetchProductById(id);
       setProduct(productData);
+      if (productData) {
+        trackProductView(productData.id, productData.category);
+      }
       setLoading(false);
     };
     loadProduct();
@@ -376,6 +382,9 @@ const ProductDetail = () => {
           </div>
         </div>
       </section>
+
+      {/* Recommendations */}
+      <YouMightAlsoLike currentProductId={product.id} />
 
       {/* Personalization Modal */}
       <Dialog open={showPersonalizationModal} onOpenChange={setShowPersonalizationModal}>

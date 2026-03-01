@@ -12,6 +12,8 @@ export interface FeaturedArtisan {
   is_verified: boolean;
   product_count: number;
   total_sales: number;
+  review_count: number;
+  avg_rating: number;
 }
 
 export const useFeaturedArtisans = (limit: number = 4) => {
@@ -83,18 +85,35 @@ export const useFeaturedArtisans = (limit: number = 4) => {
           });
         }
 
+        // Fetch review stats per artisan
+        const { data: reviews } = await supabase
+          .from('artisan_reviews')
+          .select('artisan_id, rating')
+          .in('artisan_id', artisanIds);
+
+        const reviewCounts = new Map<string, number>();
+        const reviewSums = new Map<string, number>();
+        reviews?.forEach(r => {
+          reviewCounts.set(r.artisan_id, (reviewCounts.get(r.artisan_id) || 0) + 1);
+          reviewSums.set(r.artisan_id, (reviewSums.get(r.artisan_id) || 0) + r.rating);
+        });
+
         // Combine data and score artisans
         const scoredArtisans = profiles.map(profile => {
           const userId = profile.user_id!;
           const productCount = productCounts.get(userId) || 0;
           const totalSales = salesCounts.get(userId) || 0;
           const isVerified = profile.is_verified || false;
+          const reviewCount = reviewCounts.get(userId) || 0;
+          const avgRating = reviewCount > 0 ? (reviewSums.get(userId) || 0) / reviewCount : 0;
           
-          // Score: verified (10 points) + products (1 point each, max 20) + sales (2 points each, max 40)
+          // Score: verified (15) + products (1 each, max 20) + sales (2 each, max 40) + reviews (3 each, max 30) + avg rating * 5
           const score = 
-            (isVerified ? 10 : 0) + 
+            (isVerified ? 15 : 0) + 
             Math.min(productCount, 20) + 
-            Math.min(totalSales * 2, 40);
+            Math.min(totalSales * 2, 40) +
+            Math.min(reviewCount * 3, 30) +
+            avgRating * 5;
 
           return {
             id: profile.user_id!,
@@ -107,6 +126,8 @@ export const useFeaturedArtisans = (limit: number = 4) => {
             is_verified: isVerified,
             product_count: productCount,
             total_sales: totalSales,
+            review_count: reviewCount,
+            avg_rating: Math.round(avgRating * 10) / 10,
             _score: score,
           };
         });

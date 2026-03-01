@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, MapPin, Hammer, CheckCircle, Package, ShoppingBag, Loader2 } from "lucide-react";
+import { ArrowRight, MapPin, Hammer, CheckCircle, Package, ShoppingBag, Loader2, Star } from "lucide-react";
 import { useFeaturedArtisans } from "@/hooks/useFeaturedArtisans";
 import artisanPortrait from "@/assets/artisan-portrait.jpg";
 
@@ -149,6 +149,17 @@ export function FeaturedArtisans() {
                     {/* Bottom Stats Bar */}
                     <div className="p-2 md:p-3 border-t-2 border-foreground bg-muted flex items-center justify-between">
                       <div className="flex items-center gap-3">
+                        {artisan.avg_rating > 0 && (
+                          <div className="flex items-center gap-0.5">
+                            <Star className="h-3 w-3 fill-[hsl(var(--kente-gold))] text-[hsl(var(--kente-gold))]" />
+                            <span className="font-display text-[10px] md:text-xs text-foreground">
+                              {artisan.avg_rating}
+                            </span>
+                            <span className="font-display text-[10px] text-muted-foreground">
+                              ({artisan.review_count})
+                            </span>
+                          </div>
+                        )}
                         <div className="flex items-center gap-1">
                           <Package className="h-3 w-3 text-muted-foreground" />
                           <span className="font-display text-[10px] md:text-xs text-foreground">

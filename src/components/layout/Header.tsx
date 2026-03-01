@@ -17,6 +17,7 @@ import { useCartStore } from "@/stores/cartStore";
 const navigation = [
   { name: "ARTISANS", href: "/artisans" },
   { name: "MARKETPLACE", href: "/marketplace" },
+  { name: "CORPORATE GIFTS", href: "/corporate-gifting" },
   { name: "EXHIBITION", href: "/exhibition" },
   { name: "ABOUT", href: "/about" },
   { name: "RESOURCES", href: "/resources" },
