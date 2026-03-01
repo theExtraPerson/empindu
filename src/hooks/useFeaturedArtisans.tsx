@@ -124,6 +124,8 @@ export const useFeaturedArtisans = (limit: number = 4) => {
             is_verified: isVerified,
             product_count: productCount,
             total_sales: totalSales,
+            review_count: reviewCount,
+            avg_rating: Math.round(avgRating * 10) / 10,
             _score: score,
           };
         });
