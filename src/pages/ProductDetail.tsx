@@ -27,6 +27,8 @@ import {
 import { useProducts, Product } from '@/hooks/useProducts';
 import { useCartStore } from '@/stores/cartStore';
 import { useToast } from '@/hooks/use-toast';
+import { useRecommendations } from '@/hooks/useRecommendations';
+import { YouMightAlsoLike } from '@/components/recommendations/YouMightAlsoLike';
 import heroCrafts from '@/assets/hero-crafts.jpg';
 
 const formatPrice = (price: number) => {
