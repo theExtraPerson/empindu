@@ -81,10 +81,21 @@ export const CorporateGiftingManager = () => {
         .update(update)
         .eq('id', id);
       if (error) throw error;
+
+      // Send email notification on status change (skip for notes-only updates)
+      if (status) {
+        try {
+          await supabase.functions.invoke('send-gift-order-email', {
+            body: { giftOrderId: id, newStatus: status },
+          });
+        } catch (emailErr) {
+          console.error('Failed to send gift order email:', emailErr);
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-gift-orders'] });
-      toast.success('Gift order updated');
+      toast.success('Gift order updated & notification sent');
     },
     onError: () => toast.error('Failed to update gift order'),
   });
