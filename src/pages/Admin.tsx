@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Layout } from '@/components/layout/Layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Users, Package, BarChart3, Shield, ShoppingBag, RotateCcw, MapPin, UserCog } from 'lucide-react';
+import { Loader2, Users, Package, BarChart3, Shield, ShoppingBag, RotateCcw, MapPin, UserCog, Gift } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdminData } from '@/hooks/useAdminData';
 import { ArtisansManager } from '@/components/admin/ArtisansManager';
@@ -13,6 +13,7 @@ import { OrdersManager } from '@/components/admin/OrdersManager';
 import { ReturnsManager } from '@/components/admin/ReturnsManager';
 import { PickupLocationsManager } from '@/components/admin/PickupLocationsManager';
 import { UsersManager } from '@/components/admin/UsersManager';
+import { CorporateGiftingManager } from '@/components/admin/CorporateGiftingManager';
 
 const Admin = () => {
   const { user, role, loading: authLoading } = useAuth();
@@ -113,6 +114,10 @@ const Admin = () => {
                 <UserCog className="h-4 w-4" />
                 <span className="hidden sm:inline">Users</span>
               </TabsTrigger>
+              <TabsTrigger value="gifting" className="flex items-center gap-2">
+                <Gift className="h-4 w-4" />
+                <span className="hidden sm:inline">Gifting</span>
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="analytics">
@@ -145,6 +150,10 @@ const Admin = () => {
 
             <TabsContent value="users">
               <UsersManager />
+            </TabsContent>
+
+            <TabsContent value="gifting">
+              <CorporateGiftingManager />
             </TabsContent>
           </Tabs>
         </div>
