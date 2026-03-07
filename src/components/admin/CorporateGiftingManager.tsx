@@ -320,6 +320,14 @@ export const CorporateGiftingManager = () => {
                                 )}
                               </div>
 
+                              {/* Status Timeline */}
+                              <div className="border-t pt-4">
+                                <p className="text-muted-foreground text-sm mb-3 flex items-center gap-1">
+                                  <Clock className="h-4 w-4" /> Status History
+                                </p>
+                                <GiftOrderTimeline giftOrderId={order.id} />
+                              </div>
+
                               {/* Admin Notes */}
                               <div className="border-t pt-4">
                                 <p className="text-muted-foreground text-sm mb-2">Admin Notes</p>
@@ -332,7 +340,7 @@ export const CorporateGiftingManager = () => {
                                 <Button
                                   size="sm"
                                   className="mt-2"
-                                  onClick={() => updateMutation.mutate({ id: order.id, status: order.status, notes: adminNotes })}
+                                  onClick={() => updateMutation.mutate({ id: order.id, status: order.status, notes: adminNotes, oldStatus: order.status })}
                                 >
                                   Save Notes
                                 </Button>
