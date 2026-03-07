@@ -22,13 +22,15 @@ import {
   Package,
   ChevronLeft,
   ChevronRight,
-  Loader2
+  Loader2,
+  Gift
 } from 'lucide-react';
 import { useProducts, Product } from '@/hooks/useProducts';
 import { useCartStore } from '@/stores/cartStore';
 import { useToast } from '@/hooks/use-toast';
 import { useRecommendations } from '@/hooks/useRecommendations';
 import { YouMightAlsoLike } from '@/components/recommendations/YouMightAlsoLike';
+import { GiftThisModal } from '@/components/gifting/GiftThisModal';
 import heroCrafts from '@/assets/hero-crafts.jpg';
 
 const formatPrice = (price: number) => {
@@ -49,7 +51,7 @@ const ProductDetail = () => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [showPersonalizationModal, setShowPersonalizationModal] = useState(false);
   const [personalizationNote, setPersonalizationNote] = useState('');
-
+  const [showGiftModal, setShowGiftModal] = useState(false);
   useEffect(() => {
     const loadProduct = async () => {
       if (!id) return;
@@ -353,6 +355,16 @@ const ProductDetail = () => {
                     <ShoppingBag className="h-5 w-5 mr-2" />
                     ADD TO CART — {formatPrice(product.price * quantity)}
                   </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="h-14 font-display text-sm tracking-widest border-2 border-foreground"
+                    onClick={() => setShowGiftModal(true)}
+                    disabled={product.stock_quantity === 0 || !product.is_available}
+                    title="Gift this product"
+                  >
+                    <Gift className="h-5 w-5" />
+                  </Button>
                 </div>
 
                 {product.is_personalizable && (
@@ -426,6 +438,9 @@ const ProductDetail = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Gift This Modal */}
+      {product && <GiftThisModal product={product} open={showGiftModal} onOpenChange={setShowGiftModal} />}
     </Layout>
   );
 };

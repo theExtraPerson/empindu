@@ -9,9 +9,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Search, Eye, Gift, Users, Package } from 'lucide-react';
+import { Search, Eye, Gift, Users, Package, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { GiftOrderTimeline } from '@/components/gifting/GiftOrderTimeline';
 
 const GIFT_STATUSES = ['pending', 'reviewed', 'confirmed', 'in_production', 'shipped', 'delivered', 'cancelled'];
 
@@ -73,7 +74,7 @@ export const CorporateGiftingManager = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, status, notes }: { id: string; status: string; notes?: string }) => {
+    mutationFn: async ({ id, status, notes, oldStatus }: { id: string; status: string; notes?: string; oldStatus?: string }) => {
       const update: any = { status };
       if (notes !== undefined) update.notes = notes;
       const { error } = await supabase
@@ -82,8 +83,18 @@ export const CorporateGiftingManager = () => {
         .eq('id', id);
       if (error) throw error;
 
+      // Log status change to history
+      if (status && oldStatus !== status) {
+        await supabase.from('gift_order_status_history').insert({
+          gift_order_id: id,
+          old_status: oldStatus || null,
+          new_status: status,
+          changed_by: (await supabase.auth.getUser()).data.user?.id || null,
+        });
+      }
+
       // Send email notification on status change (skip for notes-only updates)
-      if (status) {
+      if (status && oldStatus !== status) {
         try {
           await supabase.functions.invoke('send-gift-order-email', {
             body: { giftOrderId: id, newStatus: status },
@@ -95,6 +106,7 @@ export const CorporateGiftingManager = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-gift-orders'] });
+      queryClient.invalidateQueries({ queryKey: ['gift-order-history'] });
       toast.success('Gift order updated & notification sent');
     },
     onError: () => toast.error('Failed to update gift order'),
@@ -181,7 +193,7 @@ export const CorporateGiftingManager = () => {
                       <div className="flex gap-2">
                         <Select
                           value={order.status}
-                          onValueChange={(value) => updateMutation.mutate({ id: order.id, status: value })}
+                          onValueChange={(value) => updateMutation.mutate({ id: order.id, status: value, oldStatus: order.status })}
                         >
                           <SelectTrigger className="w-[140px] h-8">
                             <SelectValue />
@@ -308,6 +320,14 @@ export const CorporateGiftingManager = () => {
                                 )}
                               </div>
 
+                              {/* Status Timeline */}
+                              <div className="border-t pt-4">
+                                <p className="text-muted-foreground text-sm mb-3 flex items-center gap-1">
+                                  <Clock className="h-4 w-4" /> Status History
+                                </p>
+                                <GiftOrderTimeline giftOrderId={order.id} />
+                              </div>
+
                               {/* Admin Notes */}
                               <div className="border-t pt-4">
                                 <p className="text-muted-foreground text-sm mb-2">Admin Notes</p>
@@ -320,7 +340,7 @@ export const CorporateGiftingManager = () => {
                                 <Button
                                   size="sm"
                                   className="mt-2"
-                                  onClick={() => updateMutation.mutate({ id: order.id, status: order.status, notes: adminNotes })}
+                                  onClick={() => updateMutation.mutate({ id: order.id, status: order.status, notes: adminNotes, oldStatus: order.status })}
                                 >
                                   Save Notes
                                 </Button>

@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Heart, ShoppingBag, Edit, Trash2, Info, RotateCcw, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, ShoppingBag, Edit, Trash2, Info, RotateCcw, Sparkles, X, ChevronLeft, ChevronRight, Gift } from 'lucide-react';
 import { Product } from '@/hooks/useProducts';
 import { useCartStore } from '@/stores/cartStore';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { GiftThisModal } from '@/components/gifting/GiftThisModal';
 import {
   Dialog,
   DialogContent,
@@ -38,6 +39,7 @@ export const ProductCard = ({
   const isMobile = useIsMobile();
   const [showDetails, setShowDetails] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showGiftModal, setShowGiftModal] = useState(false);
 
   // Get all images or fallback to default
   const allImages = product.images?.length 
@@ -130,6 +132,15 @@ export const ProductCard = ({
 
             {/* Feature badges */}
             <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 flex gap-1">
+              {!isOwner && product.is_available && product.stock_quantity > 0 && (
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowGiftModal(true); }}
+                  className="w-6 h-6 sm:w-7 sm:h-7 border-2 border-foreground bg-primary flex items-center justify-center"
+                  title="Gift this product"
+                >
+                  <Gift className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary-foreground" />
+                </button>
+              )}
               {product.is_returnable && (
                 <span className="w-6 h-6 sm:w-7 sm:h-7 border-2 border-foreground bg-accent flex items-center justify-center" title="Returnable">
                   <RotateCcw className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-accent-foreground" />
@@ -377,6 +388,8 @@ export const ProductCard = ({
           </div>
         </DialogContent>
       </Dialog>
+
+      <GiftThisModal product={product} open={showGiftModal} onOpenChange={setShowGiftModal} />
     </>
   );
 };
