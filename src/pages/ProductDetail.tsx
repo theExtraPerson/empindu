@@ -355,6 +355,16 @@ const ProductDetail = () => {
                     <ShoppingBag className="h-5 w-5 mr-2" />
                     ADD TO CART — {formatPrice(product.price * quantity)}
                   </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="h-14 font-display text-sm tracking-widest border-2 border-foreground"
+                    onClick={() => setShowGiftModal(true)}
+                    disabled={product.stock_quantity === 0 || !product.is_available}
+                    title="Gift this product"
+                  >
+                    <Gift className="h-5 w-5" />
+                  </Button>
                 </div>
 
                 {product.is_personalizable && (
