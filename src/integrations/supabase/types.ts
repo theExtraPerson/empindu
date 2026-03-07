@@ -204,6 +204,44 @@ export type Database = {
           },
         ]
       }
+      gift_order_status_history: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          gift_order_id: string
+          id: string
+          new_status: string
+          note: string | null
+          old_status: string | null
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          gift_order_id: string
+          id?: string
+          new_status: string
+          note?: string | null
+          old_status?: string | null
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          gift_order_id?: string
+          id?: string
+          new_status?: string
+          note?: string | null
+          old_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gift_order_status_history_gift_order_id_fkey"
+            columns: ["gift_order_id"]
+            isOneToOne: false
+            referencedRelation: "corporate_gift_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string
