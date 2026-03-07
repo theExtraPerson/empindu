@@ -22,13 +22,15 @@ import {
   Package,
   ChevronLeft,
   ChevronRight,
-  Loader2
+  Loader2,
+  Gift
 } from 'lucide-react';
 import { useProducts, Product } from '@/hooks/useProducts';
 import { useCartStore } from '@/stores/cartStore';
 import { useToast } from '@/hooks/use-toast';
 import { useRecommendations } from '@/hooks/useRecommendations';
 import { YouMightAlsoLike } from '@/components/recommendations/YouMightAlsoLike';
+import { GiftThisModal } from '@/components/gifting/GiftThisModal';
 import heroCrafts from '@/assets/hero-crafts.jpg';
 
 const formatPrice = (price: number) => {
@@ -49,7 +51,7 @@ const ProductDetail = () => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [showPersonalizationModal, setShowPersonalizationModal] = useState(false);
   const [personalizationNote, setPersonalizationNote] = useState('');
-
+  const [showGiftModal, setShowGiftModal] = useState(false);
   useEffect(() => {
     const loadProduct = async () => {
       if (!id) return;
