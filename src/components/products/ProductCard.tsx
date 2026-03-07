@@ -388,6 +388,8 @@ export const ProductCard = ({
           </div>
         </DialogContent>
       </Dialog>
+
+      <GiftThisModal product={product} open={showGiftModal} onOpenChange={setShowGiftModal} />
     </>
   );
 };
