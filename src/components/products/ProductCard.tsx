@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Heart, ShoppingBag, Edit, Trash2, Info, RotateCcw, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, ShoppingBag, Edit, Trash2, Info, RotateCcw, Sparkles, X, ChevronLeft, ChevronRight, Gift } from 'lucide-react';
 import { Product } from '@/hooks/useProducts';
 import { useCartStore } from '@/stores/cartStore';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { GiftThisModal } from '@/components/gifting/GiftThisModal';
 import {
   Dialog,
   DialogContent,
@@ -38,6 +39,7 @@ export const ProductCard = ({
   const isMobile = useIsMobile();
   const [showDetails, setShowDetails] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showGiftModal, setShowGiftModal] = useState(false);
 
   // Get all images or fallback to default
   const allImages = product.images?.length 
