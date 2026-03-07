@@ -438,6 +438,9 @@ const ProductDetail = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Gift This Modal */}
+      {product && <GiftThisModal product={product} open={showGiftModal} onOpenChange={setShowGiftModal} />}
     </Layout>
   );
 };
