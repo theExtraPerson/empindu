@@ -104,6 +104,14 @@ export const useCorporateGifting = () => {
         if (recipientsError) throw recipientsError;
       }
 
+      // 4. Log initial status in history
+      await supabase.from('gift_order_status_history').insert({
+        gift_order_id: giftOrder.id,
+        old_status: null,
+        new_status: 'pending',
+        changed_by: user.id,
+      });
+
       toast({ title: 'Gift order submitted!', description: 'Our team will contact you within 24 hours to confirm details.' });
       return true;
     } catch (err: any) {
