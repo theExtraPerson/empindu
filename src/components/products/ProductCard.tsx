@@ -132,6 +132,15 @@ export const ProductCard = ({
 
             {/* Feature badges */}
             <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 flex gap-1">
+              {!isOwner && product.is_available && product.stock_quantity > 0 && (
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowGiftModal(true); }}
+                  className="w-6 h-6 sm:w-7 sm:h-7 border-2 border-foreground bg-primary flex items-center justify-center"
+                  title="Gift this product"
+                >
+                  <Gift className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary-foreground" />
+                </button>
+              )}
               {product.is_returnable && (
                 <span className="w-6 h-6 sm:w-7 sm:h-7 border-2 border-foreground bg-accent flex items-center justify-center" title="Returnable">
                   <RotateCcw className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-accent-foreground" />
