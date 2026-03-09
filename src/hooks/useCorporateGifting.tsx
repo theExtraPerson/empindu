@@ -112,6 +112,11 @@ export const useCorporateGifting = () => {
         changed_by: user.id,
       });
 
+      // 5. Send confirmation email (fire-and-forget)
+      supabase.functions.invoke('send-gift-confirmation', {
+        body: { giftOrderId: giftOrder.id },
+      }).catch(err => console.error('Gift confirmation email failed:', err));
+
       toast({ title: 'Gift order submitted!', description: 'Our team will contact you within 24 hours to confirm details.' });
       return true;
     } catch (err: any) {
