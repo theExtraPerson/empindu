@@ -169,6 +169,10 @@ export default function Profile() {
                 <OrderHistory />
               </TabsContent>
 
+              <TabsContent value="gifts">
+                <MyGiftOrders />
+              </TabsContent>
+
               <TabsContent value="profile">
                 <div className="bg-background border-2 border-foreground p-6 md:p-10 shadow-brutal">
                   {/* Avatar & Email */}
