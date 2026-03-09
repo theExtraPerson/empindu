@@ -159,6 +159,10 @@ export default function Profile() {
                   <Package className="h-4 w-4 mr-2" />
                   MY ORDERS
                 </TabsTrigger>
+                <TabsTrigger value="gifts" className="font-display text-xs tracking-widest data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Gift className="h-4 w-4 mr-2" />
+                  MY GIFTS
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="orders">
