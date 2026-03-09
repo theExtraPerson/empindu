@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Layout } from '@/components/layout/Layout';
 import { OrderHistory } from '@/components/orders/OrderHistory';
+import { MyGiftOrders } from '@/components/gifting/MyGiftOrders';
 
 export default function Profile() {
   const navigate = useNavigate();
