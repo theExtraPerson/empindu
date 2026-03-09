@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Mail, Phone, MapPin, Palette, Clock, Link2, Save, LogOut, Shield, Package } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Palette, Clock, Link2, Save, LogOut, Shield, Package, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Layout } from '@/components/layout/Layout';
 import { OrderHistory } from '@/components/orders/OrderHistory';
+import { MyGiftOrders } from '@/components/gifting/MyGiftOrders';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -158,10 +159,18 @@ export default function Profile() {
                   <Package className="h-4 w-4 mr-2" />
                   MY ORDERS
                 </TabsTrigger>
+                <TabsTrigger value="gifts" className="font-display text-xs tracking-widest data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Gift className="h-4 w-4 mr-2" />
+                  MY GIFTS
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="orders">
                 <OrderHistory />
+              </TabsContent>
+
+              <TabsContent value="gifts">
+                <MyGiftOrders />
               </TabsContent>
 
               <TabsContent value="profile">
