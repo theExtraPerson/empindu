@@ -49,7 +49,7 @@ const values = [
 const TeamCarouselSection = ({ team }: { team: typeof teamData }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const extendedTeam = [...team, ...team, ...team]; // Triple for infinite loop effect
   const visibleCount = 4;
