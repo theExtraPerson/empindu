@@ -18,6 +18,7 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Resources from "./pages/Resources";
 import CorporateGifting from "./pages/CorporateGifting";
+import ArtisanProfile from "./pages/ArtisanProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,7 +34,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/artisans" element={<Artisans />} />
-            <Route path="/artisans/:id" element={<Artisans />} />
+            <Route path="/artisans/:id" element={<ArtisanProfile />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/marketplace/:id" element={<ProductDetail />} />
             <Route path="/dashboard" element={<Dashboard />} />
