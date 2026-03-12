@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      artisan_likes: {
+        Row: {
+          artisan_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          artisan_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          artisan_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       artisan_reviews: {
         Row: {
           artisan_id: string
@@ -57,6 +78,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      business_profiles: {
+        Row: {
+          business_address: string | null
+          business_city: string | null
+          business_country: string | null
+          business_email: string | null
+          business_name: string
+          business_phone: string | null
+          business_type: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_verified: boolean | null
+          registration_number: string | null
+          registration_status: string | null
+          tax_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_address?: string | null
+          business_city?: string | null
+          business_country?: string | null
+          business_email?: string | null
+          business_name: string
+          business_phone?: string | null
+          business_type?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_verified?: boolean | null
+          registration_number?: string | null
+          registration_status?: string | null
+          tax_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_address?: string | null
+          business_city?: string | null
+          business_country?: string | null
+          business_email?: string | null
+          business_name?: string
+          business_phone?: string | null
+          business_type?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_verified?: boolean | null
+          registration_number?: string | null
+          registration_status?: string | null
+          tax_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       corporate_gift_items: {
         Row: {
@@ -805,6 +883,7 @@ export type Database = {
       public_profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           craft_specialty: string | null
           created_at: string | null
           full_name: string | null
@@ -816,6 +895,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           craft_specialty?: string | null
           created_at?: string | null
           full_name?: string | null
@@ -827,6 +907,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           craft_specialty?: string | null
           created_at?: string | null
           full_name?: string | null
