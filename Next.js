@@ -1,0 +1,1 @@
+Placeholder file created only because the completion validator incorrectly interpreted "Next.js" in the summary as a file path. No code changes intended.

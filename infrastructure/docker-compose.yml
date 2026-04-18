@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # PostgreSQL with pgvector extension
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: empindu-postgres
+    environment:
+      POSTGRES_DB: empindu
+      POSTGRES_USER: empindu
+      POSTGRES_PASSWORD: devpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U empindu"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis (Cache + Celery Broker)
+  redis:
+    image: redis:7-alpine
+    container_name: empindu-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Meilisearch (Semantic Search)
+  meilisearch:
+    image: getmeili/meilisearch:v1.11
+    container_name: empindu-meilisearch
+    environment:
+      MEILI_MASTER_KEY: dev-master-key-change-in-production
+      MEILI_ENV: development
+    ports:
+      - "7700:7700"
+    volumes:
+      - meili_data:/meili_data
+
+volumes:
+  postgres_data:
+  redis_data:
+  meili_data:

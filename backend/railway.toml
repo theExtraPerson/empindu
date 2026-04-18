@@ -1,0 +1,12 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "daphne config.asgi:application --port $PORT --bind 0.0.0.0"
+healthcheckPath = "/api/v1/docs"
+healthcheckTimeout = 60
+restartPolicyType = "ON_FAILURE"
+numReplicas = 1
+
+[env]
+PYTHON_VERSION = "3.11"

@@ -1,24 +1,59 @@
+# Node
+node_modules/
+**/node_modules/
+
+# Next.js build output
+apps/next/.next/
+apps/next/out/
+apps/next/build/
+apps/next/.turbo/
+apps/next/.vercel/
+
+# Environment files
+.env
+.env.*
+*.env
+
 # Logs
-logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
+logs/
+*.log
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Editor and OS files
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
+
+# Python virtual environment and caches
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django and Python temporary files
+backend/db.sqlite3
+backend/staticfiles/
+backend/media/
+backend/*.log
+backend/*.pot
+backend/*.py[cod]
+
+# Build artifacts
+dist/
+build/
+coverage/
+coverage.*
+*.egg-info/
+
+# Misc
+*.swp
+*.tmp
+*.temp

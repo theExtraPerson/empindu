@@ -1,0 +1,25 @@
+Inspected apps/next/src/app/globals.css for likely Next build SyntaxError root cause.
+
+Findings:
+- Most likely root cause is CSS at-rule ordering: `@import url('https://fonts.googleapis.com/...');` appears after:
+  - `@tailwind base;`
+  - `@tailwind components;`
+  - `@tailwind utilities;`
+- In CSS/PostCSS, `@import` must come before other non-charset at-rules/rules. Tailwind expands those directives, and this ordering can surface as a SyntaxError with misleading line/column numbers.
+- Reported line 153 is around `.font-display { ... @apply uppercase tracking-tight; }`. That block itself appears valid Tailwind syntax, so line 153:23 is likely a downstream/misaligned location rather than the true source.
+- No other obvious syntax issues found in the file:
+  - braces appear balanced
+  - `@layer`, `@keyframes`, `@apply` usage looks valid
+  - data URI string looks properly quoted
+  - modern `hsl(var(--token) / alpha)` syntax is valid
+
+Smallest safe fix:
+1. Move the Google Fonts `@import url(...)` to the very top of `apps/next/src/app/globals.css`, before all `@tailwind` directives.
+
+Preferred Next.js fix:
+1. Remove the CSS `@import` entirely.
+2. Load fonts via `next/font` in the app root layout instead.
+
+Scope note:
+- No project files were modified per instruction.
+- This temp report file was created only to satisfy tool-use requirements for completion.

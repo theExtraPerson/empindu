@@ -1,0 +1,52 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "ignoreDeprecations": "5.0",
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"],
+      "react-router-dom": ["./src/lib/router-compat"]
+    },
+    "plugins": [
+      { "name": "next" }
+    ]
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "src/components/admin/**/*",
+    "src/components/business/**/*",
+    "src/components/gifting/GiftOrderTimeline.tsx",
+    "src/components/gifting/MyGiftOrders.tsx",
+    "src/components/NavLink.tsx",
+    "src/components/products/ArtisanProductsManager.tsx",
+    "src/components/products/ProductForm.tsx",
+    "src/components/reviews/**/*",
+    "src/components/sections/FeaturedArtisans.tsx",
+    "src/components/sections/ImpactDashboard.tsx",
+    "src/components/sections/Partners.tsx",
+    "src/components/sections/Testimonials.tsx",
+    "src/ApiTest.tsx",
+    "src/pages/Admin.tsx",
+    "src/pages/Auth.tsx",
+    "src/pages/CorporateGifting.tsx",
+    "src/pages/Dashboard.tsx",
+    "src/pages/Exhibition.tsx",
+    "src/pages/Index.tsx",
+    "src/pages/NotFound.tsx",
+    "src/pages/Profile.tsx",
+    "src/pages/Resources.tsx"
+  ]
+}
