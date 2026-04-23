@@ -100,12 +100,19 @@ WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
 # Database
-# Support both PostgreSQL and SQLite for development
+# Support both PostgreSQL and MySQL for development
 DATABASES = {
-    "default": env.db(
-        "DATABASE_URL",
-        default="sqlite:///" + str(BASE_DIR / "db.sqlite3"),
-    ),
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'empindu_db',
+        'USER': 'empindu',
+        'PASSWORD': '3mpindU.',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+    }
 }
 
 # Use in-memory cache if Redis not available

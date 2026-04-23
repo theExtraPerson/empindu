@@ -1,11 +1,14 @@
 """
 Orders API
 Core commerce lifecycle, inventory reservation, and returns handling.
+Implements Row Level Security (RLS) for artisans and buyers.
 """
 from typing import List, Optional
+from django.http import HttpRequest
 
 from django.shortcuts import get_object_or_404
 from ninja import Router
+from ninja.errors import HttpError
 
 from api.v1.contracts import (
     OrderCreateIn,
@@ -22,6 +25,66 @@ from apps.orders.services import (
 )
 
 router = Router(tags=["Orders"])
+
+
+# === Row Level Security (RLS) Helpers ===
+def get_user_artisan(user):
+    """Get artisan profile for a user, if one exists"""
+    if user and hasattr(user, 'artisan'):
+        return user.artisan
+    return None
+
+
+def is_admin(user):
+    """Check if user is admin or staff"""
+    return user and (user.is_staff or user.is_superuser)
+
+
+def can_view_order(user, order: Order) -> bool:
+    """
+    RLS: Check if user can view an order
+    - Admins can view all orders
+    - Artisans can view their own orders
+    - Buyers can view their own orders
+    """
+    if not user or not user.is_authenticated:
+        return False
+    
+    # Admins see everything
+    if is_admin(user):
+        return True
+    
+    # Artisan can see their own orders
+    artisan = get_user_artisan(user)
+    if artisan and order.artisan_id == artisan.id:
+        return True
+    
+    # Buyer can see their own orders
+    if order.buyer_id == user.id:
+        return True
+    
+    return False
+
+
+def can_update_order(user, order: Order) -> bool:
+    """
+    RLS: Check if user can update an order
+    - Only artisans and admins can update orders
+    - Artisans can only update their own orders
+    """
+    if not user or not user.is_authenticated:
+        return False
+    
+    # Admins can update all
+    if is_admin(user):
+        return True
+    
+    # Artisan can only update their own
+    artisan = get_user_artisan(user)
+    if artisan and order.artisan_id == artisan.id:
+        return True
+    
+    return False
 
 
 def serialize_order(order: Order) -> dict:
@@ -63,12 +126,42 @@ def serialize_return_request(return_request: ReturnRequest) -> dict:
     }
 
 
-@router.get("", response=List[OrderOut], auth=None)
+@router.get("", response=List[OrderOut])
 def list_orders(request, buyer_email: Optional[str] = None):
-    queryset = Order.objects.select_related("product", "artisan__user")
-    if buyer_email:
-        queryset = queryset.filter(buyer_email__iexact=buyer_email)
-    return [serialize_order(order) for order in queryset[:100]]
+    """
+    List orders with RLS enforcement.
+    
+    Access Rules:
+    - Admins see all orders
+    - Artisans see only their own orders
+    - Buyers see only their own orders
+    """
+    user = request.auth
+    
+    if is_admin(user):
+        # Admin: see all orders
+        queryset = Order.objects.select_related("product", "artisan__user")
+        if buyer_email:
+            queryset = queryset.filter(buyer_email__iexact=buyer_email)
+        return [serialize_order(order) for order in queryset[:100]]
+    
+    # Artisan: see only their own orders
+    artisan = get_user_artisan(user)
+    if artisan:
+        queryset = Order.objects.filter(artisan=artisan).select_related(
+            "product", "artisan__user"
+        )
+        return [serialize_order(order) for order in queryset[:100]]
+    
+    # Buyer: see only their own orders
+    if user and user.is_authenticated:
+        queryset = Order.objects.filter(buyer=user).select_related(
+            "product", "artisan__user"
+        )
+        return [serialize_order(order) for order in queryset[:100]]
+    
+    # Unauthenticated: empty list
+    return []
 
 
 @router.post("", response=OrderOut, auth=None)
@@ -78,21 +171,39 @@ def create_order(request, payload: OrderCreateIn):
     return serialize_order(order)
 
 
-@router.get("/{order_id}", response=OrderOut, auth=None)
+@router.get("/{order_id}", response=OrderOut)
 def get_order(request, order_id: int):
+    """
+    Get order details with RLS enforcement.
+    """
     order = get_object_or_404(
         Order.objects.select_related("product", "artisan__user"),
         pk=order_id,
     )
+    
+    if not can_view_order(request.auth, order):
+        raise HttpError(403, "You don't have permission to view this order")
+    
     return serialize_order(order)
 
 
 @router.patch("/{order_id}/status", response=OrderOut)
 def update_order_status(request, order_id: int, payload: OrderStatusUpdateIn):
+    """
+    Update order status with RLS enforcement.
+    Only artisans (for their own orders) and admins can update.
+    """
     order = get_object_or_404(
         Order.objects.select_related("product", "artisan__user"),
         pk=order_id,
     )
+    
+    if not can_update_order(request.auth, order):
+        raise HttpError(
+            403, 
+            "Only the artisan or admin can update this order"
+        )
+    
     order = transition_order(order, payload.status)
     return serialize_order(order)
 

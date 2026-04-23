@@ -1,8 +1,15 @@
 /**
  * Empindu API client for the Django commerce backend.
+ * Supports JWT authentication for protected endpoints.
  */
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
+
+// Get JWT token from localStorage (or your auth provider)
+function getAuthToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+}
 
 export interface CraftTradition {
   id: number;
@@ -175,12 +182,20 @@ export interface PaymentIntent {
 }
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+    ...(init?.headers || {}),
+  };
+
+  // Add JWT token if available
+  const token = getAuthToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   const response = await fetch(`${API_BASE}${path}`, {
     ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers || {}),
-    },
+    headers,
   });
 
   if (!response.ok) {
@@ -244,10 +259,21 @@ export async function getOrders(params?: { buyer_email?: string }): Promise<Orde
   return apiFetch<Order[]>(`/orders${suffix}`);
 }
 
+export async function getOrder(orderId: number): Promise<Order> {
+  return apiFetch<Order>(`/orders/${orderId}`);
+}
+
 export async function createOrder(payload: OrderCreateInput): Promise<Order> {
   return apiFetch<Order>('/orders', {
     method: 'POST',
     body: JSON.stringify(payload),
+  });
+}
+
+export async function updateOrderStatus(orderId: number, status: string): Promise<Order> {
+  return apiFetch<Order>(`/orders/${orderId}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
   });
 }
 
