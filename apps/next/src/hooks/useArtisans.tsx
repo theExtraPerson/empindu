@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 
 import type { Artisan, ArtisanSummary, CraftTradition } from '@/lib/api';
 import { getArtisan, getArtisans, getCraftTraditions } from '@/lib/api';
@@ -12,6 +13,7 @@ export const useArtisans = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const { toast } = useToast();
 
+  const { data: session } = useSession();
   const fetchArtisans = async (filters?: {
     craft_type?: string;
     region?: string;
@@ -19,7 +21,7 @@ export const useArtisans = () => {
   }) => {
     try {
       setLoading(true);
-      const data = await getArtisans(filters);
+      const data = await getArtisans(filters, session?.accessToken);
       setArtisans(data);
     } catch (error: unknown) {
       console.error('Error fetching artisans', error);
@@ -35,7 +37,7 @@ export const useArtisans = () => {
 
   const fetchCraftTraditions = async () => {
     try {
-      const data = await getCraftTraditions();
+      const data = await getCraftTraditions(session?.accessToken);
       setCraftTraditions(data);
     } catch (error: unknown) {
       console.error('Error fetching craft traditions', error);
@@ -44,7 +46,7 @@ export const useArtisans = () => {
 
   const fetchArtisanBySlug = async (slug: string): Promise<Artisan | null> => {
     try {
-      return await getArtisan(slug);
+      return await getArtisan(slug, session?.accessToken);
     } catch (error: unknown) {
       console.error('Error fetching artisan', error);
       toast({

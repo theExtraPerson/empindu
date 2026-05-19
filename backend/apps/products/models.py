@@ -4,7 +4,7 @@ Story-first product architecture with cultural IP anchoring
 Thrive With Nature
 """
 from django.db import models
-from pgvector.django import VectorField
+# from pgvector.django import VectorField # For semantic search embeddings (future)
 
 
 class Product(models.Model):
@@ -76,7 +76,7 @@ class Product(models.Model):
     weight_grams = models.PositiveIntegerField(default=0)
 
     # Semantic search embedding (updated by Celery task)
-    embedding = VectorField(dimensions=384, null=True, blank=True)
+    embedding = models.JSONField(null=True, blank=True)
 
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)

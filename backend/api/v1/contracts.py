@@ -176,6 +176,7 @@ class ReturnRequestOut(Schema):
 class GiftOrderItemIn(Schema):
     product_id: int
     quantity: int = 1
+    personalization: Optional[str] = ""
 
 
 class GiftOrderItemOut(Schema):
@@ -184,14 +185,41 @@ class GiftOrderItemOut(Schema):
     quantity: int
     unit_price_ugx: float
     line_total_ugx: float
+    personalization: str = ""
+
+
+class GiftOrderRecipientIn(Schema):
+    name: str
+    email: Optional[str] = ""
+    phone: Optional[str] = ""
+    address: Optional[str] = ""
+    city: Optional[str] = ""
+    country: Optional[str] = ""
+    personal_message: Optional[str] = ""
+
+
+class GiftOrderRecipientOut(Schema):
+    name: str
+    email: str
+    phone: str
+    address: str
+    city: str
+    country: str
+    personal_message: str
 
 
 class GiftOrderCreateIn(Schema):
     customer_name: str
     customer_email: str
     company: Optional[str] = ""
+    contact_phone: Optional[str] = ""
+    occasion: Optional[str] = ""
+    gift_message: Optional[str] = ""
+    branding_notes: Optional[str] = ""
+    delivery_date: Optional[str] = None
     notes: Optional[str] = ""
     items: List[GiftOrderItemIn]
+    recipients: List[GiftOrderRecipientIn] = []
 
 
 class GiftOrderOut(Schema):
@@ -199,10 +227,17 @@ class GiftOrderOut(Schema):
     customer_name: str
     customer_email: str
     company: str
+    contact_phone: str
+    occasion: str
+    gift_message: str
+    branding_notes: str
+    delivery_date: Optional[str] = None
+    recipient_count: int
     notes: str
     total_items: int
     total_amount_ugx: float
     status: str
     items: List[GiftOrderItemOut]
+    recipients: List[GiftOrderRecipientOut]
     created_at: str
     updated_at: str

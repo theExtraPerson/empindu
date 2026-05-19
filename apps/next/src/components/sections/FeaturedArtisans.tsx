@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from "framer-motion";
 import { Link } from "@/lib/router-compat";
 import { ArrowRight, MapPin, Hammer, CheckCircle, Package, ShoppingBag, Loader2, Star } from "lucide-react";
 import { useFeaturedArtisans } from "@/hooks/useFeaturedArtisans";
@@ -14,11 +13,7 @@ export function FeaturedArtisans() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Brutalist Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
+          <div className="animate-weave-in opacity-0">
             <span className="font-display text-xs tracking-[0.3em] text-muted-foreground mb-3 block">
               [ MEET THE MAKERS ]
             </span>
@@ -27,22 +22,17 @@ export function FeaturedArtisans() {
               <br />
               <span className="text-primary">ARTISANS</span>
             </h2>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-          >
+          <div className="animate-weave-in opacity-0 [animation-delay:100ms]">
             <Link 
               to="/artisans"
-              className="group inline-flex items-center gap-3 px-6 py-3 bg-foreground text-background font-display text-sm tracking-wider border-2 border-foreground hover:bg-primary hover:border-primary transition-all duration-300 shadow-brutal"
+              className="group inline-flex min-h-[44px] items-center gap-3 px-6 py-3 bg-foreground text-background font-display text-sm tracking-wider border-2 border-foreground hover:bg-primary hover:border-primary transition-all duration-300 shadow-brutal"
             >
               VIEW ALL
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
-          </motion.div>
+          </div>
         </div>
 
         {/* Loading State */}
@@ -57,11 +47,7 @@ export function FeaturedArtisans() {
 
         {/* Empty State */}
         {!loading && artisans.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-20 bg-background border-2 border-foreground shadow-brutal"
-          >
+          <div className="animate-weave-in py-20 text-center bg-background border-2 border-foreground shadow-brutal">
             <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="font-display text-xl font-bold text-foreground mb-2">
               NO ARTISANS YET
@@ -70,29 +56,23 @@ export function FeaturedArtisans() {
               Be the first to join our community of skilled craftspeople.
             </p>
             <Link
-              to="/auth"
-              className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-primary text-primary-foreground font-display text-sm tracking-wider border-2 border-foreground shadow-brutal hover:bg-secondary hover:text-secondary-foreground transition-colors"
+              to="/onboarding"
+              className="inline-flex min-h-[44px] items-center gap-2 mt-6 px-6 py-3 bg-primary text-primary-foreground font-display text-sm tracking-wider border-2 border-foreground shadow-brutal hover:bg-secondary hover:text-secondary-foreground transition-colors"
             >
               BECOME AN ARTISAN
               <ArrowRight className="h-4 w-4" />
             </Link>
-          </motion.div>
+          </div>
         )}
 
         {/* Artisan Cards */}
         {!loading && artisans.length > 0 && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
             {artisans.map((artisan, index) => (
-              <motion.div
+              <div
                 key={artisan.id}
-                initial={{ opacity: 0, y: 40, rotate: -2 }}
-                whileInView={{ opacity: 1, y: 0, rotate: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
-                className="group"
-                style={{ 
-                  transform: `rotate(${index % 2 === 0 ? -1 : 1}deg)`,
-                }}
+                className="group animate-weave-in opacity-0"
+                style={{ animationDelay: `${index * 60}ms` }}
               >
                 <Link to="/artisans">
                   <div className="relative bg-background border-2 border-foreground shadow-brutal hover:shadow-brutal-lg transition-all duration-300 hover:-translate-y-2 hover:rotate-0">
@@ -114,11 +94,14 @@ export function FeaturedArtisans() {
                     {/* Image Container */}
                     <div className="aspect-[3/4] overflow-hidden relative">
                       <img
-                        src={artisan.avatar_url || artisanPortrait}
+                        src={artisan.avatar_url || artisanPortrait.src}
                         alt={artisan.full_name}
                         className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        decoding="async"
+                        sizes="(min-width: 1024px) 25vw, 50vw"
                         onError={(e) => {
-                          e.currentTarget.src = artisanPortrait;
+                          e.currentTarget.src = artisanPortrait.src;
                         }}
                       />
                       {/* Overlay Pattern */}
@@ -183,7 +166,7 @@ export function FeaturedArtisans() {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
         )}

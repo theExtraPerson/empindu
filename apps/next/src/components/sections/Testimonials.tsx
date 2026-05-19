@@ -148,9 +148,12 @@ export function Testimonials() {
                       {/* Portrait */}
                       <div className="w-16 h-16 md:w-24 md:h-24 border-2 border-mudcloth-black overflow-hidden flex-shrink-0">
                         <img
-                          src={testimonial.image}
+                          src={testimonial.image.src}
                           alt={testimonial.name}
                           className="w-full h-full object-cover grayscale"
+                          loading="lazy"
+                          decoding="async"
+                          sizes="96px"
                         />
                       </div>
 
@@ -206,7 +209,7 @@ export function Testimonials() {
           className="text-center mt-8 md:mt-12"
         >
           <span className="font-mono text-xs text-bark-brown/40 tracking-wider">
-            AUTO-ROTATING · CLICK TO SELECT
+            AUTO-ROTATING - CLICK TO SELECT
           </span>
         </motion.div>
       </div>

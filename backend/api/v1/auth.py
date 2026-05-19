@@ -1,6 +1,10 @@
+import hashlib
+import hmac
+import time
 from datetime import datetime, timezone
-from typing import Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
+from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
@@ -35,6 +39,16 @@ class RefreshIn(Schema):
     refresh_token: str
 
 
+class SocialLoginIn(Schema):
+    provider: Literal["google", "telegram"]
+    provider_user_id: str
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    avatar_url: Optional[str] = None
+    role: Literal["buyer", "artisan"] = "buyer"
+    auth_data: Optional[Dict[str, Any]] = None
+
+
 class UpdateMeIn(Schema):
     full_name: Optional[str] = None
     phone: Optional[str] = None
@@ -65,6 +79,24 @@ class AuthResponseOut(Schema):
     access_expires_at: str
     refresh_expires_at: str
     user: SessionUserOut
+
+
+class UserListItemOut(Schema):
+    id: str
+    email: str
+    full_name: str
+    role: Literal["admin", "artisan", "buyer"]
+    is_active: bool
+    is_verified: bool
+    date_joined: str
+    location: Optional[str] = None
+    phone: Optional[str] = None
+
+
+class CreateAdminIn(Schema):
+    email: str
+    password: str
+    full_name: str
 
 
 MANAGED_ROLE_GROUPS = {"buyer", "artisan", "admin"}
@@ -102,6 +134,42 @@ def _sync_role_group(user: User, role: str) -> None:
         user.groups.remove(*groups)
     group, _ = Group.objects.get_or_create(name=role)
     user.groups.add(group)
+
+
+def _require_social_secret(request) -> None:
+    expected = getattr(settings, "SOCIAL_AUTH_SHARED_SECRET", "") or getattr(settings, "SECRET_KEY", "")
+    if not expected:
+        return
+
+    provided = request.headers.get("X-Empindu-Social-Secret", "")
+    if not hmac.compare_digest(provided, expected):
+        raise HttpError(401, "Social authentication is not authorized.")
+
+
+def _verify_telegram_auth(auth_data: Dict[str, Any]) -> None:
+    bot_token = getattr(settings, "TELEGRAM_BOT_TOKEN", "")
+    if not bot_token:
+        return
+
+    received_hash = str(auth_data.get("hash", ""))
+    if not received_hash:
+        raise HttpError(401, "Telegram authentication hash is missing.")
+
+    payload = {
+        str(key): str(value)
+        for key, value in auth_data.items()
+        if key != "hash" and value is not None
+    }
+    check_string = "\n".join(f"{key}={payload[key]}" for key in sorted(payload))
+    secret_key = hashlib.sha256(bot_token.encode()).digest()
+    expected_hash = hmac.new(secret_key, check_string.encode(), hashlib.sha256).hexdigest()
+
+    if not hmac.compare_digest(expected_hash, received_hash):
+        raise HttpError(401, "Telegram authentication could not be verified.")
+
+    auth_date = int(payload.get("auth_date", "0") or 0)
+    if auth_date and time.time() - auth_date > 86400:
+        raise HttpError(401, "Telegram authentication has expired.")
 
 
 def _serialize_user(user: User) -> dict:
@@ -153,6 +221,86 @@ def _get_authenticated_user(request) -> User:
     return user
 
 
+def _require_admin_user(request) -> User:
+    user = _get_authenticated_user(request)
+    profile = _get_or_create_profile(user)
+    if _resolve_role(user, profile) != "admin":
+        raise HttpError(403, "Admin access required.")
+    return user
+
+
+@router.get("/users", response=List[UserListItemOut])
+def list_users(request):
+    _require_admin_user(request)
+
+    users = User.objects.select_related("profile").order_by("email")
+    result = []
+    for user in users:
+        profile = getattr(user, "profile", None)
+        if profile is None:
+            profile = _get_or_create_profile(user)
+
+        result.append(
+            {
+                "id": str(user.pk),
+                "email": user.email,
+                "full_name": user.get_full_name().strip() or user.email or user.username,
+                "role": _resolve_role(user, profile),
+                "is_active": user.is_active,
+                "is_verified": bool(profile.is_verified or user.is_staff or user.is_superuser),
+                "date_joined": user.date_joined.isoformat(),
+                "location": profile.location or None,
+                "phone": profile.phone or None,
+            }
+        )
+
+    return result
+
+
+@router.post("/admin/create", response=UserListItemOut)
+def create_admin(request, payload: CreateAdminIn):
+    """Create a new admin account (admin-only endpoint)."""
+    _require_admin_user(request)
+
+    email = payload.email.strip().lower()
+    if User.objects.filter(email__iexact=email).exists():
+        raise HttpError(409, "An account with this email already exists.")
+
+    try:
+        validate_password(payload.password)
+    except DjangoValidationError as exc:
+        raise HttpError(400, " ".join(exc.messages))
+
+    first_name, last_name = _split_full_name(payload.full_name)
+
+    with transaction.atomic():
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=payload.password,
+            first_name=first_name,
+            last_name=last_name,
+            is_staff=True,
+        )
+        profile = _get_or_create_profile(user)
+        profile.role = "admin"
+        profile.is_verified = True
+        profile.save()
+        _sync_role_group(user, "admin")
+
+    return {
+        "id": str(user.pk),
+        "email": user.email,
+        "full_name": user.get_full_name().strip() or user.email or user.username,
+        "role": "admin",
+        "is_active": user.is_active,
+        "is_verified": True,
+        "date_joined": user.date_joined.isoformat(),
+        "location": profile.location or None,
+        "phone": profile.phone or None,
+    }
+
+
 @router.post("/login", response=AuthResponseOut)
 def login(request, payload: LoginIn):
     lookup = User.objects.filter(email__iexact=payload.email.strip()).first()
@@ -193,6 +341,51 @@ def register(request, payload: RegisterIn):
         profile.craft_specialty = payload.craft_specialty or ""
         profile.save()
         _sync_role_group(user, payload.role)
+
+    return _build_auth_response(user)
+
+
+@router.post("/social", response=AuthResponseOut)
+def social_login(request, payload: SocialLoginIn):
+    """Create or reuse a backend account after verified provider sign-in."""
+    _require_social_secret(request)
+
+    if payload.provider == "telegram":
+        _verify_telegram_auth(payload.auth_data or {})
+
+    email = (payload.email or "").strip().lower()
+    if not email:
+        email = f"{payload.provider}_{payload.provider_user_id}@empindu.local"
+
+    full_name = (payload.full_name or "").strip() or email.split("@")[0]
+    first_name, last_name = _split_full_name(full_name)
+
+    with transaction.atomic():
+        user = User.objects.filter(email__iexact=email).first()
+        if not user:
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=None,
+                first_name=first_name,
+                last_name=last_name,
+            )
+        else:
+            changed_fields = []
+            if first_name and user.first_name != first_name:
+                user.first_name = first_name
+                changed_fields.append("first_name")
+            if last_name and user.last_name != last_name:
+                user.last_name = last_name
+                changed_fields.append("last_name")
+            if changed_fields:
+                user.save(update_fields=changed_fields)
+
+        profile = _get_or_create_profile(user)
+        if profile.role == "buyer" and payload.role == "artisan":
+            profile.role = "artisan"
+        profile.save()
+        _sync_role_group(user, profile.role)
 
     return _build_auth_response(user)
 

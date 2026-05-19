@@ -34,6 +34,16 @@ export interface RegisterInput {
   craft_specialty?: string;
 }
 
+export interface SocialLoginInput {
+  provider: 'google' | 'telegram';
+  provider_user_id: string;
+  email?: string | null;
+  full_name?: string | null;
+  avatar_url?: string | null;
+  role?: Extract<AppRole, 'buyer' | 'artisan'>;
+  auth_data?: Record<string, unknown>;
+}
+
 export interface UpdateProfileInput {
   full_name?: string | null;
   phone?: string | null;
@@ -74,6 +84,25 @@ export async function registerUser(input: RegisterInput): Promise<AuthResponse> 
     headers: {
       'Content-Type': 'application/json',
     },
+    body: JSON.stringify(input),
+  });
+
+  return parseResponse<AuthResponse>(response);
+}
+
+export async function loginWithSocial(input: SocialLoginInput): Promise<AuthResponse> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  const socialSecret = process.env.SOCIAL_AUTH_SHARED_SECRET || process.env.SECRET_KEY;
+  if (socialSecret) {
+    headers['X-Empindu-Social-Secret'] = socialSecret;
+  }
+
+  const response = await fetch(`${AUTH_BASE}/social`, {
+    method: 'POST',
+    headers,
     body: JSON.stringify(input),
   });
 

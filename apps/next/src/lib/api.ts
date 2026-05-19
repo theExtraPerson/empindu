@@ -5,10 +5,9 @@
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
 
-// Get JWT token from localStorage (or your auth provider)
-function getAuthToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+// Get JWT token from NextAuth session (passed as parameter)
+function getAuthToken(accessToken?: string): string | null {
+  return accessToken || null;
 }
 
 export interface CraftTradition {
@@ -48,6 +47,107 @@ export interface Artisan {
   order_count: number;
   total_earnings_ugx: number;
   listings: number[];
+}
+
+export interface MyArtisanProfile extends Artisan {
+  profile_url: string;
+  bio_luganda: string;
+  bio_swahili: string;
+  bio_draft: string | null;
+  bio_draft_language: string;
+  bio_draft_at: string | null;
+  phone: string;
+  momo_number: string;
+  airtel_number: string;
+  telegram_chat_id: number | null;
+  is_active: boolean;
+  onboarded_via: string;
+}
+
+export interface ArtisanDashboardProduct {
+  id: number;
+  slug: string;
+  name: string;
+  story: string;
+  material: string;
+  technique: string;
+  days_to_make: number;
+  price_ugx: number;
+  price_usd: number;
+  artisan_earnings_ugx: number;
+  heritage_fund_ugx: number;
+  stock: number;
+  status: 'draft' | 'active' | 'sold_out' | 'archived';
+  is_customisable: boolean;
+  weight_grams: number;
+  hero_photo_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ArtisanDashboardOrder {
+  id: number;
+  product_id: number;
+  product_name: string;
+  quantity: number;
+  status: string;
+  payout_status: string;
+  payment_method: string;
+  buyer_email: string;
+  buyer_phone: string;
+  shipping_name: string;
+  shipping_country: string;
+  shipping_address: Record<string, unknown>;
+  tracking_number: string;
+  price_ugx: number;
+  price_usd: number;
+  artisan_earnings_ugx: number;
+  heritage_fund_ugx: number;
+  created_at: string;
+  paid_at: string | null;
+  dispatched_at: string | null;
+  delivered_at: string | null;
+}
+
+export interface ArtisanDashboard {
+  artisan: MyArtisanProfile;
+  stats: {
+    products: number;
+    active_products: number;
+    draft_products: number;
+    orders: number;
+    open_orders: number;
+    total_revenue_ugx: number;
+    total_earnings_ugx: number;
+    pending_payout_ugx: number;
+  };
+  products: ArtisanDashboardProduct[];
+  orders: ArtisanDashboardOrder[];
+}
+
+export interface ArtisanProductInput {
+  name: string;
+  story: string;
+  material: string;
+  technique: string;
+  days_to_make: number;
+  price_ugx: number;
+  stock: number;
+  status: 'draft' | 'active' | 'sold_out' | 'archived';
+  is_customisable: boolean;
+  weight_grams: number;
+}
+
+export interface ArtisanProfileInput {
+  bio?: string;
+  bio_luganda?: string;
+  bio_swahili?: string;
+  community?: string;
+  district?: string;
+  phone?: string;
+  momo_number?: string;
+  airtel_number?: string;
+  years_experience?: number;
 }
 
 export interface Provenance {
@@ -129,6 +229,72 @@ export interface OrderCreateInput {
   gift_details?: GiftDetailsInput;
 }
 
+export interface GiftOrderItemInput {
+  product_id: number;
+  quantity: number;
+  personalization?: string;
+}
+
+export interface GiftOrderRecipientInput {
+  name: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  personal_message?: string;
+}
+
+export interface GiftOrderCreateInput {
+  customer_name: string;
+  customer_email: string;
+  contact_phone?: string;
+  company?: string;
+  occasion?: string;
+  gift_message?: string;
+  branding_notes?: string;
+  delivery_date?: string;
+  notes?: string;
+  items: GiftOrderItemInput[];
+  recipients: GiftOrderRecipientInput[];
+}
+
+export interface GiftOrder {
+  id: number;
+  customer_name: string;
+  customer_email: string;
+  contact_phone: string;
+  company: string;
+  occasion: string;
+  gift_message: string;
+  branding_notes: string;
+  delivery_date: string | null;
+  recipient_count: number;
+  notes: string;
+  total_items: number;
+  total_amount_ugx: number;
+  status: string;
+  items: Array<{
+    product_id: number;
+    product_name: string;
+    quantity: number;
+    unit_price_ugx: number;
+    line_total_ugx: number;
+    personalization: string;
+  }>;
+  recipients: Array<{
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    country: string;
+    personal_message: string;
+  }>;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Order {
   id: number;
   product_id: number;
@@ -181,14 +347,15 @@ export interface PaymentIntent {
   message: string;
 }
 
-async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-    ...(init?.headers || {}),
+export async function apiFetch<T>(path: string, init?: RequestInit, accessToken?: string): Promise<T> {
+  const isFormData = typeof FormData !== 'undefined' && init?.body instanceof FormData;
+  const headers: Record<string, string> = {
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+    ...((init?.headers as Record<string, string>) || {}),
   };
 
   // Add JWT token if available
-  const token = getAuthToken();
+  const token = getAuthToken(accessToken);
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -210,20 +377,20 @@ export async function getArtisans(params?: {
   craft_type?: string;
   region?: string;
   certified?: boolean;
-}): Promise<ArtisanSummary[]> {
+}, accessToken?: string): Promise<ArtisanSummary[]> {
   const qs = new URLSearchParams();
   if (params?.craft_type) qs.append('craft_type', params.craft_type);
   if (params?.region) qs.append('region', params.region);
   if (params?.certified !== undefined) qs.append('certified', String(params.certified));
-  return apiFetch<ArtisanSummary[]>(`/artisans/?${qs.toString()}`);
+  return apiFetch<ArtisanSummary[]>(`/artisans/?${qs.toString()}`, undefined, accessToken);
 }
 
-export async function getArtisan(slug: string): Promise<Artisan> {
-  return apiFetch<Artisan>(`/artisans/${slug}`);
+export async function getArtisan(slug: string, accessToken?: string): Promise<Artisan> {
+  return apiFetch<Artisan>(`/artisans/${slug}/`, undefined, accessToken);
 }
 
-export async function getCraftTraditions(): Promise<CraftTradition[]> {
-  return apiFetch<CraftTradition[]>('/artisans/traditions/list');
+export async function getCraftTraditions(accessToken?: string): Promise<CraftTradition[]> {
+  return apiFetch<CraftTradition[]>('/artisans/traditions/list', undefined, accessToken);
 }
 
 export async function getProducts(params?: {
@@ -252,6 +419,24 @@ export async function getProduct(slug: string): Promise<Product> {
   return apiFetch<Product>(`/products/${slug}`);
 }
 
+export async function createOrder(order: OrderCreateInput, accessToken?: string): Promise<Order> {
+  return apiFetch<Order>('/orders/', {
+    method: 'POST',
+    body: JSON.stringify(order),
+  }, accessToken);
+}
+
+export async function createGiftOrder(order: GiftOrderCreateInput, accessToken?: string): Promise<GiftOrder> {
+  return apiFetch<GiftOrder>('/gifting/', {
+    method: 'POST',
+    body: JSON.stringify(order),
+  }, accessToken);
+}
+
+export async function getGiftOrders(accessToken?: string): Promise<GiftOrder[]> {
+  return apiFetch<GiftOrder[]>('/gifting/', undefined, accessToken);
+}
+
 export async function getOrders(params?: { buyer_email?: string }): Promise<Order[]> {
   const qs = new URLSearchParams();
   if (params?.buyer_email) qs.append('buyer_email', params.buyer_email);
@@ -263,18 +448,13 @@ export async function getOrder(orderId: number): Promise<Order> {
   return apiFetch<Order>(`/orders/${orderId}`);
 }
 
-export async function createOrder(payload: OrderCreateInput): Promise<Order> {
-  return apiFetch<Order>('/orders', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
-}
+/* duplicate createOrder removed; use the createOrder(order, accessToken?) variant above */
 
-export async function updateOrderStatus(orderId: number, status: string): Promise<Order> {
+export async function updateOrderStatus(orderId: number, status: string, accessToken?: string): Promise<Order> {
   return apiFetch<Order>(`/orders/${orderId}/status`, {
     method: 'PATCH',
     body: JSON.stringify({ status }),
-  });
+  }, accessToken);
 }
 
 export async function getReturnRequests(orderId: number): Promise<ReturnRequest[]> {
@@ -293,6 +473,55 @@ export async function initiatePayment(orderId: number, phoneNumber?: string): Pr
     method: 'POST',
     body: JSON.stringify({ order_id: orderId, phone_number: phoneNumber || null }),
   });
+}
+
+export async function getMyArtisanDashboard(accessToken: string): Promise<ArtisanDashboard> {
+  return apiFetch<ArtisanDashboard>('/artisans/me/dashboard', undefined, accessToken);
+}
+
+export async function updateMyArtisanProfile(payload: ArtisanProfileInput, accessToken: string): Promise<MyArtisanProfile> {
+  return apiFetch<MyArtisanProfile>('/artisans/me/profile', {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  }, accessToken);
+}
+
+export async function getMyArtisanProducts(accessToken: string): Promise<ArtisanDashboardProduct[]> {
+  return apiFetch<ArtisanDashboardProduct[]>('/artisans/me/products', undefined, accessToken);
+}
+
+export async function createMyArtisanProduct(payload: ArtisanProductInput, accessToken: string): Promise<ArtisanDashboardProduct> {
+  return apiFetch<ArtisanDashboardProduct>('/artisans/me/products', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }, accessToken);
+}
+
+export async function updateMyArtisanProduct(productId: number, payload: ArtisanProductInput, accessToken: string): Promise<ArtisanDashboardProduct> {
+  return apiFetch<ArtisanDashboardProduct>(`/artisans/me/products/${productId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  }, accessToken);
+}
+
+export async function archiveMyArtisanProduct(productId: number, accessToken: string): Promise<{ message: string }> {
+  return apiFetch<{ message: string }>(`/artisans/me/products/${productId}`, {
+    method: 'DELETE',
+  }, accessToken);
+}
+
+export async function uploadMyProductPhoto(productId: number, file: File, accessToken: string, isHero = false): Promise<ProductPhoto> {
+  const formData = new FormData();
+  formData.append('image', file);
+  formData.append('is_hero', String(isHero));
+  return apiFetch<ProductPhoto>(`/artisans/me/products/${productId}/photos`, {
+    method: 'POST',
+    body: formData,
+  }, accessToken);
+}
+
+export async function getMyArtisanOrders(accessToken: string): Promise<ArtisanDashboardOrder[]> {
+  return apiFetch<ArtisanDashboardOrder[]>('/artisans/me/orders', undefined, accessToken);
 }
 
 export async function checkApiHealth(): Promise<boolean> {

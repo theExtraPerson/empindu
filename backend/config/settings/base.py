@@ -13,6 +13,15 @@ env = environ.Env(
     DEBUG=(bool, False),
     SECRET_KEY=(str, "change-me-in-production"),
     ALLOWED_HOSTS=(list, ["localhost", "127.0.0.1"]),
+    TELEGRAM_BOT_TOKEN=(str, ""),
+    TELEGRAM_WEBHOOK_URL=(str, ""),
+ 
+    TELEGRAM_WEBHOOK_SECRET=(str, ""),
+    TELEGRAM_ANNOUNCEMENT_CHAT_ID=(str, ""),
+    SOCIAL_AUTH_SHARED_SECRET=(str, ""),
+    FRONTEND_URL=(str, "http://localhost:3000"),
+    OPENAI_API_KEY=(str, ""),
+    OPENAI_TRANSCRIBE_MODEL=(str, "gpt-4o-mini-transcribe"),
 )
 
 # Read .env file
@@ -24,6 +33,15 @@ DEBUG = env("DEBUG")
 SECRET_KEY = env("SECRET_KEY")
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
+
+TELEGRAM_BOT_TOKEN = env("TELEGRAM_BOT_TOKEN")
+TELEGRAM_WEBHOOK_URL = env("TELEGRAM_WEBHOOK_URL")
+TELEGRAM_WEBHOOK_SECRET = env("TELEGRAM_WEBHOOK_SECRET")
+TELEGRAM_ANNOUNCEMENT_CHAT_ID = env("TELEGRAM_ANNOUNCEMENT_CHAT_ID")
+SOCIAL_AUTH_SHARED_SECRET = env("SOCIAL_AUTH_SHARED_SECRET")
+FRONTEND_URL = env("FRONTEND_URL")
+OPENAI_API_KEY = env("OPENAI_API_KEY")
+OPENAI_TRANSCRIBE_MODEL = env("OPENAI_TRANSCRIBE_MODEL")
 
 # Application definition
 INSTALLED_APPS = [
@@ -99,30 +117,30 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
+ASGI_APPLICATION = "config.asgi.application"
+
 # Database
-# Support both PostgreSQL and MySQL for development
+# PostgreSQL (production-ready with pgvector support)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'empindu_db',
-        'USER': 'empindu',
-        'PASSWORD': '3mpindU.',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME', default='empindu'),
+        'USER': env('DB_USER', default='postgres'),
+        'PASSWORD': env('DB_PASSWORD', default='3mpindu'),
+        'HOST': env('DB_HOST', default='127.0.0.1'),
+        'PORT': env('DB_PORT', default='5432'),
+        'ATOMIC_REQUESTS': True,
+        'CONN_MAX_AGE': env.int('DB_CONN_MAX_AGE', default=60),
         'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+            'sslmode': env('DB_SSLMODE', default='prefer'),
+        }
     }
 }
 
-# Use in-memory cache if Redis not available
-if "redis" in env("REDIS_URL", default=""):
-    CELERY_BROKER_URL = env("REDIS_URL")
-else:
-    # Fallback to database broker for development
-    CELERY_BROKER_URL = "django://"
-    CELERY_TASK_ALWAYS_EAGER = True  # Execute tasks immediately
-CELERY_RESULT_BACKEND = "django-db"
+# Ensure pgvector extension is used for AI/ML features
+if 'postgresql' in DATABASES['default']['ENGINE']:
+    # pgvector will be available in all PostgreSQL connections
+    pass
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 # Channel Layers (WebSocket support)
@@ -177,9 +195,30 @@ CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS",
     default=[
         "http://localhost:3000",
-        "https://empindu.lovable.app",
+        "https://empindu.vercel.app",  # Assuming Vercel for production
     ],
 )
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "x-empindu-social-secret",
+]
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

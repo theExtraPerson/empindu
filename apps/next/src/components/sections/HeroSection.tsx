@@ -1,145 +1,74 @@
-'use client';
+"use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { Link } from "@/lib/router-compat";
-import { ArrowDown, ArrowRight } from "lucide-react";
-const heroCrafts = "/empinduu.jpg";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
+// Mobile-first, low-bandwidth hero preserving the Empindu theme.
 export function HeroSection() {
-  const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 500], [0, 150]);
-  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
-  const scale = useTransform(scrollY, [0, 500], [1, 1.1]);
-
   return (
-    <section className="relative min-h-screen flex flex-col overflow-hidden bg-bark-brown">
-      {/* Background Image with Parallax */}
-      <motion.div style={{ y, scale }} className="absolute inset-0">
-        <img
-          src={heroCrafts}
-          alt="Ugandan crafts collection"
-          className="w-full h-full object-fit opacity-60"
+    <section className="relative w-full bg-bark-brown text-warm-cream">
+      {/* Lightweight background: single image with lazy loading to save bandwidth */}
+      <div className="relative h-56 w-full overflow-hidden bg-bark-brown sm:h-72 md:h-96">
+        <Image
+          src="/empinduu.jpg"
+          alt="Handmade crafts"
+          className="object-cover opacity-75"
+          priority
+          fill
+          sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-bark-brown/40 via-transparent to-bark-brown/80" />
-      </motion.div>
-
-      {/* Main Content - Massive Typography */}
-      <div className="relative z-10 flex-1 flex flex-col justify-end px-4 sm:px-6 lg:px-8 pb-0">
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-          className="mb-4"
-        >
-          {/* Giant Headline */}
-          <h1 className="font-display text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[9vw] leading-[0.9] text-warm-cream">
-            THRIVE WITH
-          </h1>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-        >
-          <h1 className="font-display text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[9vw] leading-[0.9] text-secondary">
-            NATURE
-          </h1>
-        </motion.div>
+        <div className="absolute inset-0 bg-gradient-to-b from-bark-brown/70 to-bark-brown" />
       </div>
 
-      {/* Bottom Bar - Brutalist Info Strip */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
-        className="relative z-10 border-t-2 border-warm-cream/30 mt-8"
-      >
-        <div className="grid grid-cols-2 md:grid-cols-4 divide-x-2 divide-warm-cream/30">
-          {/* Stat 1 */}
-          <div className="p-4 md:p-6 lg:p-8 group hover:bg-warm-cream/5 transition-colors">
-            <p className="font-display text-[10px] tracking-widest text-warm-cream/50 mb-2">ARTISANS</p>
-            <p className="font-display text-3xl md:text-4xl text-warm-cream">430+</p>
-          </div>
+      <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
+        <p className="text-xs uppercase tracking-widest text-secondary/80">Authentic craft</p>
+        <h1 className="mt-2 font-display text-2xl sm:text-3xl md:text-4xl leading-tight">
+          Thrive with nature — preserve culture
+        </h1>
+        <p className="mt-3 text-sm text-warm-cream/90 max-w-xl">
+          Handmade gifts from Ugandan artisans, optimized for fast mobile browsing and simple checkout.
+        </p>
 
-          {/* Stat 2 */}
-          <div className="p-4 md:p-6 lg:p-8 group hover:bg-warm-cream/5 transition-colors">
-            <p className="font-display text-[10px] tracking-widest text-warm-cream/50 mb-2">PRODUCTS</p>
-            <p className="font-display text-3xl md:text-4xl text-warm-cream">200+</p>
-          </div>
-
-          {/* Tagline */}
-          <div className="p-4 md:p-6 lg:p-8 col-span-2 md:col-span-1 group hover:bg-warm-cream/5 transition-colors">
-            <p className="font-display text-[10px] tracking-widest text-warm-cream/50 mb-2">PEARL OF AFRICA</p>
-            <p className="font-body text-sm text-warm-cream/70 leading-relaxed max-w-xs">
-              Authentic Ugandan artistry. Centuries-old techniques.
-            </p>
-          </div>
-
-          {/* CTA */}
+        <div className="mt-5 flex gap-3">
           <Link
-            to="/marketplace"
-            className="p-4 md:p-6 lg:p-8 bg-secondary hover:bg-secondary/90 transition-all group flex flex-col justify-between border-l-2 border-secondary-foreground/20"
+            href="/marketplace"
+            className="inline-flex min-h-[44px] items-center justify-center rounded border border-warm-cream bg-secondary px-4 py-2 text-sm font-semibold uppercase tracking-wide text-secondary-foreground"
           >
-            <p className="font-display text-[10px] tracking-widest text-secondary-foreground/60 mb-2">EXPLORE</p>
-            <div className="flex items-center justify-between">
-              <span className="font-display text-lg md:text-xl text-secondary-foreground">SHOP NOW</span>
-              <ArrowRight className="h-5 w-5 text-secondary-foreground group-hover:translate-x-1 transition-transform" />
-            </div>
+            Shop
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
+
+          <Link
+            href="/gift-checkout"
+            className="inline-flex min-h-[44px] items-center justify-center rounded border border-warm-cream bg-transparent px-4 py-2 text-sm font-semibold uppercase tracking-wide text-warm-cream"
+          >
+            Send Gift
           </Link>
         </div>
-      </motion.div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        style={{ opacity }}
-        className="absolute right-4 md:right-8 bottom-48 md:bottom-56 flex flex-col items-center gap-2"
-      >
-        <span className="font-display text-[10px] tracking-widest text-warm-cream/50 [writing-mode:vertical-rl]">
-          SCROLL
-        </span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        >
-          <ArrowDown className="h-4 w-4 text-warm-cream/50" />
-        </motion.div>
-      </motion.div>
-
-      {/* Decorative Claymorphic Elements */}
-      <div className="absolute top-1/4 left-8 md:left-16 z-0">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.6, scale: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="w-16 h-16 md:w-24 md:h-24 rounded-organic bg-gradient-to-br from-secondary/40 to-clay-medium/30 shadow-clay animate-gentle-float"
-        />
-      </div>
-
-      <div className="absolute top-1/3 right-12 md:right-24 z-0">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.5, scale: 1 }}
-          transition={{ duration: 1, delay: 1.2 }}
-          className="w-12 h-12 md:w-20 md:h-20 rounded-organic-alt bg-gradient-to-tr from-clay-light/40 to-accent/20 shadow-clay animate-gentle-float"
-          style={{ animationDelay: "-3s" }}
-        />
-      </div>
-
-      {/* Top-right badge */}
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 1.4 }}
-        className="absolute top-24 right-4 md:right-8 z-10"
-      >
-        <div className="px-4 py-3 border-2 border-warm-cream/30 bg-bark-brown/80 backdrop-blur-sm">
-          <p className="font-display text-[10px] tracking-widest text-secondary">COMING SOON</p>
-          <p className="font-display text-sm text-warm-cream">EMPINDU FESTIVAL 2026</p>
+        <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="rounded p-3 bg-bark-brown/70 text-center">
+            <div className="text-lg font-display text-secondary">47+</div>
+            <div className="text-xs text-warm-cream/80">Artisans</div>
+          </div>
+          <div className="rounded p-3 bg-bark-brown/70 text-center">
+            <div className="text-lg font-display text-primary">312+</div>
+            <div className="text-xs text-warm-cream/80">Orders</div>
+          </div>
+          <div className="rounded p-3 bg-bark-brown/70 text-center">
+            <div className="text-lg font-display text-accent">8</div>
+            <div className="text-xs text-warm-cream/80">Countries</div>
+          </div>
+          <div className="rounded p-3 bg-bark-brown/70 text-center">
+            <div className="text-lg font-display text-secondary">UGX 2.8M</div>
+            <div className="text-xs text-warm-cream/80">Heritage Fund</div>
+          </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
+
 
 

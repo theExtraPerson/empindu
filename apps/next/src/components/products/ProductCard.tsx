@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Link } from '@/lib/router-compat';
 import { Badge } from '@/components/ui/badge';
 import { ProductList } from '@/hooks/useProducts';
@@ -19,13 +18,7 @@ export const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
   const cover = product.hero_image_url || product.images?.[0]?.image_url || heroFallback;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.05 }}
-      className="group h-full"
-    >
+    <div className="group h-full animate-weave-in opacity-0" style={{ animationDelay: `${index * 40}ms` }}>
       <Link
         to={`/marketplace/${product.slug}`}
         className="h-full flex flex-col border-2 border-foreground bg-background shadow-brutal hover:-translate-y-1 hover:shadow-brutal-lg transition-all duration-300"
@@ -35,6 +28,9 @@ export const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
             src={cover}
             alt={product.name}
             className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
+            loading={index < 3 ? 'eager' : 'lazy'}
+            decoding="async"
+            sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
           />
           <div className="absolute top-3 left-3 flex gap-2">
             <span className="px-3 py-1 bg-primary text-primary-foreground font-display text-[10px] tracking-[0.14em] border-2 border-foreground">
@@ -63,7 +59,7 @@ export const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
 
           <div className="flex items-center gap-2 text-xs text-muted-foreground font-body">
             <span className="font-semibold text-foreground">{product.artisan.full_name}</span>
-            <span>&bull;</span>
+            <span aria-hidden="true">-</span>
             <span>{product.artisan.community}, {product.artisan.district}</span>
           </div>
 
@@ -89,7 +85,7 @@ export const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 };
 

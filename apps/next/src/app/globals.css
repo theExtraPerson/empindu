@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Lekton:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
-
 :root {
   --primary: 35, 25%, 85%;
   --primary-foreground: 25, 30%, 15%;

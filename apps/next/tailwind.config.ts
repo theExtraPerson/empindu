@@ -89,8 +89,8 @@ const config: Config = {
       },
 
       fontFamily: {
-        display: ["Lekton", "monospace"],
-        body: ["DM Sans", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Lekton", "monospace"],
+        body: ["var(--font-body)", "DM Sans", "system-ui", "sans-serif"],
       },
 
       backgroundImage: {

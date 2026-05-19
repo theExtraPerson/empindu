@@ -177,7 +177,7 @@ export function Header() {
                     </DropdownMenuItem>
                   )}
                   {role === 'admin' && (
-                    <DropdownMenuItem onClick={() => navigate('/admin')} className="rounded-none font-display text-xs tracking-wider">
+                    <DropdownMenuItem onClick={() => navigate('/admin/users')} className="rounded-none font-display text-xs tracking-wider">
                       <Shield className="w-4 h-4 mr-2" />
                       ADMIN
                     </DropdownMenuItem>

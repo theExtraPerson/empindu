@@ -1,6 +1,6 @@
 import { HeroSection } from '@/components/sections/HeroSection';
 import { FeaturedArtisans } from '@/components/sections/FeaturedArtisans';
-import { Testimonials } from '@/components/sections/Testimonials';
+import { LazyTestimonials } from '@/components/sections/LazyTestimonials';
 
 export default function Page() {
   return (
@@ -22,7 +22,7 @@ export default function Page() {
         </div>
       </section>
       <FeaturedArtisans />
-      <Testimonials />
+      <LazyTestimonials />
     </>
   );
 }

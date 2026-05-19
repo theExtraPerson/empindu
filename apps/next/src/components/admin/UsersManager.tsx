@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Search, UserCheck, UserX, Shield, ShoppingBag, Palette } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Loader2, Search, UserCheck, UserX, Shield, ShoppingBag, Palette, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -17,23 +18,42 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Database } from '@/integrations/supabase/types';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
-type AppRole = Database['public']['Enums']['app_role'];
+type AppRole = 'admin' | 'artisan' | 'buyer';
 
 interface UserWithRole {
   id: string;
   email: string;
   full_name: string | null;
   role: AppRole;
-  is_verified: boolean | null;
-  created_at: string;
+  is_verified: boolean;
+  date_joined: string;
+  location: string | null;
+  phone: string | null;
 }
 
+const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+
 export const UsersManager = () => {
+  const { role, session } = useAuth();
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    email: '',
+    password: '',
+    full_name: '',
+  });
   const [roleChangeDialog, setRoleChangeDialog] = useState<{
     open: boolean;
     userId: string;
@@ -45,35 +65,24 @@ export const UsersManager = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      // Get all profiles
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('user_id, full_name, is_verified, created_at');
+      if (!session?.accessToken) {
+        throw new Error('Admin authentication required.');
+      }
 
-      if (profilesError) throw profilesError;
-
-      // Get all user roles
-      const { data: roles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('user_id, role');
-
-      if (rolesError) throw rolesError;
-
-      // Get auth users for emails (we need to use profiles as proxy since we can't query auth.users directly from client)
-      // We'll display user_id as identifier if email not available
-      const usersWithRoles: UserWithRole[] = (profiles || []).map(profile => {
-        const userRole = roles?.find(r => r.user_id === profile.user_id);
-        return {
-          id: profile.user_id,
-          email: profile.user_id, // We'll show user_id since we can't get email from client
-          full_name: profile.full_name,
-          role: (userRole?.role as AppRole) || 'buyer',
-          is_verified: profile.is_verified,
-          created_at: profile.created_at,
-        };
+      const response = await fetch(`${apiBase}/api/v1/auth/users`, {
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+          'Content-Type': 'application/json',
+        },
       });
 
-      setUsers(usersWithRoles);
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || 'Failed to fetch users');
+      }
+
+      const data: UserWithRole[] = await response.json();
+      setUsers(data);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast.error('Failed to load users');
@@ -83,8 +92,54 @@ export const UsersManager = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (role === 'admin') {
+      fetchUsers();
+    } else {
+      setLoading(false);
+    }
+  }, [role, session]);
+
+  const handleCreateAdmin = async () => {
+    if (!createForm.email || !createForm.password || !createForm.full_name) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    setCreateLoading(true);
+    try {
+      if (!session?.accessToken) {
+        throw new Error('Admin authentication required.');
+      }
+
+      const response = await fetch(`${apiBase}/api/v1/auth/admin/create`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: createForm.email,
+          password: createForm.password,
+          full_name: createForm.full_name,
+        }),
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || 'Failed to create admin account');
+      }
+
+      toast.success(`Admin account created for ${createForm.email}`);
+      setCreateForm({ email: '', password: '', full_name: '' });
+      setCreateDialogOpen(false);
+      fetchUsers();
+    } catch (error) {
+      console.error('Error creating admin:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to create admin account');
+    } finally {
+      setCreateLoading(false);
+    }
+  };
 
   const handleRoleChange = (userId: string, currentRole: AppRole, newRole: AppRole, userName: string) => {
     if (currentRole === newRole) return;
@@ -94,47 +149,36 @@ export const UsersManager = () => {
   const confirmRoleChange = async () => {
     if (!roleChangeDialog) return;
 
-    const { userId, newRole } = roleChangeDialog;
-
-    try {
-      // Delete existing role
-      const { error: deleteError } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', userId);
-
-      if (deleteError) throw deleteError;
-
-      // Insert new role
-      const { error: insertError } = await supabase
-        .from('user_roles')
-        .insert({ user_id: userId, role: newRole });
-
-      if (insertError) throw insertError;
-
-      toast.success(`Role updated to ${newRole}`);
-      await fetchUsers();
-    } catch (error) {
-      console.error('Error updating role:', error);
-      toast.error('Failed to update role');
-    } finally {
-      setRoleChangeDialog(null);
-    }
+    toast.error('Role updates are not implemented in this backend route yet.');
+    setRoleChangeDialog(null);
   };
 
-  const filteredUsers = users.filter(user => 
-    user.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.id.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const getRoleBadge = (role: AppRole) => {
     switch (role) {
       case 'admin':
-        return <Badge className="bg-red-500/10 text-red-600 border-red-200"><Shield className="h-3 w-3 mr-1" />Admin</Badge>;
+        return (
+          <Badge className="bg-red-500/10 text-red-600 border-red-200">
+            <Shield className="h-3 w-3 mr-1" />Admin
+          </Badge>
+        );
       case 'artisan':
-        return <Badge className="bg-amber-500/10 text-amber-600 border-amber-200"><Palette className="h-3 w-3 mr-1" />Artisan</Badge>;
+        return (
+          <Badge className="bg-amber-500/10 text-amber-600 border-amber-200">
+            <Palette className="h-3 w-3 mr-1" />Artisan
+          </Badge>
+        );
       case 'buyer':
-        return <Badge className="bg-blue-500/10 text-blue-600 border-blue-200"><ShoppingBag className="h-3 w-3 mr-1" />Buyer</Badge>;
+        return (
+          <Badge className="bg-blue-500/10 text-blue-600 border-blue-200">
+            <ShoppingBag className="h-3 w-3 mr-1" />Buyer
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{role}</Badge>;
     }
@@ -142,10 +186,18 @@ export const UsersManager = () => {
 
   const roleStats = {
     total: users.length,
-    admins: users.filter(u => u.role === 'admin').length,
-    artisans: users.filter(u => u.role === 'artisan').length,
-    buyers: users.filter(u => u.role === 'buyer').length,
+    admins: users.filter((u) => u.role === 'admin').length,
+    artisans: users.filter((u) => u.role === 'artisan').length,
+    buyers: users.filter((u) => u.role === 'buyer').length,
   };
+
+  if (role !== 'admin') {
+    return (
+      <div className="min-h-[320px] rounded-3xl border border-muted-foreground/10 bg-muted-foreground/5 p-8 text-center text-sm text-muted-foreground">
+        Admin access required to view user data.
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -157,7 +209,6 @@ export const UsersManager = () => {
 
   return (
     <div className="space-y-6">
-      {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
@@ -185,15 +236,22 @@ export const UsersManager = () => {
         </Card>
       </div>
 
-      {/* Users Table */}
       <Card>
         <CardHeader>
-          <CardTitle>User Management</CardTitle>
-          <CardDescription>View and manage user roles</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>User Directory</CardTitle>
+              <CardDescription>Secure admin-only list of registered users from the backend.</CardDescription>
+            </div>
+            <Button onClick={() => setCreateDialogOpen(true)} size="sm" className="gap-2">
+              <Plus className="h-4 w-4" />
+              Create Admin
+            </Button>
+          </div>
           <div className="relative mt-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name..."
+              placeholder="Search by name or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -205,9 +263,9 @@ export const UsersManager = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
                 <TableHead>Verified</TableHead>
-                <TableHead>Current Role</TableHead>
-                <TableHead>Change Role</TableHead>
                 <TableHead>Joined</TableHead>
               </TableRow>
             </TableHeader>
@@ -224,9 +282,11 @@ export const UsersManager = () => {
                     <TableCell>
                       <div>
                         <p className="font-medium">{user.full_name || 'No name'}</p>
-                        <p className="text-xs text-muted-foreground truncate max-w-[200px]">{user.id}</p>
+                        <p className="text-xs text-muted-foreground truncate max-w-[200px]">{user.email}</p>
                       </div>
                     </TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{getRoleBadge(user.role)}</TableCell>
                     <TableCell>
                       {user.is_verified ? (
                         <UserCheck className="h-5 w-5 text-green-500" />
@@ -234,26 +294,8 @@ export const UsersManager = () => {
                         <UserX className="h-5 w-5 text-muted-foreground" />
                       )}
                     </TableCell>
-                    <TableCell>{getRoleBadge(user.role)}</TableCell>
-                    <TableCell>
-                      <Select
-                        value={user.role}
-                        onValueChange={(value: AppRole) => 
-                          handleRoleChange(user.id, user.role, value, user.full_name || 'User')
-                        }
-                      >
-                        <SelectTrigger className="w-32">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="buyer">Buyer</SelectItem>
-                          <SelectItem value="artisan">Artisan</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {new Date(user.created_at).toLocaleDateString()}
+                      {new Date(user.date_joined).toLocaleDateString()}
                     </TableCell>
                   </TableRow>
                 ))
@@ -263,7 +305,6 @@ export const UsersManager = () => {
         </CardContent>
       </Card>
 
-      {/* Role Change Confirmation Dialog */}
       <AlertDialog open={roleChangeDialog?.open} onOpenChange={(open) => !open && setRoleChangeDialog(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -281,12 +322,65 @@ export const UsersManager = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmRoleChange}>
-              Confirm Change
-            </AlertDialogAction>
+            <AlertDialogAction onClick={confirmRoleChange}>Confirm Change</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create Admin Account</DialogTitle>
+            <DialogDescription>
+              Create a new admin user with full access to manage the platform.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">Full Name</label>
+              <Input
+                placeholder="Admin Full Name"
+                value={createForm.full_name}
+                onChange={(e) => setCreateForm({ ...createForm, full_name: e.target.value })}
+                disabled={createLoading}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Email</label>
+              <Input
+                placeholder="admin@example.com"
+                type="email"
+                value={createForm.email}
+                onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
+                disabled={createLoading}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Password</label>
+              <Input
+                placeholder="Secure password (min 8 chars, mixed case, numbers, symbols)"
+                type="password"
+                value={createForm.password}
+                onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
+                disabled={createLoading}
+              />
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-800">
+              ⚠️ This account will have full admin privileges. Share credentials securely.
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateDialogOpen(false)} disabled={createLoading}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreateAdmin} disabled={createLoading} className="gap-2">
+              {createLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              Create Account
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
+

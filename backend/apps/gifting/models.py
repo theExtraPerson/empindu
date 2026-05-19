@@ -42,7 +42,13 @@ class GiftOrder(models.Model):
 
     customer_name = models.CharField(max_length=200)
     customer_email = models.EmailField()
+    contact_phone = models.CharField(max_length=40, blank=True)
     company = models.CharField(max_length=200, blank=True)
+    occasion = models.CharField(max_length=100, blank=True)
+    gift_message = models.TextField(blank=True)
+    branding_notes = models.TextField(blank=True)
+    delivery_date = models.DateField(null=True, blank=True)
+    recipient_count = models.PositiveIntegerField(default=1)
     total_items = models.PositiveIntegerField(default=0)
     total_amount_ugx = models.DecimalField(max_digits=14, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="draft")
@@ -71,6 +77,7 @@ class GiftOrderItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     unit_price_ugx = models.DecimalField(max_digits=12, decimal_places=2)
     line_total_ugx = models.DecimalField(max_digits=12, decimal_places=2)
+    personalization = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -78,3 +85,25 @@ class GiftOrderItem(models.Model):
 
     def __str__(self):
         return f"Gift item #{self.id} for order #{self.gift_order_id}"
+
+
+class GiftOrderRecipient(models.Model):
+    gift_order = models.ForeignKey(
+        GiftOrder,
+        on_delete=models.CASCADE,
+        related_name="recipients",
+    )
+    name = models.CharField(max_length=200)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=40, blank=True)
+    address = models.TextField(blank=True)
+    city = models.CharField(max_length=120, blank=True)
+    country = models.CharField(max_length=80, blank=True)
+    personal_message = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["id"]
+
+    def __str__(self):
+        return f"{self.name} for gift order #{self.gift_order_id}"

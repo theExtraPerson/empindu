@@ -34,8 +34,8 @@ from .gifting import router as gifting_router
 from .payments import router as payments_router
 
 api.add_router("/auth/", auth_router, auth=None)
-api.add_router("/artisans/", artisans_router)
-api.add_router("/products/", products_router)
-api.add_router("/orders/", orders_router, auth=JWTBearer())
-api.add_router("/gifting/", gifting_router)
-api.add_router("/payments/", payments_router, auth=JWTBearer())
+api.add_router("/artisans/", artisans_router, auth=None)  # Public
+api.add_router("/products/", products_router, auth=None)  # Public
+api.add_router("/orders/", orders_router)  # Protected by global auth
+api.add_router("/gifting/", gifting_router, auth=None)  # Public for browsing
+api.add_router("/payments/", payments_router)  # Protected by global auth
