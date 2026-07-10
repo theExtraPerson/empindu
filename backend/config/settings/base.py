@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Third party
+    "rest_framework",
     "ninja",
     "allauth",
     "corsheaders",
@@ -94,6 +95,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "apps.artisans.middleware.UnfoldContextFixMiddleware",
+    "api.v1.throttles.RequestSizeLimitMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -182,20 +184,32 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files (Cloudinary)
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": env("CLOUDINARY_CLOUD_NAME"),
-    "API_KEY": env("CLOUDINARY_API_KEY"),
-    "API_SECRET": env("CLOUDINARY_API_SECRET"),
+    "CLOUD_NAME": env("CLOUDINARY_CLOUD_NAME", default=""),
+    "API_KEY": env("CLOUDINARY_API_KEY", default=""),
+    "API_SECRET": env("CLOUDINARY_API_SECRET", default=""),
+    "SECURE_URL": True,
+    "STATICFILES_MANIFEST_ROOT": str(BASE_DIR / "staticfiles"),
 }
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# Cloudinary delivery defaults for Empindu content
+CLOUDINARY_DEFAULT_TRANSFORMATIONS = {
+    "profile": {"quality": "auto", "fetch_format": "auto", "crop": "fill", "gravity": "face"},
+    "product": {"quality": "auto", "fetch_format": "auto", "crop": "fill", "gravity": "auto"},
+    "story": {"quality": "auto", "fetch_format": "auto", "crop": "limit"},
+}
 
 # CORS
 CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS",
     default=[
         "http://localhost:3000",
-        "https://empindu.vercel.app",  # Assuming Vercel for production
+        "https://empindu.vercel.app",
+          
+          # Assuming Vercel for production
+          # use app.empindu.com in production
     ],
 )
 CORS_ALLOW_CREDENTIALS = True
@@ -347,6 +361,25 @@ UNFOLD = {
             },
         ],
     },
+}
+
+# ============================================================================
+# REST FRAMEWORK CONFIGURATION
+# ============================================================================
+
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': [
+        'api.v1.throttles.AuthThrottle',
+        'api.v1.throttles.SearchThrottle',
+        'api.v1.throttles.CheckoutThrottle',
+        'api.v1.throttles.CustomThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'auth': '50/minute',
+        'search': '100/minute',
+        'checkout': '30/minute',
+        'global': '1000/hour',
+    }
 }
 
 

@@ -1,16 +1,20 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { getProduct, Product } from '@/lib/api';
-import { Heart, Share2, Truck, Gift, ChevronRight, Star } from 'lucide-react';
+import { getProduct, type Product as ApiProduct } from '@/lib/api';
+import { Heart, Share2, Truck, Gift, ChevronRight, Star, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useCartStore } from '@/stores/cartStore';
+import type { Product as CartProduct } from '@/hooks/useProducts';
 
 export default function Page() {
   const params = useParams();
+  const router = useRouter();
   const slug = params?.slug as string;
-  const [product, setProduct] = useState<Product | null>(null);
+  const { addItem } = useCartStore();
+  const [product, setProduct] = useState<ApiProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -71,6 +75,26 @@ export default function Page() {
 
   const mainImage = product.photos[mainImageIdx]?.url || '';
   const totalPrice = product.price_ugx * quantity;
+
+  const handleAddToCartAndCheckout = () => {
+    const cartProduct: CartProduct = {
+      ...product,
+      price: product.price_ugx,
+      stock_quantity: product.stock,
+      is_available: product.stock > 0,
+      description: product.story,
+      category: product.provenance?.craft_tradition || product.artisan.craft_tradition || 'Heritage Craft',
+      hero_image_url: product.photos.find((photo) => photo.is_hero)?.url || product.photos[0]?.url || null,
+      images: product.photos.map((photo, index) => ({
+        image_url: photo.url,
+        is_primary: photo.is_hero || index === 0,
+        display_order: index,
+      })),
+    };
+
+    addItem(cartProduct, quantity);
+    router.push('/checkout');
+  };
 
   return (
     <section className="bg-background text-foreground">
@@ -147,7 +171,6 @@ export default function Page() {
 
             {/* Product Info & Purchase */}
             <div className="space-y-6">
-              {/* Price & Header */}
               <div className="space-y-2">
                 <p className="text-sm text-secondary font-display tracking-widest uppercase">
                   {product.artisan.community}, {product.artisan.district}
@@ -156,7 +179,20 @@ export default function Page() {
                   {product.name}
                 </h1>
 
-                {/* Price Display */}
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <span className="border-2 border-foreground bg-background px-3 py-1 font-display text-[11px] uppercase tracking-[0.22em] text-foreground">
+                    {product.artisan.craft_tradition || 'Craft Story'}
+                  </span>
+                  {product.artisan.is_certified ? (
+                    <span className="border-2 border-foreground bg-secondary px-3 py-1 font-display text-[11px] uppercase tracking-[0.22em] text-secondary-foreground">
+                      Certified maker
+                    </span>
+                  ) : null}
+                  <span className="border-2 border-foreground bg-muted px-3 py-1 font-display text-[11px] uppercase tracking-[0.22em] text-foreground">
+                    {product.days_to_make} days to make
+                  </span>
+                </div>
+
                 <div className="border-2 border-foreground bg-muted p-4 space-y-2">
                   <div className="flex items-baseline gap-4">
                     <p className="font-display text-4xl text-secondary font-bold">
@@ -300,9 +336,8 @@ export default function Page() {
           {/* Story Section */}
           <div className="mt-16 border-t-2 border-foreground pt-12 space-y-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-              {/* Main Story */}
               <div className="lg:col-span-2 space-y-6">
-                <div>
+                <div className="border-2 border-foreground bg-card p-6">
                   <h2 className="font-display text-3xl text-foreground mb-4 tracking-tight">
                     The Story Behind This Piece
                   </h2>
@@ -311,65 +346,114 @@ export default function Page() {
                   </p>
                 </div>
 
-                {/* Provenance Block */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="border-2 border-foreground bg-background p-4 space-y-2">
+                    <p className="text-[11px] font-display uppercase tracking-[0.22em] text-muted-foreground">Material</p>
+                    <p className="font-body text-foreground">{product.material || 'Crafted from natural materials'}</p>
+                  </div>
+                  <div className="border-2 border-foreground bg-background p-4 space-y-2">
+                    <p className="text-[11px] font-display uppercase tracking-[0.22em] text-muted-foreground">Technique</p>
+                    <p className="font-body text-foreground">{product.technique || 'Traditional handcrafting'}</p>
+                  </div>
+                  <div className="border-2 border-foreground bg-background p-4 space-y-2">
+                    <p className="text-[11px] font-display uppercase tracking-[0.22em] text-muted-foreground">Time to make</p>
+                    <p className="font-body text-foreground">{product.days_to_make} days</p>
+                  </div>
+                  <div className="border-2 border-foreground bg-background p-4 space-y-2">
+                    <p className="text-[11px] font-display uppercase tracking-[0.22em] text-muted-foreground">Craft tradition</p>
+                    <p className="font-body text-foreground">{product.provenance?.craft_tradition || product.artisan.craft_tradition || 'Heritage craft'}</p>
+                  </div>
+                </div>
+
                 {product.provenance && (
                   <div className="border-2 border-foreground bg-card p-6 space-y-4">
                     <h3 className="font-display text-2xl text-secondary tracking-wide">
                       Provenance Record
                     </h3>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {product.material && (
-                        <div className="border-l-2 border-secondary pl-4">
-                          <p className="text-xs font-display tracking-widest uppercase text-muted-foreground">
-                            Material
-                          </p>
-                          <p className="font-body text-foreground mt-1">{product.material}</p>
-                        </div>
-                      )}
-
-                      {product.technique && (
-                        <div className="border-l-2 border-secondary pl-4">
-                          <p className="text-xs font-display tracking-widest uppercase text-muted-foreground">
-                            Technique
-                          </p>
-                          <p className="font-body text-foreground mt-1">{product.technique}</p>
-                        </div>
-                      )}
-
-                      {product.days_to_make && (
-                        <div className="border-l-2 border-secondary pl-4">
-                          <p className="text-xs font-display tracking-widest uppercase text-muted-foreground">
-                            Time to Make
-                          </p>
-                          <p className="font-body text-foreground mt-1">{product.days_to_make} days</p>
-                        </div>
-                      )}
-
-                      {product.provenance?.craft_tradition && (
-                        <div className="border-l-2 border-secondary pl-4">
-                          <p className="text-xs font-display tracking-widest uppercase text-muted-foreground">
-                            Craft Tradition
-                          </p>
-                          <p className="font-body text-foreground mt-1">{product.provenance.craft_tradition}</p>
-                        </div>
-                      )}
-
-                      {product.provenance?.gi_status && (
-                        <div className="border-l-2 border-secondary pl-4">
-                          <p className="text-xs font-display tracking-widest uppercase text-muted-foreground">
-                            Geographic Indication
-                          </p>
-                          <p className="font-body text-foreground mt-1">{product.provenance.gi_status}</p>
-                        </div>
-                      )}
+                    <div className="flex flex-wrap gap-2">
+                      {product.provenance?.gi_status ? (
+                        <span className="border-2 border-foreground bg-background px-3 py-2 font-display text-[11px] uppercase tracking-[0.22em] text-foreground">
+                          GI: {product.provenance.gi_status}
+                        </span>
+                      ) : null}
+                      {product.provenance?.community ? (
+                        <span className="border-2 border-foreground bg-background px-3 py-2 font-display text-[11px] uppercase tracking-[0.22em] text-foreground">
+                          {product.provenance.community}
+                        </span>
+                      ) : null}
+                      {product.provenance?.district ? (
+                        <span className="border-2 border-foreground bg-background px-3 py-2 font-display text-[11px] uppercase tracking-[0.22em] text-foreground">
+                          {product.provenance.district}
+                        </span>
+                      ) : null}
                     </div>
+                    <p className="text-sm text-muted-foreground font-body leading-7">
+                      {product.provenance?.technique_detail || product.technique || 'Crafted with care and cultural continuity.'}
+                    </p>
                   </div>
                 )}
               </div>
 
-              {/* Shipping Info */}
               <div className="space-y-4">
+                <div className="border-2 border-foreground bg-card p-6 space-y-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-display text-lg text-foreground tracking-widest uppercase">
+                      Why buyers trust this piece
+                    </h3>
+                    <span className="rounded-full border border-foreground/10 bg-secondary/10 px-2 py-1 text-[10px] font-display uppercase tracking-[0.2em] text-secondary">
+                      community proof
+                    </span>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-xl border border-foreground/10 bg-background p-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Verified maker</p>
+                      <p className="mt-1 font-semibold text-foreground">{product.artisan.is_certified ? 'Certified' : 'Story-backed'}</p>
+                    </div>
+                    <div className="rounded-xl border border-foreground/10 bg-background p-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Gift ready</p>
+                      <p className="mt-1 font-semibold text-foreground">Personal notes available</p>
+                    </div>
+                    <div className="rounded-xl border border-foreground/10 bg-background p-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Heritage impact</p>
+                      <p className="mt-1 font-semibold text-foreground">UGX {Math.round(product.heritage_fund_ugx).toLocaleString()} supports craft</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    {[
+                      {
+                        name: 'Amina',
+                        location: 'London, UK',
+                        quote: 'It arrived beautifully wrapped and felt deeply personal. The story card made it even more special.',
+                      },
+                      {
+                        name: 'Joseph',
+                        location: 'Kampala, Uganda',
+                        quote: 'The provenance made the purchase feel honest and meaningful. I bought it as a gift for my mother.',
+                      },
+                      {
+                        name: 'Nadia',
+                        location: 'Toronto, Canada',
+                        quote: 'You can feel the care in every detail. This is what gifting should feel like.',
+                      },
+                    ].map((review) => (
+                      <div key={review.name} className="rounded-xl border border-foreground/10 bg-background p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="font-semibold text-foreground">{review.name}</p>
+                          <div className="flex gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} className="h-3.5 w-3.5 fill-current text-secondary" />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="mt-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">{review.location}</p>
+                        <p className="mt-2 text-sm leading-6 text-muted-foreground">“{review.quote}”</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="border-2 border-foreground bg-card p-6 space-y-4">
                   <h3 className="font-display text-lg text-foreground tracking-widest uppercase">
                     Shipping
@@ -396,29 +480,26 @@ export default function Page() {
                     Calculate shipping
                   </button>
                 </div>
-
-                {/* Reviews Summary */}
-                <div className="border-2 border-foreground bg-card p-6 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 text-secondary fill-current" />
-                      ))}
-                    </div>
-                    <span className="text-sm text-muted-foreground">(12 reviews)</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    "Beautiful craftsmanship. Arrived safely and exceeded expectations."
-                  </p>
-                  <button className="w-full border-2 border-foreground bg-background px-3 py-2 text-xs font-display tracking-widest uppercase hover:bg-muted transition-all">
-                    See all reviews
-                  </button>
-                </div>
               </div>
             </div>
           </div>
 
-          {/* Related Products */}
+          <div className="mt-12 border-2 border-foreground bg-secondary/10 p-6 sm:p-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-[11px] font-display uppercase tracking-[0.22em] text-muted-foreground">Ready to claim it?</p>
+                <h2 className="font-display text-3xl text-foreground tracking-tight">Bring this piece home</h2>
+              </div>
+              <button
+                onClick={handleAddToCartAndCheckout}
+                className="inline-flex min-h-[52px] items-center justify-center gap-2 border-2 border-foreground bg-secondary px-6 py-3 font-display text-sm uppercase tracking-[0.24em] text-secondary-foreground transition-all hover:bg-secondary/90"
+              >
+                <ShoppingBag className="h-4 w-4" />
+                Add to Cart & Checkout
+              </button>
+            </div>
+          </div>
+
           <div className="mt-16 border-t-2 border-foreground pt-12">
             <h2 className="font-display text-3xl text-foreground mb-8 tracking-tight">
               More from {product.artisan.full_name}

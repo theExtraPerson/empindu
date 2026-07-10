@@ -46,6 +46,10 @@ class ArtisanAdmin(ModelAdmin):
         ),
         ("Location", {"fields": ["community", "district"]}),
         (
+            "Media",
+            {"fields": ["profile_photo", "cover_photo"]},
+        ),
+        (
             "Published Bio",
             {"fields": ["bio", "bio_luganda", "bio_swahili"]},
         ),

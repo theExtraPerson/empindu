@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from django.db import transaction
 from django.utils.dateparse import parse_date
+from types import SimpleNamespace
 
 from apps.gifting.models import GiftDetails
 from apps.heritage.models import HeritageFundEntry
@@ -78,6 +79,54 @@ def create_order_from_payload(payload, buyer=None) -> Order:
 
     queue_order_notification.delay(order.id, "order.created")
     return order
+
+
+class PayloadProxy:
+    def __init__(self, data):
+        self._data = data
+
+    def __getattr__(self, name):
+        return self._data.get(name)
+
+    def dict(self):
+        return self._data
+
+
+class ProxyWithDict:
+    """Wraps a dict-like or object to provide a .dict() method expected by payloads."""
+    def __init__(self, data):
+        self._data = data
+
+    def dict(self):
+        if hasattr(self._data, 'dict') and callable(getattr(self._data, 'dict')):
+            return self._data.dict()
+        if isinstance(self._data, dict):
+            return self._data
+        try:
+            return vars(self._data)
+        except TypeError:
+            return {}
+
+
+@transaction.atomic
+def create_orders_from_cart_payload(payload, buyer=None):
+    orders = []
+    for item in payload.items:
+        item_gift_details = item.gift_details if item.gift_details is not None else payload.gift_details
+        item_payload = SimpleNamespace(
+            product_id=item.product_id,
+            quantity=item.quantity,
+            payment_method=payload.payment_method,
+            shipping_name=payload.shipping_name,
+            buyer_email=payload.buyer_email,
+            buyer_phone=payload.buyer_phone,
+            shipping_country=payload.shipping_country,
+            shipping_address=ProxyWithDict(payload.shipping_address),
+            gift_details=ProxyWithDict(item_gift_details) if item_gift_details is not None else None,
+        )
+        order = create_order_from_payload(item_payload, buyer=buyer)
+        orders.append(order)
+    return orders
 
 
 @transaction.atomic

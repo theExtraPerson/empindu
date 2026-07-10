@@ -217,6 +217,32 @@ export interface GiftDetailsInput {
   scheduled_delivery_date?: string;
 }
 
+export interface CartOrderItemInput {
+  product_id: number;
+  quantity: number;
+  gift_details?: GiftDetailsInput | null;
+}
+
+export interface CartCheckoutIn {
+  items: CartOrderItemInput[];
+  payment_method: 'stripe' | 'momo' | 'airtel' | 'ton' | string;
+  shipping_name: string;
+  buyer_email: string;
+  buyer_phone: string;
+  shipping_country: string;
+  shipping_address: ShippingAddressInput;
+  gift_details?: GiftDetailsInput | null;
+}
+
+export interface CartCheckoutOut {
+  order_ids: number[];
+  order_count: number;
+  total_amount_ugx: number;
+  status: string;
+  payment_url?: string | null;
+  orders: Order[];
+}
+
 export interface OrderCreateInput {
   product_id: number;
   quantity: number;
@@ -386,7 +412,8 @@ export async function getArtisans(params?: {
 }
 
 export async function getArtisan(slug: string, accessToken?: string): Promise<Artisan> {
-  return apiFetch<Artisan>(`/artisans/${slug}/`, undefined, accessToken);
+  const encodedSlug = encodeURIComponent(slug);
+  return apiFetch<Artisan>(`/artisans/${encodedSlug}`, undefined, accessToken);
 }
 
 export async function getCraftTraditions(accessToken?: string): Promise<CraftTradition[]> {
@@ -424,6 +451,19 @@ export async function createOrder(order: OrderCreateInput, accessToken?: string)
     method: 'POST',
     body: JSON.stringify(order),
   }, accessToken);
+}
+
+export async function checkoutCart(order: CartCheckoutIn, accessToken?: string): Promise<CartCheckoutOut> {
+  return apiFetch<CartCheckoutOut>('/orders/checkout', {
+    method: 'POST',
+    body: JSON.stringify(order),
+  }, accessToken);
+}
+
+export async function confirmOrder(orderId: number, buyerEmail: string): Promise<Order> {
+  const qs = new URLSearchParams();
+  if (buyerEmail) qs.append('buyer_email', buyerEmail);
+  return apiFetch<Order>(`/orders/${orderId}/confirm?${qs.toString()}`);
 }
 
 export async function createGiftOrder(order: GiftOrderCreateInput, accessToken?: string): Promise<GiftOrder> {

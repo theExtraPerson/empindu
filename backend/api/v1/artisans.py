@@ -7,6 +7,7 @@ from ninja import File, Router, Schema
 from ninja.files import UploadedFile
 from typing import List, Optional
 from decimal import Decimal
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.text import slugify
@@ -21,6 +22,28 @@ from ninja_jwt.authentication import JWTAuth
 router = Router(tags=["Artisans"])
 
 
+def _ensure_missing_artisan_slugs():
+    for artisan in Artisan.objects.filter(Q(slug__isnull=True) | Q(slug="")):
+        artisan.save()
+
+
+def _get_public_artisan(slug: str):
+    _ensure_missing_artisan_slugs()
+    slug = (slug or "").strip()
+    if not slug:
+        return None
+
+    queryset = Artisan.objects.select_related("user", "craft_tradition").filter(is_active=True)
+    artisan = queryset.filter(slug__iexact=slug).first()
+    if artisan:
+        return artisan
+
+    if slug.isdigit():
+        return queryset.filter(pk=int(slug)).first()
+
+    return None
+
+
 # === Public Endpoints ===
 @router.get("/{slug}", response=ArtisanDetailOut, auth=None)
 def get_artisan(request, slug: str):
@@ -28,9 +51,9 @@ def get_artisan(request, slug: str):
     Get full artisan profile - story-first SSR page data
     Used by Next.js Server Components for artisan profile pages
     """
-    artisan = Artisan.objects.select_related(
-        "user", "craft_tradition"
-    ).get(slug=slug, is_active=True)
+    artisan = _get_public_artisan(slug)
+    if not artisan:
+        raise HttpError(404, "Artisan profile not found")
 
     return {
         "id": artisan.id,
@@ -39,7 +62,14 @@ def get_artisan(request, slug: str):
         "bio": artisan.bio,
         "community": artisan.community,
         "district": artisan.district,
-        "craft_tradition": artisan.craft_tradition,
+        "craft_tradition": {
+            "id": artisan.craft_tradition.id,
+            "name": artisan.craft_tradition.name,
+            "ethnic_group": artisan.craft_tradition.ethnic_group,
+            "region": artisan.craft_tradition.region,
+            "description": artisan.craft_tradition.description,
+            "gi_status": artisan.craft_tradition.gi_status,
+        },
         "profile_photo_url": artisan.profile_photo.url if artisan.profile_photo else None,
         "cover_photo_url": artisan.cover_photo.url if artisan.cover_photo else None,
         "years_experience": artisan.years_experience,
@@ -61,6 +91,7 @@ def list_artisans(
     List artisans with filters
     Supports discovery by craft tradition, region, certification status
     """
+    _ensure_missing_artisan_slugs()
     qs = Artisan.objects.filter(is_active=True).select_related("craft_tradition")
 
     if craft_type:
@@ -243,16 +274,6 @@ def _serialize_artisan_order(order: Order) -> dict:
         "dispatched_at": order.dispatched_at.isoformat() if order.dispatched_at else None,
         "delivered_at": order.delivered_at.isoformat() if order.delivered_at else None,
     }
-
-
-def _unique_product_slug(name: str) -> str:
-    base = slugify(name)[:130] or "artisan-product"
-    slug = base
-    counter = 1
-    while Product.objects.filter(slug=slug).exists():
-        counter += 1
-        slug = f"{base}-{counter}"
-    return slug
 
 
 def _price_usd(price_ugx: float) -> Decimal:
@@ -466,7 +487,6 @@ def create_my_artisan_product(request, data: ArtisanProductIn):
     product = Product.objects.create(
         artisan=artisan,
         craft_tradition=artisan.craft_tradition,
-        slug=_unique_product_slug(data.name),
         name=data.name,
         story=data.story,
         material=data.material,

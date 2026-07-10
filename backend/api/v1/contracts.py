@@ -112,6 +112,23 @@ class OrderCreateIn(Schema):
     gift_details: Optional[GiftDetailsIn] = None
 
 
+class CartOrderItemIn(Schema):
+    product_id: int
+    quantity: int = 1
+    gift_details: Optional[GiftDetailsIn] = None
+
+
+class CartCheckoutIn(Schema):
+    items: List[CartOrderItemIn]
+    payment_method: str
+    shipping_name: str
+    buyer_email: str
+    buyer_phone: str
+    shipping_country: str
+    shipping_address: ShippingAddressIn
+    gift_details: Optional[GiftDetailsIn] = None
+
+
 class OrderStatusUpdateIn(Schema):
     status: str
 
@@ -130,6 +147,25 @@ class PaymentIntentOut(Schema):
     checkout_url: Optional[str] = None
     client_secret: Optional[str] = None
     message: str
+
+
+class PayoutOut(Schema):
+    id: int
+    order_id: int
+    artisan_id: int
+    artisan_name: str
+    amount_ugx: float
+    provider: str
+    to_account: str
+    status: str
+    external_reference: str
+    created_at: str
+    processed_at: Optional[str] = None
+
+
+class PayoutUpdateIn(Schema):
+    status: str
+    external_reference: Optional[str] = None
 
 
 class OrderOut(Schema):
@@ -153,6 +189,19 @@ class OrderOut(Schema):
     payment_reference: Optional[str] = ""
     tracking_number: Optional[str] = ""
     created_at: str
+
+
+class CartCheckoutOrderOut(OrderOut):
+    pass
+
+
+class CartCheckoutOut(Schema):
+    order_ids: List[int]
+    order_count: int
+    total_amount_ugx: float
+    status: str
+    payment_url: Optional[str] = None
+    orders: List[CartCheckoutOrderOut]
 
 
 class ReturnRequestCreateIn(Schema):

@@ -106,6 +106,15 @@ class Order(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=['buyer']),
+            models.Index(fields=['artisan']),
+            models.Index(fields=['status']),
+            models.Index(fields=['payment_method']),
+            models.Index(fields=['-created_at']),
+            models.Index(fields=['product']),
+            models.Index(fields=['payout_status']),
+        ]
 
     def __str__(self):
         return f"Order #{self.id} - {self.product.name} by {self.artisan.full_name}"
@@ -152,6 +161,11 @@ class ReturnRequest(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=['order']),
+            models.Index(fields=['status']),
+            models.Index(fields=['-created_at']),
+        ]
 
     def __str__(self):
         return f"Return #{self.id} for order #{self.order_id}"

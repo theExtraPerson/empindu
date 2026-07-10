@@ -23,6 +23,8 @@ logger = logging.getLogger(__name__)
 @require_http_methods(["POST"])
 def telegram_webhook(request):
     secret = getattr(settings, "TELEGRAM_WEBHOOK_SECRET", "")
+    if not secret:
+        raise ImproperlyConfigured("TELEGRAM_WEBHOOK_SECRET must be set")
     if secret and request.headers.get("X-Telegram-Bot-Api-Secret-Token") != secret:
         return JsonResponse({"error": "invalid webhook secret"}, status=403)
 

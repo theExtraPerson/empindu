@@ -9,19 +9,17 @@ export function FeaturedArtisans() {
   const { artisans, loading } = useFeaturedArtisans(4);
 
   return (
-    <section className="py-16 md:py-24 bg-muted border-y-2 border-foreground">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 md:py-24 bg-muted border-y-2 border-foreground ">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl py-6">
         {/* Brutalist Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
           <div className="animate-weave-in opacity-0">
-            <span className="font-display text-xs tracking-[0.3em] text-muted-foreground mb-3 block">
-              [ MEET THE MAKERS ]
+            <span className="inline-block border-2 border-primary px-3 py-1 font-display text-xs tracking-[0.35em] uppercase text-secondary-foreground">
+              Meet the Makers
             </span>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-none">
-              FEATURED
-              <br />
-              <span className="text-primary">ARTISANS</span>
-            </h2>
+            <h1 className="mt-2 font-display text-2xl sm:text-3xl md:text-4xl leading-tight">
+            Featured <span className="text-primary">Artisans</span>
+        </h1>
           </div>
 
           <div className="animate-weave-in opacity-0 [animation-delay:100ms]">
@@ -70,11 +68,11 @@ export function FeaturedArtisans() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
             {artisans.map((artisan, index) => (
               <div
-                key={artisan.id}
+                key={artisan.slug}
                 className="group animate-weave-in opacity-0"
                 style={{ animationDelay: `${index * 60}ms` }}
               >
-                <Link to="/artisans">
+                <Link to={`/artisans/${artisan.slug}`}>
                   <div className="relative bg-background border-2 border-foreground shadow-brutal hover:shadow-brutal-lg transition-all duration-300 hover:-translate-y-2 hover:rotate-0">
                     {/* Verified Badge */}
                     {artisan.is_verified && (

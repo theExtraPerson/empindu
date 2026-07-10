@@ -13,6 +13,8 @@ from ninja.errors import HttpError
 from api.v1.contracts import (
     OrderCreateIn,
     OrderOut,
+    CartCheckoutIn,
+    CartCheckoutOut,
     OrderStatusUpdateIn,
     ReturnRequestCreateIn,
     ReturnRequestOut,
@@ -20,6 +22,7 @@ from api.v1.contracts import (
 from apps.orders.models import Order, ReturnRequest
 from apps.orders.services import (
     create_order_from_payload,
+    create_orders_from_cart_payload,
     create_return_request,
     transition_order,
 )
@@ -171,6 +174,21 @@ def create_order(request, payload: OrderCreateIn):
     return serialize_order(order)
 
 
+@router.post("/checkout", response=CartCheckoutOut, auth=None)
+def checkout_cart(request, payload: CartCheckoutIn):
+    buyer = request.auth if getattr(request, "auth", None) else None
+    orders = create_orders_from_cart_payload(payload, buyer=buyer)
+    total_amount = sum(float(order.price_ugx) for order in orders)
+    return {
+        "order_ids": [order.id for order in orders],
+        "order_count": len(orders),
+        "total_amount_ugx": total_amount,
+        "status": "pending_payment",
+        "payment_url": None,
+        "orders": [serialize_order(order) for order in orders],
+    }
+
+
 @router.get("/{order_id}", response=OrderOut)
 def get_order(request, order_id: int):
     """
@@ -185,6 +203,19 @@ def get_order(request, order_id: int):
         raise HttpError(403, "You don't have permission to view this order")
     
     return serialize_order(order)
+
+
+@router.get("/{order_id}/confirm", response=OrderOut, auth=None)
+def confirm_order(request, order_id: int, buyer_email: Optional[str] = None):
+    order = get_object_or_404(
+        Order.objects.select_related("product", "artisan__user"),
+        pk=order_id,
+    )
+
+    if buyer_email and order.buyer_email and order.buyer_email.strip().lower() == buyer_email.strip().lower():
+        return serialize_order(order)
+
+    raise HttpError(403, "Buyer email must match to view this order.")
 
 
 @router.patch("/{order_id}/status", response=OrderOut)

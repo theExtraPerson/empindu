@@ -53,7 +53,7 @@ export function Testimonials() {
 
   return (
     <section className="py-16 md:py-24 bg-warm-cream overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl py-6 px-4 sm:px-6 lg:px-8">
         {/* Brutalist Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -63,18 +63,16 @@ export function Testimonials() {
         >
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <span className="font-display text-xs tracking-[0.3em] text-bark-brown/60 mb-3 block">
-                [ TESTIMONIALS ]
-              </span>
-              <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-mudcloth-black tracking-tight leading-none">
-                VOICES OF
-                <br />
-                <span className="text-primary">COMMUNITY</span>
-              </h2>
+              <p className="inline-block border-2 border-primary px-3 py-1 font-display text-xs tracking-[0.35em] uppercase text-secondary-foreground">
+              Testimonials
+            </p>
+              <h1 className="mt-2 font-display text-2xl sm:text-3xl md:text-4xl leading-tight">
+              Voices of <span className="text-primary"> the Community</span> 
+            </h1> 
             </div>
             
             {/* Carousel Indicators */}
-            <div className="flex items-center gap-2">
+            <div className="flex border-radius-left-50 items-center gap-2">
               {testimonials.map((_, index) => (
                 <button
                   key={index}

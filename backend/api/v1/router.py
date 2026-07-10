@@ -27,6 +27,7 @@ api = NinjaAPI(
 )
 
 from .auth import router as auth_router
+from .admin_auth import router as admin_auth_router
 from .artisans import router as artisans_router
 from .products import router as products_router
 from .orders import router as orders_router
@@ -34,6 +35,7 @@ from .gifting import router as gifting_router
 from .payments import router as payments_router
 
 api.add_router("/auth/", auth_router, auth=None)
+api.add_router("/admin/auth/", admin_auth_router, auth=None)  # Admin OTP + 2FA
 api.add_router("/artisans/", artisans_router, auth=None)  # Public
 api.add_router("/products/", products_router, auth=None)  # Public
 api.add_router("/orders/", orders_router)  # Protected by global auth

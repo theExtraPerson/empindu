@@ -371,17 +371,10 @@ def create_listing_from_telegram(
     photo_name: str = "telegram-product.jpg",
 ) -> Product:
     artisan = Artisan.objects.select_related("craft_tradition", "user").get(telegram_chat_id=chat_id, is_active=True)
-    base_slug = slugify(name)[:120] or f"telegram-listing-{artisan.id}"
-    slug = base_slug
-    counter = 1
-    while Product.objects.filter(slug=slug).exists():
-        counter += 1
-        slug = f"{base_slug}-{counter}"
 
     product = Product.objects.create(
         artisan=artisan,
         craft_tradition=artisan.craft_tradition,
-        slug=slug,
         name=name,
         story=story,
         story_draft=story,

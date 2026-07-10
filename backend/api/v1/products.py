@@ -28,6 +28,13 @@ def get_product(request, slug: str):
         .get(slug=slug, status="active")
     )
 
+    provenance = None
+    if hasattr(product, "provenance"):
+        try:
+            provenance = product.provenance
+        except Exception:
+            provenance = None
+
     return {
         "id": product.id,
         "slug": product.slug,
@@ -54,7 +61,7 @@ def get_product(request, slug: str):
             "is_certified": product.artisan.is_certified,
             "years_experience": product.artisan.years_experience,
         },
-        "provenance": product.provenance,
+        "provenance": provenance,
         "photos": [
             {
                 "url": photo.image.url,
@@ -84,23 +91,21 @@ def list_products(
     """
     from django.core.paginator import Paginator
 
-    qs = Product.objects.filter(status="active").select_related(
-        "artisan__user", "artisan__craft_tradition"
-    )
+    queryset = Product.objects.select_related('artisan__user', 'craft_tradition').prefetch_related('photos')
 
     if craft_type:
-        qs = qs.filter(craft_tradition__name__icontains=craft_type)
+        queryset = queryset.filter(craft_tradition__name__icontains=craft_type)
     if region:
-        qs = qs.filter(artisan__district__icontains=region)
+        queryset = queryset.filter(artisan__district__icontains=region)
     if min_usd:
-        qs = qs.filter(price_usd__gte=min_usd)
+        queryset = queryset.filter(price_usd__gte=min_usd)
     if max_usd:
-        qs = qs.filter(price_usd__lte=max_usd)
+        queryset = queryset.filter(price_usd__lte=max_usd)
     if artisan_slug:
-        qs = qs.filter(artisan__slug=artisan_slug)
+        queryset = queryset.filter(artisan__slug=artisan_slug)
 
     # Pagination
-    paginator = Paginator(qs, page_size)
+    paginator = Paginator(queryset, page_size)
     page_obj = paginator.page(page)
 
     results = []

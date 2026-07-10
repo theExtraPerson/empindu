@@ -254,28 +254,44 @@ export default function ArtisanDashboardPage() {
 
 function Overview({ dashboard }: { dashboard: ArtisanDashboard }) {
   const stats = [
-    { label: 'Products', value: dashboard.stats.products, icon: Boxes },
+    { label: 'Active listings', value: dashboard.stats.active_products, icon: Boxes },
     { label: 'Open orders', value: dashboard.stats.open_orders, icon: Truck },
-    { label: 'Paid earnings', value: money(dashboard.stats.total_earnings_ugx), icon: Banknote },
+    { label: 'Gross sales', value: money(dashboard.stats.total_revenue_ugx), icon: Banknote },
     { label: 'Pending payout', value: money(dashboard.stats.pending_payout_ugx), icon: ReceiptText },
   ];
 
   return (
     <div className="grid gap-5">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <div key={stat.label} className="rounded-2xl border border-foreground/10 bg-card p-5 shadow-clay">
-              <Icon className="h-5 w-5 text-accent" />
-              <p className="mt-4 text-2xl font-bold">{stat.value}</p>
-              <p className="text-sm text-muted-foreground">{stat.label}</p>
-            </div>
-          );
-        })}
-      </div>
+      <section className="rounded-[2rem] border border-foreground/10 bg-card p-5 shadow-clay sm:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">Momentum snapshot</p>
+            <h2 className="mt-2 text-2xl font-bold">You’re building a stronger craft business every week.</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+              Keep your story fresh, stay responsive to buyers, and your next payout will feel more predictable.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-accent/20 bg-accent/10 px-4 py-3 text-sm">
+            <p className="font-semibold text-accent">Next payout preview</p>
+            <p className="mt-1 text-muted-foreground">{money(dashboard.stats.pending_payout_ugx)} ready for review</p>
+          </div>
+        </div>
 
-      <div className="grid gap-5 lg:grid-cols-2">
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <div key={stat.label} className="rounded-2xl border border-foreground/10 bg-muted/50 p-4">
+                <Icon className="h-5 w-5 text-accent" />
+                <p className="mt-4 text-2xl font-bold">{stat.value}</p>
+                <p className="text-sm text-muted-foreground">{stat.label}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <div className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
         <section className="rounded-[2rem] border border-foreground/10 bg-card p-5 shadow-clay">
           <h2 className="text-xl font-bold">Profile readiness</h2>
           <div className="mt-4 grid gap-3">
@@ -287,12 +303,23 @@ function Overview({ dashboard }: { dashboard: ArtisanDashboard }) {
         </section>
 
         <section className="rounded-[2rem] border border-foreground/10 bg-card p-5 shadow-clay">
-          <h2 className="text-xl font-bold">Recent orders</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-xl font-bold">Recent orders</h2>
+            <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-accent">
+              {dashboard.orders.length} active
+            </span>
+          </div>
           <div className="mt-4 grid gap-3">
             {dashboard.orders.slice(0, 4).map((order) => (
-              <div key={order.id} className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3 text-sm">
-                <span>{order.product_name}</span>
-                <span className="font-semibold">{order.status.replaceAll('_', ' ')}</span>
+              <div key={order.id} className="rounded-xl border border-foreground/10 bg-muted/50 px-4 py-3 text-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-semibold">{order.product_name}</span>
+                  <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{order.status.replaceAll('_', ' ')}</span>
+                </div>
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+                  <span>{order.shipping_country}</span>
+                  <span>{money(order.artisan_earnings_ugx)}</span>
+                </div>
               </div>
             ))}
             {dashboard.orders.length === 0 ? <p className="text-sm text-muted-foreground">Orders will appear here after checkout.</p> : null}

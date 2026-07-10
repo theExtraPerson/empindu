@@ -19,7 +19,7 @@ export default function Page() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="rounded-organic border-2 border-foreground bg-background p-6">
+          <div className="border-2 border-foreground bg-background p-6">
             <h2 className="font-display text-2xl text-secondary tracking-tight mb-4">Our values</h2>
             <ul className="space-y-3 text-muted-foreground font-body">
               <li>• Transparent artisan earnings</li>
@@ -29,12 +29,27 @@ export default function Page() {
             </ul>
           </div>
 
-          <div className="rounded-organic border-2 border-foreground bg-background p-6">
+          <div className="border-2 border-foreground bg-background p-6">
             <h2 className="font-display text-2xl text-secondary tracking-tight mb-4">What makes us different</h2>
             <p className="text-muted-foreground font-body leading-7">
               We treat every product listing as a cultural narrative, not just a SKU. That means clear provenance,
               visible maker profiles, and a checkout that reflects the value of craft.
             </p>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="border-2 border-foreground bg-background p-5">
+            <p className="font-display text-sm uppercase tracking-[0.25em] text-secondary">For buyers</p>
+            <p className="mt-2 text-sm leading-7 text-muted-foreground">A calm, confident experience with visible stories, transparent pricing, and gift-ready options.</p>
+          </div>
+          <div className="border-2 border-foreground bg-background p-5">
+            <p className="font-display text-sm uppercase tracking-[0.25em] text-secondary">For artisans</p>
+            <p className="mt-2 text-sm leading-7 text-muted-foreground">An onboarding flow and workspace that help makers publish with pride and manage sales simply.</p>
+          </div>
+          <div className="border-2 border-foreground bg-background p-5">
+            <p className="font-display text-sm uppercase tracking-[0.25em] text-secondary">For communities</p>
+            <p className="mt-2 text-sm leading-7 text-muted-foreground">Every interaction is designed to preserve heritage, increase visibility, and support sustainable income.</p>
           </div>
         </div>
 

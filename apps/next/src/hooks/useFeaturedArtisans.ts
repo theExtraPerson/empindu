@@ -6,7 +6,7 @@ import { useArtisans } from '@/hooks/useArtisans';
 import { useProducts } from '@/hooks/useProducts';
 
 interface FeaturedArtisan {
-  id: string;
+  slug: string;
   full_name: string;
   avatar_url: string | null;
   craft_specialty: string | null;
@@ -28,7 +28,7 @@ export function useFeaturedArtisans(limit = 4) {
       const productCount = products.filter((product) => product.artisan.slug === artisan.slug).length;
 
       return {
-        id: artisan.slug,
+        slug: artisan.slug,
         full_name: artisan.full_name,
         avatar_url: artisan.profile_photo_url,
         craft_specialty: artisan.craft_tradition,

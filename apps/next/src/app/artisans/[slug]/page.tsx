@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getArtisan, getProducts, Artisan, ProductList } from '@/lib/api';
-import { Heart, MapPin, Award, TrendingUp, Share2 } from 'lucide-react';
+import { Heart, MapPin, Award, TrendingUp, Share2, Clipboard, Info, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface Params {
@@ -16,6 +16,26 @@ export default function Page({ params }: { params: Params }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+
+  const craftTradition = artisan?.craft_tradition || null;
+
+  const profileFields = useMemo(
+    () =>
+      artisan
+        ? [
+            { label: 'Slug', value: artisan.slug || 'pending' },
+            { label: 'Profile ID', value: artisan.id },
+            { label: 'Community', value: artisan.community || 'Unknown' },
+            { label: 'District', value: artisan.district || 'Unknown' },
+            { label: 'Certified', value: artisan.is_certified ? 'Yes' : 'No' },
+            { label: 'Years experience', value: `${artisan.years_experience}+` },
+            { label: 'Orders fulfilled', value: artisan.order_count?.toString() || '0' },
+            { label: 'Total earnings', value: `UGX ${(artisan.total_earnings_ugx || 0).toLocaleString()}` },
+            { label: 'Listings count', value: artisan.listings?.length?.toString() || '0' },
+          ]
+        : [],
+    [artisan]
+  );
 
   useEffect(() => {
     async function loadData() {
@@ -81,40 +101,34 @@ export default function Page({ params }: { params: Params }) {
 
   return (
     <section className="bg-background text-foreground">
-      {/* Hero with Artisan at Work */}
-      <div className="relative">
+      {/* Hero */}
+      <div className="relative border-b-4 border-foreground">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="relative h-72 sm:h-96 md:h-[500px] overflow-hidden border-b-2 border-foreground"
+          className="relative h-72 sm:h-96 md:h-[520px] overflow-hidden"
         >
           {artisan.cover_photo_url ? (
             <img
               src={artisan.cover_photo_url}
               alt={artisan.full_name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover grayscale"
               loading="lazy"
               decoding="async"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-b from-secondary/20 to-background flex items-center justify-center">
-              <p className="text-muted-foreground">No cover photo</p>
+            <div className="w-full h-full bg-muted flex items-center justify-center text-foreground/80 uppercase text-sm tracking-[0.35em]">
+              no cover photo
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+          <div className="absolute inset-0 bg-background/80" />
         </motion.div>
 
-        {/* Artisan Info Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <div className="mx-auto max-w-6xl">
-            <div className="flex flex-col sm:flex-row items-start sm:items-end gap-6">
-              {/* Profile Photo */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="relative -mt-20 sm:-mt-32 md:-mt-40"
-              >
-                <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 border-4 border-background bg-muted rounded-none overflow-hidden">
+        <div className="absolute inset-x-0 bottom-0 px-4 sm:px-6 lg:px-8 pb-6">
+          <div className="mx-auto max-w-6xl bg-background border-4 border-foreground p-6 sm:p-8 shadow-brutal">
+            <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] items-end">
+              <div className="relative -mt-24">
+                <div className="w-40 h-40 sm:w-48 sm:h-48 border-4 border-foreground bg-muted overflow-hidden">
                   {artisan.profile_photo_url ? (
                     <img
                       src={artisan.profile_photo_url}
@@ -124,56 +138,53 @@ export default function Page({ params }: { params: Params }) {
                       decoding="async"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      Photo
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground uppercase text-xs tracking-[0.35em]">
+                      profile
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </div>
 
-              {/* Name & Quick Info */}
-              <div className="flex-1 space-y-3 pb-2">
+              <div className="space-y-4">
                 <div>
-                  <h1 className="font-display text-3xl sm:text-4xl md:text-5xl text-foreground tracking-tight leading-tight">
+                  <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">artisan profile</p>
+                  <h1 className="font-display text-4xl sm:text-5xl md:text-6xl tracking-tight uppercase">
                     {artisan.full_name}
                   </h1>
-                  <p className="text-lg text-secondary font-display tracking-wide">
-                    {artisan.craft_tradition.name || 'Artisan'}
+                  <p className="mt-2 text-sm font-display uppercase tracking-[0.45em] text-secondary">
+                    {craftTradition?.name || 'Craft tradition'}
                   </p>
                 </div>
 
-                {/* Quick Stats */}
-                <div className="flex flex-wrap gap-4 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <MapPin className="w-4 h-4" />
-                    <span>{artisan.community}, {artisan.district}</span>
+                <div className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.35em] text-muted-foreground">
+                  <span className="border-2 border-foreground px-3 py-2">{artisan.community}</span>
+                  <span className="border-2 border-foreground px-3 py-2">{artisan.district}</span>
+                  <span className="border-2 border-foreground px-3 py-2">{artisan.years_experience}+ yrs</span>
+                  <span className="border-2 border-foreground px-3 py-2">
+                    {artisan.is_certified ? 'certified' : 'not certified'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-sm sm:text-base">
+                  <div className="border-2 border-foreground bg-card p-4 uppercase tracking-[0.25em]">
+                    <p className="text-muted-foreground text-[10px]">orders</p>
+                    <p className="font-display text-2xl text-foreground">{artisan.order_count}</p>
                   </div>
-                  {artisan.is_certified && (
-                    <div className="flex items-center gap-2 text-secondary font-semibold">
-                      <Award className="w-4 h-4" />
-                      <span>Empindu Certified</span>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-2 text-foreground font-semibold">
-                    <TrendingUp className="w-4 h-4" />
-                    <span>{artisan.order_count} orders fulfilled</span>
+                  <div className="border-2 border-foreground bg-card p-4 uppercase tracking-[0.25em]">
+                    <p className="text-muted-foreground text-[10px]">earnings</p>
+                    <p className="font-display text-2xl text-secondary">UGX {artisan.total_earnings_ugx.toLocaleString()}</p>
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex gap-2 pt-2">
+                <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => setSaved(!saved)}
-                    className={`flex items-center gap-2 border-2 border-foreground px-4 py-3 min-h-[44px] font-display text-sm uppercase tracking-widest transition-all ${
-                      saved
-                        ? 'bg-secondary text-secondary-foreground'
-                        : 'bg-background hover:bg-muted text-foreground'
+                    className={`border-2 border-foreground px-4 py-3 uppercase tracking-[0.35em] font-display text-sm transition-all ${
+                      saved ? 'bg-secondary text-secondary-foreground' : 'bg-background hover:bg-muted text-foreground'
                     }`}
                   >
-                    <Heart className={`w-4 h-4 ${saved ? 'fill-current' : ''}`} />
-                    <span className="hidden sm:inline">{saved ? 'Saved' : 'Save'}</span>
+                    {saved ? 'saved' : 'save'}
                   </button>
-
                   <button
                     onClick={() => {
                       if (navigator.share) {
@@ -186,10 +197,9 @@ export default function Page({ params }: { params: Params }) {
                         navigator.clipboard.writeText(shareUrl);
                       }
                     }}
-                    className="flex items-center gap-2 border-2 border-foreground px-4 py-3 min-h-[44px] font-display text-sm uppercase tracking-widest hover:bg-muted transition-all"
+                    className="border-2 border-foreground px-4 py-3 uppercase tracking-[0.35em] font-display text-sm hover:bg-muted transition-all"
                   >
-                    <Share2 className="w-4 h-4" />
-                    <span className="hidden sm:inline">Share</span>
+                    share
                   </button>
                 </div>
               </div>
@@ -198,151 +208,122 @@ export default function Page({ params }: { params: Params }) {
         </div>
       </div>
 
-      {/* Artisan Story & Details */}
-      <div className="px-4 sm:px-6 lg:px-8 py-12 sm:py-16 border-b-2 border-foreground">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-3 gap-8 md:gap-12">
-            {/* Main Story */}
-            <div className="md:col-span-2 space-y-6">
-              <div>
-                <h2 className="font-display text-2xl sm:text-3xl text-foreground mb-4 tracking-tight">
-                  The Artisan
-                </h2>
-                <p className="text-muted-foreground font-body leading-8 whitespace-pre-wrap">
-                  {artisan.bio || `${artisan.full_name} is a skilled artisan specializing in ${artisan.craft_tradition.name} from ${artisan.community}, ${artisan.district}. With ${artisan.years_experience} years of experience, their work carries the traditions and cultural knowledge of their craft lineage.`}
-                </p>
-              </div>
-
-              {/* Craft Tradition */}
-              <div className="border-2 border-foreground bg-card p-6 space-y-3">
-                <h3 className="font-display text-xl text-secondary tracking-wide">
-                  {artisan.craft_tradition.name}
-                </h3>
-                <p className="text-muted-foreground font-body leading-7">
-                  {artisan.craft_tradition.description}
-                </p>
-                {artisan.craft_tradition.gi_status && (
-                  <p className="text-sm text-secondary font-semibold">
-                    🏛️ Geographic Indication Status: {artisan.craft_tradition.gi_status}
-                  </p>
-                )}
-                <p className="text-sm text-muted-foreground">
-                  Ethnic tradition: {artisan.craft_tradition.ethnic_group} • Region: {artisan.craft_tradition.region}
-                </p>
-              </div>
+      <div className="px-4 sm:px-6 lg:px-8 py-16">
+        <div className="mx-auto max-w-6xl grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="space-y-10">
+            <div className="border-4 border-foreground bg-card p-8 shadow-brutal">
+              <h2 className="font-display text-3xl uppercase tracking-[0.35em] mb-6">about {artisan.full_name}</h2>
+              <p className="text-muted-foreground leading-8 whitespace-pre-wrap">{artisan.bio || 'No biography available.'}</p>
             </div>
 
-            {/* Impact Sidebar */}
-            <div className="space-y-4">
-              <div className="border-2 border-foreground bg-card p-6 space-y-4">
-                <h3 className="font-display text-lg text-foreground uppercase tracking-widest">
-                  Impact
-                </h3>
-
-                <div className="space-y-3">
-                  <div className="border-2 border-foreground bg-background p-4">
-                    <p className="text-muted-foreground text-xs font-display tracking-widest uppercase">
-                      Total Earnings
-                    </p>
-                    <p className="font-display text-2xl text-secondary mt-1">
-                      UGX {artisan.total_earnings_ugx.toLocaleString()}
-                    </p>
-                  </div>
-
-                  <div className="border-2 border-foreground bg-background p-4">
-                    <p className="text-muted-foreground text-xs font-display tracking-widest uppercase">
-                      Orders Fulfilled
-                    </p>
-                    <p className="font-display text-2xl text-primary mt-1">
-                      {artisan.order_count}
-                    </p>
-                  </div>
-
-                  <div className="border-2 border-foreground bg-background p-4">
-                    <p className="text-muted-foreground text-xs font-display tracking-widest uppercase">
-                      Years Active
-                    </p>
-                    <p className="font-display text-2xl text-foreground mt-1">
-                      {artisan.years_experience}+
-                    </p>
-                  </div>
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div className="border-4 border-foreground bg-card p-8 shadow-brutal">
+                <h3 className="font-display text-xl uppercase tracking-[0.35em] mb-4">craft tradition</h3>
+                <p className="text-muted-foreground leading-7 mb-4">{craftTradition?.description || 'Craft story and heritage details will appear here soon.'}</p>
+                <div className="space-y-3 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2"><Info className="w-4 h-4" /> {craftTradition?.ethnic_group || 'Heritage community'}</div>
+                  <div className="flex items-center gap-2"><Globe className="w-4 h-4" /> {craftTradition?.region || 'Region to be confirmed'}</div>
+                  {craftTradition?.gi_status && (
+                    <div className="flex items-center gap-2"><Award className="w-4 h-4" /> GI status: {craftTradition.gi_status}</div>
+                  )}
                 </div>
-
-                <p className="text-xs text-muted-foreground font-body leading-6">
-                  Every purchase directly supports this artisan and contributes to preserving their craft tradition.
-                </p>
               </div>
 
-              {/* CTA */}
-              <Link
-                href={`/marketplace?artisan_slug=${params.slug}`}
-                className="w-full block border-2 border-foreground bg-secondary px-6 py-3 text-center font-display uppercase tracking-widest text-secondary-foreground hover:bg-secondary/90 transition-all"
-              >
-                Browse All Products
-              </Link>
+              <div className="border-4 border-foreground bg-card p-8 shadow-brutal">
+                <h3 className="font-display text-xl uppercase tracking-[0.35em] mb-4">profile data</h3>
+                <div className="grid gap-3">
+                  {profileFields.map((field) => (
+                    <div key={field.label} className="border-2 border-foreground p-4 bg-background">
+                      <p className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground">{field.label}</p>
+                      <p className="font-display text-base text-foreground mt-2">{field.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
+
+          <aside className="space-y-6">
+            <div className="border-4 border-foreground bg-card p-8 shadow-brutal">
+              <h3 className="font-display text-xl uppercase tracking-[0.35em] mb-4">artisan details</h3>
+              <div className="space-y-4 text-sm text-muted-foreground">
+                <div className="border-2 border-foreground p-4 bg-background">
+                  <p className="uppercase tracking-[0.35em] text-[10px]">location</p>
+                  <p className="font-display mt-2 text-foreground">{artisan.community}, {artisan.district}</p>
+                </div>
+                <div className="border-2 border-foreground p-4 bg-background">
+                  <p className="uppercase tracking-[0.35em] text-[10px]">certification</p>
+                  <p className="font-display mt-2 text-foreground">{artisan.is_certified ? 'Empindu certified' : 'Not certified'}</p>
+                </div>
+                <div className="border-2 border-foreground p-4 bg-background">
+                  <p className="uppercase tracking-[0.35em] text-[10px]">years of craft</p>
+                  <p className="font-display mt-2 text-foreground">{artisan.years_experience}</p>
+                </div>
+                <div className="border-2 border-foreground p-4 bg-background">
+                  <p className="uppercase tracking-[0.35em] text-[10px]">listings</p>
+                  <p className="font-display mt-2 text-foreground">{artisan.listings?.length || 0}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-4 border-foreground bg-card p-8 shadow-brutal">
+              <h3 className="font-display text-xl uppercase tracking-[0.35em] mb-4">shop</h3>
+              <Link
+                href={`/marketplace?artisan_slug=${params.slug}`}
+                className="block border-2 border-foreground bg-secondary px-5 py-4 uppercase tracking-[0.35em] font-display text-sm text-secondary-foreground text-center hover:bg-secondary/90"
+              >
+                view artisan products
+              </Link>
+            </div>
+          </aside>
         </div>
       </div>
 
-      {/* Products Grid */}
-      {products.length > 0 && (
-        <div className="px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      {products.length > 0 ? (
+        <div className="px-4 sm:px-6 lg:px-8 pb-16">
           <div className="mx-auto max-w-6xl">
-            <h2 className="font-display text-3xl text-foreground mb-8 tracking-tight">
-              Available Pieces
-            </h2>
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="font-display text-3xl uppercase tracking-[0.35em]">available pieces</h2>
+                <p className="text-sm text-muted-foreground">Crafted by {artisan.full_name}</p>
+              </div>
+            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid gap-6 lg:grid-cols-3">
               {products.map((product, idx) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className="border-4 border-foreground bg-card shadow-brutal"
                 >
-                  <Link
-                    href={`/marketplace/${product.slug}`}
-                    className="group border-2 border-foreground bg-card hover:shadow-brutal-lg transition-all h-full flex flex-col"
-                  >
-                    {/* Product Image */}
-                    <div className="relative aspect-[4/5] overflow-hidden border-b-2 border-foreground">
+                  <Link href={`/marketplace/${product.slug}`} className="block group h-full">
+                    <div className="aspect-[3/4] overflow-hidden border-b-4 border-foreground bg-muted">
                       <img
                         src={product.hero_photo_url || ''}
                         alt={product.name}
-                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-transform duration-500"
                       />
                     </div>
-
-                    {/* Product Info */}
-                    <div className="flex-1 p-4 flex flex-col gap-3">
+                    <div className="p-6 space-y-4">
                       <div>
-                        <h3 className="font-display text-lg font-bold text-foreground group-hover:text-secondary transition-colors">
+                        <h3 className="font-display text-xl uppercase tracking-[0.35em] text-foreground">
                           {product.name}
                         </h3>
-                        <p className="text-muted-foreground text-sm line-clamp-2 mt-1">
+                        <p className="text-sm text-muted-foreground leading-6 mt-2 line-clamp-3">
                           {product.story}
                         </p>
                       </div>
-
-                      {/* Pricing */}
-                      <div className="grid grid-cols-2 gap-2 text-xs border-t border-foreground/30 pt-3">
-                        <div>
-                          <p className="text-muted-foreground text-[10px] font-display uppercase tracking-widest">
-                            You Pay
-                          </p>
-                          <p className="font-display text-base font-bold">
-                            UGX {product.price_ugx.toLocaleString()}
-                          </p>
+                      <div className="grid gap-2 text-xs uppercase tracking-[0.35em] text-muted-foreground">
+                        <div className="flex items-center justify-between">
+                          <span>price</span>
+                          <span>UGX {product.price_ugx.toLocaleString()}</span>
                         </div>
-                        <div>
-                          <p className="text-muted-foreground text-[10px] font-display uppercase tracking-widest">
-                            They Earn
-                          </p>
-                          <p className="font-display text-base font-bold text-secondary">
-                            UGX {product.artisan_earnings_ugx.toLocaleString()}
-                          </p>
+                        <div className="flex items-center justify-between">
+                          <span>artisan earn</span>
+                          <span>UGX {product.artisan_earnings_ugx.toLocaleString()}</span>
                         </div>
                       </div>
                     </div>
@@ -352,33 +333,27 @@ export default function Page({ params }: { params: Params }) {
             </div>
           </div>
         </div>
-      )}
-
-      {/* No Products */}
-      {products.length === 0 && !loading && (
-        <div className="px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="mx-auto max-w-6xl text-center">
-            <p className="text-muted-foreground font-body">
-              {artisan.full_name} does not have any active listings right now. Check back soon!
-            </p>
+      ) : (
+        <div className="px-4 sm:px-6 lg:px-8 pb-16">
+          <div className="mx-auto max-w-6xl border-4 border-foreground bg-card p-12 text-center uppercase tracking-[0.35em] text-muted-foreground">
+            <p>No active products available yet. Check back soon.</p>
           </div>
         </div>
       )}
 
-      {/* Navigation Footer */}
-      <div className="border-t-2 border-foreground px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mx-auto max-w-6xl flex flex-col sm:flex-row gap-4">
+      <div className="border-t-4 border-foreground px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto max-w-6xl flex flex-col gap-4 sm:flex-row">
           <Link
             href="/artisans"
-            className="flex-1 border-2 border-foreground bg-background px-6 py-3 text-center font-display uppercase tracking-widest text-foreground hover:bg-muted transition-all"
+            className="flex-1 border-2 border-foreground bg-background px-6 py-4 text-center uppercase tracking-[0.35em] font-display hover:bg-muted"
           >
-            ← Back to All Artisans
+            ← back to artisans
           </Link>
           <Link
             href="/marketplace"
-            className="flex-1 border-2 border-foreground bg-background px-6 py-3 text-center font-display uppercase tracking-widest text-foreground hover:bg-muted transition-all"
+            className="flex-1 border-2 border-foreground bg-background px-6 py-4 text-center uppercase tracking-[0.35em] font-display hover:bg-muted"
           >
-            Browse All Products →
+            browse marketplace →
           </Link>
         </div>
       </div>

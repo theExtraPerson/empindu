@@ -22,6 +22,7 @@ class ProductAdmin(ModelAdmin):
     list_filter = ["status", "is_customisable", "craft_tradition"]
     search_fields = ["name", "story", "artisan__user__first_name"]
     readonly_fields = [
+        "slug",
         "artisan_earnings_ugx",
         "heritage_fund_ugx",
         "created_at",
@@ -34,10 +35,15 @@ class ProductAdmin(ModelAdmin):
             {"fields": ["artisan", "craft_tradition"]},
         ),
         (
+            "Media",
+            {"fields": ["image"]},
+        ),
+        (
             "Identity & Story",
             {
                 "fields": [
                     "name",
+                    "slug",
                     "name_luganda",
                     "story",
                     "story_luganda",

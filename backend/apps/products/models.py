@@ -4,6 +4,7 @@ Story-first product architecture with cultural IP anchoring
 Thrive With Nature
 """
 from django.db import models
+from django.utils.text import slugify
 # from pgvector.django import VectorField # For semantic search embeddings (future)
 
 
@@ -84,16 +85,45 @@ class Product(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=['artisan']),
+            models.Index(fields=['craft_tradition']),
+            models.Index(fields=['status']),
+            models.Index(fields=['-created_at']),
+            models.Index(fields=['slug']),
+        ]
 
     @property
     def artisan_earnings_ugx(self) -> int:
         """Calculate artisan earnings per unit"""
+
+        if not self.price_ugx:
+            return 0
+
         return int(self.price_ugx * self.artisan_pct / 100)
 
     @property
     def heritage_fund_ugx(self) -> int:
         """Calculate Heritage Fund contribution per unit"""
+
+        if not self.price_ugx:
+            return 0
+
         return int(self.price_ugx * self.heritage_pct / 100)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.name)[:140] or "product"
+            slug = base_slug
+            counter = 1
+
+            while Product.objects.filter(slug=slug).exists():
+                counter += 1
+                slug = f"{base_slug}-{counter}"
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} by {self.artisan.full_name}"

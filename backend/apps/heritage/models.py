@@ -31,6 +31,12 @@ class HeritageFundEntry(models.Model):
     class Meta:
         verbose_name_plural = "Heritage Fund Entries"
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=['order']),
+            models.Index(fields=['craft_tradition']),
+            models.Index(fields=['entry_type']),
+            models.Index(fields=['-created_at']),
+        ]
 
     def __str__(self):
         return f"{self.entry_type}: UGX {self.amount_ugx:,} - {self.craft_tradition.name}"
@@ -60,6 +66,14 @@ class Distribution(models.Model):
     )
     distributed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['craft_tradition']),
+            models.Index(fields=['status']),
+            models.Index(fields=['-created_at']),
+        ]
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"Distribution to {self.craft_tradition.name} - UGX {self.amount_ugx:,}"

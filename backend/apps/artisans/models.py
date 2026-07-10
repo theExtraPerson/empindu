@@ -77,6 +77,24 @@ class Artisan(models.Model):
         User, on_delete=models.CASCADE, related_name="artisan"
     )
     slug = models.SlugField(unique=True, max_length=100)
+
+    def _generate_unique_slug(self):
+        base_slug = slugify(self.full_name or self.user.username or f"artisan-{self.pk or 'new'}")[:95] or f"artisan-{self.pk or 'new'}"
+        slug = base_slug
+        counter = 1
+
+        while Artisan.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+            counter += 1
+            slug = f"{base_slug}-{counter}"
+
+        return slug
+
+    def save(self, *args, **kwargs):
+        if not self.slug or not self.slug.strip():
+            self.slug = self._generate_unique_slug()
+
+        super().save(*args, **kwargs)
+
     craft_tradition = models.ForeignKey(
         CraftTradition, on_delete=models.PROTECT, related_name="artisans"
     )
@@ -123,6 +141,14 @@ class Artisan(models.Model):
     class Meta:
         ordering = ["-created_at"]
         verbose_name_plural = "Artisans"
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['is_active']),
+            models.Index(fields=['is_certified']),
+            models.Index(fields=['-created_at']),
+            models.Index(fields=['craft_tradition']),
+            models.Index(fields=['district']),
+        ]
 
     @property
     def full_name(self):
@@ -136,7 +162,7 @@ class Artisan(models.Model):
 
         result = (
             Order.objects.filter(
-                artisan=self, status="delivered", artisan_payout_status="paid"
+                artisan=self, status="delivered", payout_status="paid"
             )
             .aggregate(total=models.Sum("artisan_earnings_ugx"))
         )
@@ -153,17 +179,6 @@ class Artisan(models.Model):
     def has_voice_draft(self):
         """Check if artisan has a draft bio from voice transcription"""
         return bool(self.bio_draft)
-
-    def save(self, *args, **kwargs):
-        """Auto-generate slug from name"""
-        if not self.slug:
-            base = slugify(self.full_name)
-            slug, n = base, 1
-            while Artisan.objects.filter(slug=slug).exists():
-                slug = f"{base}-{n}"
-                n += 1
-            self.slug = slug
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.full_name} - {self.craft_tradition.name}"
