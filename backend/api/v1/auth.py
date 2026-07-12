@@ -2,7 +2,7 @@ import hashlib
 import hmac
 import time
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional, TypeVar
 
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
@@ -190,8 +190,9 @@ def _serialize_user(user: User) -> dict:
         "is_verified": bool(profile.is_verified or user.is_staff or user.is_superuser),
     }
 
+T = TypeVar("T", bound=User)
 
-def _build_auth_response(user: User) -> dict:
+def _build_auth_response(user: T) -> dict:
     refresh = RefreshToken.for_user(user)
     access = refresh.access_token
     return {

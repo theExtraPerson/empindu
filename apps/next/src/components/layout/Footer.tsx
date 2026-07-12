@@ -55,7 +55,7 @@ export function Footer() {
               viewport={{ once: true }}
               className="font-display text-3xl md:text-4xl mb-4"
             >
-              JOIN THE CRAFT REVOLUTION
+              
             </motion.h3>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -64,8 +64,7 @@ export function Footer() {
               transition={{ delay: 0.1 }}
               className="text-warm-cream/60 mb-8 max-w-xl font-body"
             >
-              Subscribe to receive updates on new artisans, exclusive collections,
-              and the next wave of heritage storytelling.
+              "know theyself, and to thy known self be true"
             </motion.p>
             <motion.form
               initial={{ opacity: 0, y: 20 }}

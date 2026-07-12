@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ArrowRight, HeartHandshake, ShieldCheck, Sparkles } from 'lucide-react';
 
 export default function Page() {
   return (
@@ -52,6 +53,15 @@ export default function Page() {
             <p className="mt-2 text-sm leading-7 text-muted-foreground">Every interaction is designed to preserve heritage, increase visibility, and support sustainable income.</p>
           </div>
         </div>
+
+        <div className="rounded border-2 mx-auto sm:px-6 border-warm-cream/40 bg-bark-brown/70 p-4 shadow-brutal sm:min-w-[280px]">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-secondary">Why you should <span className='text-primary'></span></p>
+            <ul className="mt-3 space-y-2 text-sm text-warm-cream/90">
+              <li className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 text-primary" /> Transparent artisan stories and provenance</li>
+              <li className="flex items-start gap-2"><HeartHandshake className="mt-0.5 h-4 w-4 text-primary" /> Gift-ready experiences with personal messages</li>
+              <li className="flex items-start gap-2"><Sparkles className="mt-0.5 h-4 w-4 text-primary" /> Fast, mobile-first shopping with real impact</li>
+            </ul>
+          </div>
 
         <div className="mt-10 border-t-2 border-foreground pt-8">
           <Link

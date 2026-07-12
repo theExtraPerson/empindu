@@ -179,7 +179,7 @@ export function Header() {
                   {role === 'admin' && (
                     <DropdownMenuItem onClick={() => navigate('/admin/users')} className="rounded-none font-display text-xs tracking-wider">
                       <Shield className="w-4 h-4 mr-2" />
-                      ADMIN
+                      MANAGE
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator className="bg-foreground" />
@@ -197,7 +197,7 @@ export function Header() {
                   isScrolled ? "text-foreground" : "text-background"
                 )}
               >
-                START SHOPPING
+                EXPERIENCE THE CULTURE
               </button>
             )}
           </div>
