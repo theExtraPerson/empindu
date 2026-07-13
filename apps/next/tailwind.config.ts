@@ -62,9 +62,12 @@ const config: Config = {
         },
 
         gold: "hsl(var(--kente-gold))",
+        "kente-gold": "hsl(var(--kente-gold))",
         copper: "hsl(var(--copper))",
         bark: "hsl(var(--bark-brown))",
+        "bark-brown": "hsl(var(--bark-brown))",
         mud: "hsl(var(--mudcloth-black))",
+        "warm-cream": "hsl(var(--warm-cream))",
       },
 
       boxShadow: {
