@@ -10,7 +10,7 @@ interface Params {
   slug: string;
 }
 
-export default function Page({ params }: { params: Params }) {
+export function ArtisanProfileView({ params }: { params: Params }) {
   const [artisan, setArtisan] = useState<Artisan | null>(null);
   const [products, setProducts] = useState<ProductList[]>([]);
   const [loading, setLoading] = useState(true);
