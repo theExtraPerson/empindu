@@ -21,11 +21,45 @@ async function serverFetch<T>(path: string, revalidate = 60): Promise<T | null> 
   }
 }
 
-export const fetchProductsSSR = (qs = '') =>
-  serverFetch<ProductList[]>(`/products?${qs}`);
+export type ProductFilters = {
+  craft_type?: string;
+  region?: string;
+  min_usd?: number;
+  max_usd?: number;
+  occasion?: string;
+  artisan_slug?: string;
+  page?: number;
+  page_size?: number;
+};
+
+export type ArtisanFilters = {
+  craft_type?: string;
+  region?: string;
+  certified?: boolean;
+};
+
+function buildQS(params: Record<string, string | number | boolean | undefined>) {
+  const qs = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) {
+    if (v === undefined || v === '' || v === null) continue;
+    qs.append(k, String(v));
+  }
+  return qs.toString();
+}
+
+export const fetchProductsSSR = (filters: ProductFilters = {}) =>
+  serverFetch<ProductList[]>(`/products?${buildQS(filters)}`);
+
 export const fetchProductSSR = (slug: string) =>
   serverFetch<Product>(`/products/${encodeURIComponent(slug)}`);
-export const fetchArtisansSSR = () =>
-  serverFetch<ArtisanSummary[]>('/artisans/');
+
+export const fetchArtisansSSR = (filters: ArtisanFilters = {}) =>
+  serverFetch<ArtisanSummary[]>(`/artisans/?${buildQS(filters)}`);
+
 export const fetchArtisanSSR = (slug: string) =>
   serverFetch<Artisan>(`/artisans/${encodeURIComponent(slug)}`);
+
+export const fetchCraftTraditionsSSR = () =>
+  serverFetch<Array<{ id: number; name: string; region: string }>>(
+    '/artisans/traditions/list',
+  );
