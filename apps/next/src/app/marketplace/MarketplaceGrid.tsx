@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { ProductCard } from '@/components/products/ProductCard';
 import type { ProductList as ApiProductList } from '@/lib/api';
 import type { ProductList } from '@/hooks/useProducts';
@@ -20,14 +21,31 @@ function normalize(p: ApiProductList): ProductList {
   };
 }
 
-export function MarketplaceGrid({ initialProducts }: { initialProducts: ApiProductList[] }) {
-  const products = initialProducts.map(normalize);
+export function MarketplaceGrid({
+  initialProducts,
+  searchQuery = '',
+}: {
+  initialProducts: ApiProductList[];
+  searchQuery?: string;
+}) {
+  const products = useMemo(() => {
+    const all = initialProducts.map(normalize);
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return all;
+    return all.filter((p) =>
+      [p.name, p.description, p.artisan.full_name, p.artisan.community, p.category]
+        .filter(Boolean)
+        .some((s) => String(s).toLowerCase().includes(q)),
+    );
+  }, [initialProducts, searchQuery]);
 
   if (products.length === 0) {
     return (
-      <div className="border-2 border-foreground bg-card p-10 text-center shadow-brutal">
+      <div className="border-2 border-foreground bg-card p-10 text-center shadow-brutal animate-weave-in">
         <p className="font-display text-sm uppercase tracking-[0.3em] text-muted-foreground">
-          The marketplace is being restocked. Check back soon.
+          {searchQuery
+            ? `No pieces match "${searchQuery}". Try clearing filters.`
+            : 'The marketplace is being restocked. Check back soon.'}
         </p>
       </div>
     );
