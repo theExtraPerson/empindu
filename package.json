@@ -1,0 +1,9 @@
+{
+  "name": "empindu-root",
+  "private": true,
+  "scripts": {
+    "build": "cd apps/next && npm run build",
+    "build:dev": "cd apps/next && npm run build",
+    "dev": "cd apps/next && npm run dev"
+  }
+}
