@@ -2,8 +2,8 @@
   "name": "empindu-root",
   "private": true,
   "scripts": {
-    "build": "cd apps/next && npm run build",
-    "build:dev": "cd apps/next && npm run build",
-    "dev": "cd apps/next && npm run dev"
+    "build": "cd apps/next && (test -x node_modules/.bin/next || npm install --silent) && node_modules/.bin/next build",
+    "build:dev": "cd apps/next && (test -x node_modules/.bin/next || npm install --silent) && node_modules/.bin/next build",
+    "dev": "cd apps/next && (test -x node_modules/.bin/next || npm install --silent) && node_modules/.bin/next dev"
   }
 }
