@@ -86,3 +86,58 @@
     color: hsl(var(--accent-foreground));
   }
 }
+
+@layer base {
+  /* Accessible keyboard focus for all interactive elements */
+  :where(a, button, [role="button"], [role="link"], input, select, textarea, summary, [tabindex]:not([tabindex="-1"]))\
+  :focus-visible {
+    outline: 3px solid hsl(var(--accent));
+    outline-offset: 3px;
+    box-shadow: 0 0 0 2px hsl(var(--background));
+  }
+
+  /* Skip-to-content helper */
+  .skip-to-content {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    background: hsl(var(--foreground));
+    color: hsl(var(--background));
+    padding: 0.75rem 1rem;
+    font-family: var(--font-display, inherit);
+    text-transform: uppercase;
+    border: 2px solid hsl(var(--foreground));
+  }
+  .skip-to-content:focus {
+    left: 1rem;
+    top: 1rem;
+  }
+}
+
+/* Reduced motion: honor user preference — neutralize kinetic brutalist fx */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Cancel translate/scale/rotate hover transforms while preserving layout transforms via CSS vars where used */
+  *:hover,
+  *:focus,
+  *:focus-visible,
+  *:active {
+    transform: none !important;
+  }
+  /* Disable marquee/looping carousels & parallax */
+  [data-motion="kinetic"],
+  [data-motion="marquee"],
+  [data-motion="parallax"] {
+    animation: none !important;
+    transform: none !important;
+  }
+}
