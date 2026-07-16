@@ -81,6 +81,8 @@ from .utils import (
     format_product,
     get_artisan_by_name_or_slug,
     get_order,
+    get_order_for_requester,
+
     get_product,
     gift_url,
     initiate_order_payment,
