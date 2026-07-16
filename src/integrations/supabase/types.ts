@@ -880,6 +880,55 @@ export type Database = {
       }
     }
     Views: {
+      artisan_like_counts: {
+        Row: {
+          artisan_id: string | null
+          like_count: number | null
+        }
+        Relationships: []
+      }
+      public_business_profiles: {
+        Row: {
+          business_address: string | null
+          business_city: string | null
+          business_country: string | null
+          business_name: string | null
+          business_type: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          is_verified: boolean | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          business_address?: string | null
+          business_city?: string | null
+          business_country?: string | null
+          business_name?: string | null
+          business_type?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          is_verified?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          business_address?: string | null
+          business_city?: string | null
+          business_country?: string | null
+          business_name?: string | null
+          business_type?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          is_verified?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       public_profiles: {
         Row: {
           avatar_url: string | null
