@@ -206,10 +206,19 @@ async def track_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         await update.effective_message.reply_text("Order ID must be a number.")
         return
 
-    order = await get_order(order_id)
+    stored_email = context.user_data.get("buyer_email", "") if context.user_data else ""
+    order = await get_order_for_requester(
+        order_id,
+        chat_id=update.effective_chat.id,
+        email=stored_email,
+    )
     if not order:
-        await update.effective_message.reply_text("I could not find that order.")
+        await update.effective_message.reply_text(
+            "I could not find that order on your account. "
+            "Only the buyer who placed it can view its status."
+        )
         return
+
 
     await update.effective_message.reply_text(
         f"*Order #{order.id}*\n"
