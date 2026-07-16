@@ -258,13 +258,36 @@ def get_order(order_id: int) -> Order | None:
 
 
 @sync_to_async
+def get_order_for_requester(order_id: int, *, chat_id: int, email: str = "") -> Order | None:
+    """
+    Fetch an order only if it belongs to the requesting Telegram user —
+    either the order was placed from this chat_id, or the caller supplies
+    the matching buyer email that is on file for the order.
+    """
+    qs = Order.objects.select_related("product", "artisan", "artisan__user").filter(pk=order_id)
+    order = qs.first()
+    if not order:
+        return None
+    if order.shipping_address and order.shipping_address.get("telegram_chat_id") == chat_id:
+        return order
+    if email and order.buyer_email and order.buyer_email.strip().lower() == email.strip().lower():
+        return order
+    return None
+
+
+@sync_to_async
 def buyer_orders(*, chat_id: int, email: str = "", limit: int = 8) -> list[Order]:
+    """
+    List orders belonging to the requester. Always scoped to this chat_id;
+    an email filter is only applied when it matches the caller's chat_id
+    (prevents enumerating other people's orders by guessing emails).
+    """
     qs = Order.objects.select_related("product", "artisan", "artisan__user").order_by("-created_at")
+    qs = qs.filter(shipping_address__telegram_chat_id=chat_id)
     if email:
         qs = qs.filter(buyer_email__iexact=email)
-    else:
-        qs = qs.filter(shipping_address__telegram_chat_id=chat_id)
     return list(qs[:limit])
+
 
 
 @sync_to_async

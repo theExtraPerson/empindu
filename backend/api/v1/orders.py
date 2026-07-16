@@ -206,16 +206,27 @@ def get_order(request, order_id: int):
 
 
 @router.get("/{order_id}/confirm", response=OrderOut, auth=None)
-def confirm_order(request, order_id: int, buyer_email: Optional[str] = None):
+def confirm_order(request, order_id: int, token: Optional[str] = None):
+    """
+    Guest order confirmation lookup.
+    Requires the order's unique payment_reference token (issued in the
+    confirmation email) — the sequential order_id alone is not enough.
+    """
     order = get_object_or_404(
         Order.objects.select_related("product", "artisan__user"),
         pk=order_id,
     )
 
-    if buyer_email and order.buyer_email and order.buyer_email.strip().lower() == buyer_email.strip().lower():
+    # Authenticated owners/admins/artisans can view directly
+    if can_view_order(request.auth, order):
         return serialize_order(order)
 
-    raise HttpError(403, "Buyer email must match to view this order.")
+    stored_token = (order.payment_reference or "").strip()
+    supplied = (token or "").strip()
+    if stored_token and supplied and stored_token == supplied:
+        return serialize_order(order)
+
+    raise HttpError(403, "A valid confirmation token is required to view this order.")
 
 
 @router.patch("/{order_id}/status", response=OrderOut)
@@ -239,18 +250,31 @@ def update_order_status(request, order_id: int, payload: OrderStatusUpdateIn):
     return serialize_order(order)
 
 
-@router.get("/{order_id}/returns", response=List[ReturnRequestOut], auth=None)
+@router.get("/{order_id}/returns", response=List[ReturnRequestOut])
 def list_return_requests(request, order_id: int):
-    order = get_object_or_404(Order, pk=order_id)
-    queryset = order.return_requests.all()
-    return [serialize_return_request(item) for item in queryset]
-
-
-@router.post("/{order_id}/returns", response=ReturnRequestOut, auth=None)
-def request_return(request, order_id: int, payload: ReturnRequestCreateIn):
+    """Only the buyer, the fulfilling artisan, or an admin can view returns."""
     order = get_object_or_404(
         Order.objects.select_related("product", "artisan__user"),
         pk=order_id,
     )
+    if not can_view_order(request.auth, order):
+        raise HttpError(403, "You don't have permission to view returns for this order")
+    queryset = order.return_requests.all()
+    return [serialize_return_request(item) for item in queryset]
+
+
+@router.post("/{order_id}/returns", response=ReturnRequestOut)
+def request_return(request, order_id: int, payload: ReturnRequestCreateIn):
+    """Only the buyer of an order (or admin) can file a return request."""
+    order = get_object_or_404(
+        Order.objects.select_related("product", "artisan__user"),
+        pk=order_id,
+    )
+    user = request.auth
+    if not user or not user.is_authenticated:
+        raise HttpError(401, "Authentication required to request a return")
+    if not (is_admin(user) or order.buyer_id == user.id):
+        raise HttpError(403, "Only the buyer of this order can request a return")
     return_request = create_return_request(order, payload)
     return serialize_return_request(return_request)
+

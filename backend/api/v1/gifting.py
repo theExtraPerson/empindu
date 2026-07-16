@@ -63,8 +63,16 @@ def serialize_gift_order(gift_order: GiftOrder) -> dict:
 
 @router.get("", response=List[GiftOrderOut])
 def list_gift_orders(request):
+    """Only admins may list all gift orders (contains PII for many customers)."""
+    user = getattr(request, "auth", None)
+    if not user or not user.is_authenticated or not (
+        getattr(user, "is_staff", False) or getattr(user, "is_superuser", False)
+    ):
+        from ninja.errors import HttpError
+        raise HttpError(403, "Admin access required")
     queryset = GiftOrder.objects.prefetch_related("items__product", "recipients").all()[:100]
     return [serialize_gift_order(gift_order) for gift_order in queryset]
+
 
 
 @router.post("", response=GiftOrderOut, auth=None)
