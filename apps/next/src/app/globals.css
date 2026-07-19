@@ -87,6 +87,37 @@
   }
 }
 
+@layer components {
+  /* Shared brutalist Lekton typography scale — use everywhere */
+  .brutal-eyebrow {
+    @apply inline-block border-2 border-foreground px-3 py-1 font-display text-[11px] tracking-[0.35em] uppercase;
+  }
+  .brutal-eyebrow-light {
+    @apply inline-block border-2 border-warm-cream px-3 py-1 font-display text-[11px] tracking-[0.35em] uppercase text-warm-cream;
+  }
+  .brutal-h1 {
+    @apply font-display uppercase tracking-tight text-5xl md:text-7xl lg:text-8xl leading-[0.95];
+  }
+  .brutal-h2 {
+    @apply font-display uppercase tracking-tight text-3xl md:text-4xl lg:text-5xl leading-tight;
+  }
+  .brutal-h3 {
+    @apply font-display uppercase tracking-tight text-xl md:text-2xl leading-tight;
+  }
+  .brutal-lead {
+    @apply font-body text-lg leading-8 text-muted-foreground;
+  }
+  .brutal-card {
+    @apply border-2 border-foreground bg-card shadow-brutal;
+  }
+  .brutal-container {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .brutal-section {
+    @apply border-b-2 border-foreground py-16 md:py-20;
+  }
+}
+
 @layer base {
   /* Accessible keyboard focus for all interactive elements */
   :where(a, button, [role="button"], [role="link"], input, select, textarea, summary, [tabindex]:not([tabindex="-1"]))\
