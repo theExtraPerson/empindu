@@ -1,6 +1,13 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { ArrowRight, BookOpen, Compass, Film, Mic, Newspaper, Sparkles } from 'lucide-react';
+import {
+  Section,
+  SectionHeader,
+  PageHero,
+  BrutalCard,
+  Heading,
+} from '@/components/layout/PageShell';
 
 export const metadata: Metadata = {
   title: 'Resources — Stories, Guides & Craft Journals',
@@ -40,178 +47,118 @@ const guides = [
 export default function Page() {
   return (
     <div className="bg-background text-foreground">
-      {/* HERO */}
-      <section className="relative border-b-2 border-foreground bg-bark-brown text-warm-cream">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-20">
-          <span className="inline-block border-2 border-warm-cream px-3 py-1 font-display text-[11px] tracking-[0.35em] uppercase">
-            Resources
-          </span>
-          <div className="mt-6 grid gap-10 lg:grid-cols-12 lg:items-end">
-            <h1 className="lg:col-span-8 font-display text-5xl md:text-7xl lg:text-8xl leading-[0.95] tracking-tight">
-              Stories, guides, and field notes from the <span className="text-accent italic">craft</span> economy.
-            </h1>
-            <p className="lg:col-span-4 text-lg font-body leading-8 text-warm-cream/80">
-              A living archive of maker journals, buying guides, and short films — written for buyers, artisans, and
-              anyone curious about how heritage commerce actually works.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Resources"
+        title={<>Stories, guides, and field notes from the <span className="text-accent italic">craft</span> economy.</>}
+        lead="A living archive of maker journals, buying guides, and short films — written for buyers, artisans, and anyone curious about how heritage commerce actually works."
+      />
 
-      {/* CATEGORY TABS */}
-      <section className="border-b-2 border-foreground bg-background">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid gap-0 sm:grid-cols-2 lg:grid-cols-4 border-2 border-foreground shadow-brutal">
-            {categories.map((c, i) => {
-              const Icon = c.icon;
-              return (
-                <div
-                  key={c.label}
-                  className={`bg-card p-6 transition-colors hover:bg-primary-soft ${
-                    i > 0 ? 'sm:border-l-2 border-t-2 sm:border-t-0 lg:border-t-0 border-foreground' : ''
-                  } ${i === 2 ? 'lg:border-l-2 lg:border-t-0 border-t-2' : ''}`}
-                >
-                  <Icon className="h-6 w-6 text-primary" strokeWidth={1.5} />
-                  <p className="mt-4 font-display text-lg tracking-tight uppercase">{c.label}</p>
-                  <p className="mt-2 text-sm text-muted-foreground font-body leading-6">{c.body}</p>
-                </div>
-              );
-            })}
-          </div>
+      {/* CATEGORY GRID */}
+      <Section size="sm">
+        <div className="grid gap-0 sm:grid-cols-2 lg:grid-cols-4 border-2 border-foreground shadow-brutal">
+          {categories.map((c, i) => {
+            const Icon = c.icon;
+            return (
+              <div
+                key={c.label}
+                className={`bg-card p-6 transition-colors hover:bg-primary-soft ${
+                  i > 0 ? 'sm:border-l-2 border-t-2 sm:border-t-0 lg:border-t-0 border-foreground' : ''
+                } ${i === 2 ? 'lg:border-l-2 lg:border-t-0 border-t-2' : ''}`}
+              >
+                <Icon className="h-6 w-6 text-primary" strokeWidth={1.5} />
+                <Heading as="h3" size="md" className="mt-4 text-lg">{c.label}</Heading>
+                <p className="mt-2 text-sm text-muted-foreground font-body leading-6">{c.body}</p>
+              </div>
+            );
+          })}
         </div>
-      </section>
+      </Section>
 
       {/* FEATURED + LATEST */}
-      <section className="border-b-2 border-foreground bg-muted">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
-          <div className="mb-10 flex items-end justify-between gap-6">
-            <div>
-              <span className="inline-block border-2 border-foreground px-3 py-1 font-display text-[11px] tracking-[0.35em] uppercase">
-                Latest
-              </span>
-              <h2 className="mt-4 font-display text-4xl md:text-5xl tracking-tight">From the journal.</h2>
-            </div>
-            <Link
-              href="#"
-              className="hidden md:inline-flex items-center gap-2 font-display text-xs tracking-[0.3em] uppercase text-secondary hover:text-primary"
-            >
-              View all <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-12">
-            <article className="lg:col-span-7 border-2 border-foreground bg-card shadow-brutal-lg">
-              <div className="aspect-[16/10] bg-gradient-to-br from-primary via-accent to-secondary border-b-2 border-foreground relative overflow-hidden">
-                <div className="absolute inset-0 opacity-30" style={{
-                  backgroundImage: 'repeating-linear-gradient(45deg, transparent 0 12px, rgba(13,12,12,0.25) 12px 14px)',
-                }} />
-              </div>
-              <div className="p-8">
-                <p className="font-display text-[11px] tracking-[0.35em] uppercase text-primary">{featured.tag}</p>
-                <h3 className="mt-4 font-display text-3xl md:text-4xl leading-tight tracking-tight">{featured.title}</h3>
-                <p className="mt-4 text-muted-foreground font-body leading-8">{featured.excerpt}</p>
-                <div className="mt-6 flex items-center justify-between">
-                  <p className="font-display text-xs tracking-[0.3em] uppercase text-muted-foreground">{featured.meta}</p>
-                  <Link
-                    href="#"
-                    className="inline-flex items-center gap-2 border-2 border-foreground bg-secondary px-4 py-2 font-display text-xs tracking-[0.3em] uppercase text-secondary-foreground shadow-brutal-sm hover:-translate-y-0.5 transition-transform"
-                  >
-                    Read <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              </div>
-            </article>
-
-            <div className="lg:col-span-5 grid grid-cols-1 gap-6">
-              {stories.slice(0, 3).map((s) => (
-                <article
-                  key={s.title}
-                  className="border-2 border-foreground bg-card p-6 shadow-brutal transition-transform hover:-translate-y-1"
-                >
-                  <p className="font-display text-[11px] tracking-[0.35em] uppercase text-accent">{s.tag}</p>
-                  <h3 className="mt-3 font-display text-xl tracking-tight">{s.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground font-body leading-6">{s.excerpt}</p>
-                  <p className="mt-4 font-display text-[11px] tracking-[0.3em] uppercase text-muted-foreground">{s.meta}</p>
-                </article>
-              ))}
-            </div>
-          </div>
+      <Section tone="muted">
+        <div className="mb-10 flex items-end justify-between gap-6">
+          <SectionHeader eyebrow="Latest" title="From the journal." className="mb-0" />
+          <Link href="#" className="hidden md:inline-flex items-center gap-2 font-display text-xs tracking-[0.3em] uppercase text-secondary hover:text-primary">
+            View all <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
-      </section>
 
-      {/* GUIDES */}
-      <section className="border-b-2 border-foreground bg-primary-soft">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
-          <div className="mb-10 grid gap-6 md:grid-cols-2 md:items-end">
-            <div>
-              <span className="inline-block border-2 border-foreground px-3 py-1 font-display text-[11px] tracking-[0.35em] uppercase">
-                Practical
-              </span>
-              <h2 className="mt-4 font-display text-4xl md:text-5xl tracking-tight">Buying & care guides.</h2>
+        <div className="grid gap-6 lg:grid-cols-12">
+          <BrutalCard as="article" padding="sm" shadow="lg" className="lg:col-span-7 p-0 overflow-hidden">
+            <div className="aspect-[16/10] bg-gradient-to-br from-primary via-accent to-secondary border-b-2 border-foreground relative overflow-hidden">
+              <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent 0 12px, rgba(13,12,12,0.25) 12px 14px)' }} />
             </div>
-            <p className="text-muted-foreground font-body leading-8">
-              Short, honest guides written with our artisan partners — the details that make a piece last, and the
-              questions worth asking before you buy.
-            </p>
-          </div>
-          <div className="grid gap-0 md:grid-cols-3">
-            {guides.map((g, i) => (
-              <article
-                key={g.n}
-                className={`bg-card border-2 border-foreground p-8 shadow-brutal ${
-                  i > 0 ? 'md:-ml-[2px] -mt-[2px] md:mt-0' : ''
-                }`}
-              >
-                <span className="font-display text-5xl text-primary">{g.n}</span>
-                <h3 className="mt-6 font-display text-xl tracking-tight uppercase">{g.title}</h3>
-                <p className="mt-3 text-sm text-muted-foreground font-body leading-7">{g.body}</p>
-                <Link
-                  href="#"
-                  className="mt-6 inline-flex items-center gap-2 font-display text-[11px] tracking-[0.35em] uppercase text-secondary hover:text-primary"
-                >
-                  Read guide <ArrowRight className="h-4 w-4" />
+            <div className="p-8">
+              <p className="font-display text-[11px] tracking-[0.35em] uppercase text-primary">{featured.tag}</p>
+              <Heading as="h3" size="lg" className="mt-4 text-3xl md:text-4xl">{featured.title}</Heading>
+              <p className="mt-4 text-muted-foreground font-body leading-8">{featured.excerpt}</p>
+              <div className="mt-6 flex items-center justify-between">
+                <p className="font-display text-xs tracking-[0.3em] uppercase text-muted-foreground">{featured.meta}</p>
+                <Link href="#" className="inline-flex items-center gap-2 border-2 border-foreground bg-secondary px-4 py-2 font-display text-xs tracking-[0.3em] uppercase text-secondary-foreground shadow-brutal-sm hover:-translate-y-0.5 transition-transform">
+                  Read <ArrowRight className="h-4 w-4" />
                 </Link>
-              </article>
+              </div>
+            </div>
+          </BrutalCard>
+
+          <div className="lg:col-span-5 grid grid-cols-1 gap-6">
+            {stories.slice(0, 3).map((s) => (
+              <BrutalCard as="article" key={s.title} padding="md" hover>
+                <p className="font-display text-[11px] tracking-[0.35em] uppercase text-accent">{s.tag}</p>
+                <Heading as="h3" size="md" className="mt-3 text-xl">{s.title}</Heading>
+                <p className="mt-2 text-sm text-muted-foreground font-body leading-6">{s.excerpt}</p>
+                <p className="mt-4 font-display text-[11px] tracking-[0.3em] uppercase text-muted-foreground">{s.meta}</p>
+              </BrutalCard>
             ))}
           </div>
         </div>
-      </section>
+      </Section>
+
+      {/* GUIDES */}
+      <Section tone="primary-soft">
+        <SectionHeader
+          align="between"
+          eyebrow="Practical"
+          title="Buying & care guides."
+          lead="Short, honest guides written with our artisan partners — the details that make a piece last, and the questions worth asking before you buy."
+        />
+        <div className="grid gap-0 md:grid-cols-3">
+          {guides.map((g, i) => (
+            <BrutalCard as="article" key={g.n} padding="lg" className={i > 0 ? 'md:-ml-[2px] -mt-[2px] md:mt-0' : ''}>
+              <span className="font-display text-5xl text-primary">{g.n}</span>
+              <Heading as="h3" size="md" className="mt-6 text-xl">{g.title}</Heading>
+              <p className="mt-3 text-sm text-muted-foreground font-body leading-7">{g.body}</p>
+              <Link href="#" className="mt-6 inline-flex items-center gap-2 font-display text-[11px] tracking-[0.35em] uppercase text-secondary hover:text-primary">
+                Read guide <ArrowRight className="h-4 w-4" />
+              </Link>
+            </BrutalCard>
+          ))}
+        </div>
+      </Section>
 
       {/* NEWSLETTER CTA */}
-      <section className="bg-bark-brown text-warm-cream">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
-          <div className="border-2 border-warm-cream p-10 md:p-16 shadow-brutal-lg">
-            <div className="grid gap-8 md:grid-cols-12 md:items-end">
-              <div className="md:col-span-7">
-                <div className="flex items-center gap-3 text-accent">
-                  <Sparkles className="h-5 w-5" />
-                  <p className="font-display text-xs tracking-[0.35em] uppercase">The Field Notes</p>
-                </div>
-                <h2 className="mt-4 font-display text-4xl md:text-5xl leading-tight tracking-tight">
-                  A monthly letter from the workshop.
-                </h2>
-                <p className="mt-4 max-w-xl text-warm-cream/80 font-body leading-8">
-                  One story, one guide, one new artisan — delivered on the first Sunday of every month. No noise.
-                </p>
+      <Section tone="dark" bordered={false}>
+        <BrutalCard tone="dark" shadow="lg" className="p-10 md:p-16">
+          <div className="grid gap-8 md:grid-cols-12 md:items-end">
+            <div className="md:col-span-7">
+              <div className="flex items-center gap-3 text-accent">
+                <Sparkles className="h-5 w-5" />
+                <p className="font-display text-xs tracking-[0.35em] uppercase">The Field Notes</p>
               </div>
-              <div className="md:col-span-5 flex flex-wrap gap-4 md:justify-end">
-                <Link
-                  href="#"
-                  className="inline-flex items-center gap-3 border-2 border-warm-cream bg-accent px-6 py-3 font-display text-xs tracking-[0.35em] uppercase text-accent-foreground shadow-brutal transition hover:-translate-y-0.5"
-                >
-                  Subscribe <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link
-                  href="/marketplace"
-                  className="inline-flex items-center gap-3 border-2 border-warm-cream bg-transparent px-6 py-3 font-display text-xs tracking-[0.35em] uppercase text-warm-cream transition hover:bg-warm-cream hover:text-bark-brown"
-                >
-                  <Compass className="h-4 w-4" /> Explore Craft
-                </Link>
-              </div>
+              <Heading as="h2" size="lg" className="mt-4">A monthly letter from the workshop.</Heading>
+              <p className="mt-4 max-w-xl text-warm-cream/80 font-body leading-8">One story, one guide, one new artisan — delivered on the first Sunday of every month. No noise.</p>
+            </div>
+            <div className="md:col-span-5 flex flex-wrap gap-4 md:justify-end">
+              <Link href="#" className="inline-flex items-center gap-3 border-2 border-warm-cream bg-accent px-6 py-3 font-display text-xs tracking-[0.35em] uppercase text-accent-foreground shadow-brutal transition hover:-translate-y-0.5">
+                Subscribe <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link href="/marketplace" className="inline-flex items-center gap-3 border-2 border-warm-cream bg-transparent px-6 py-3 font-display text-xs tracking-[0.35em] uppercase text-warm-cream transition hover:bg-warm-cream hover:text-bark-brown">
+                <Compass className="h-4 w-4" /> Explore Craft
+              </Link>
             </div>
           </div>
-        </div>
-      </section>
+        </BrutalCard>
+      </Section>
     </div>
   );
 }
