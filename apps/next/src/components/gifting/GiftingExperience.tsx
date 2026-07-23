@@ -124,14 +124,14 @@ export function GiftingExperience() {
 
   if (complete) {
     return (
-      <main className="min-h-screen bg-background px-4 py-12">
-        <div className="mx-auto max-w-3xl rounded-[2rem] border border-foreground/10 bg-card p-8 shadow-clay">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-accent">Gift order captured</p>
-          <h1 className="mt-3 text-4xl font-bold">Gift order #{complete.id}</h1>
-          <p className="mt-4 text-muted-foreground">
+      <main className="min-h-screen bg-background px-4 py-24 text-foreground">
+        <div className="mx-auto max-w-3xl border-2 border-foreground bg-card p-10 shadow-brutal">
+          <span className="brutal-eyebrow">Gift Order Captured</span>
+          <h1 className="brutal-h2 mt-6">Gift order #{complete.id}</h1>
+          <p className="mt-4 font-body leading-8 text-muted-foreground">
             {complete.total_items} item(s), {complete.recipient_count} recipient(s), UGX {Math.round(complete.total_amount_ugx).toLocaleString()}.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild variant="earth">
               <Link href="/marketplace">Continue shopping</Link>
             </Button>
@@ -148,17 +148,29 @@ export function GiftingExperience() {
   }
 
   return (
-    <main className="min-h-screen bg-background px-4 py-8">
-      <div className="mx-auto max-w-7xl">
-        <section className="rounded-[2rem] bg-mud p-6 text-primary shadow-clay md:p-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/70">Empindu gifting</p>
-          <h1 className="mt-3 max-w-3xl text-4xl font-bold leading-tight md:text-5xl">Send artisan stories as gifts, from one person or a whole team.</h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-primary/75">
+    <main className="min-h-screen bg-background text-foreground">
+      <section className="relative overflow-hidden border-b-2 border-foreground bg-bark-brown text-warm-cream">
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-25"
+          style={{
+            backgroundImage:
+              'repeating-linear-gradient(0deg, transparent 0 22px, hsl(var(--kente-gold) / 0.55) 22px 24px), repeating-linear-gradient(90deg, transparent 0 22px, hsl(var(--copper) / 0.4) 22px 24px)',
+          }}
+        />
+        <div className="relative mx-auto max-w-7xl px-4 pt-28 pb-16 sm:px-6 lg:px-8">
+          <span className="brutal-eyebrow-light">Empindu Gifting</span>
+          <h1 className="brutal-h1 mt-6 max-w-4xl">
+            Send artisan <span className="text-accent italic">stories</span> as gifts, from one person or a whole team.
+          </h1>
+          <p className="mt-6 max-w-2xl font-body text-lg leading-8 text-warm-cream/80">
             Personal gifts and corporate bundles use the same product catalogue, cart, recipient data, and gift order database.
           </p>
-        </section>
+        </div>
+      </section>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[0.95fr_1.2fr]">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+
           <section className="rounded-[2rem] border border-foreground/10 bg-card p-5 shadow-clay">
             <div className="grid grid-cols-2 rounded-2xl bg-muted p-1">
               <button type="button" onClick={() => setMode('personal')} className={`min-h-11 rounded-xl text-sm font-semibold ${mode === 'personal' ? 'bg-card shadow-medium' : 'text-muted-foreground'}`}>
