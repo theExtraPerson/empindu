@@ -2,37 +2,48 @@
 Base settings for Empindu Django project.
 Thrive With Nature
 """
+from os import environ
 from pathlib import Path
-import environ
+from environ import env
+import dj_database_url
 
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Environment variables
-env = environ.Env(
-    DEBUG=(bool, False),
-    SECRET_KEY=(str, "change-me-in-production"),
-    ALLOWED_HOSTS=(list, ["localhost", "127.0.0.1"]),
-    TELEGRAM_BOT_TOKEN=(str, ""),
-    TELEGRAM_WEBHOOK_URL=(str, ""),
- 
-    TELEGRAM_WEBHOOK_SECRET=(str, ""),
-    TELEGRAM_ANNOUNCEMENT_CHAT_ID=(str, ""),
-    SOCIAL_AUTH_SHARED_SECRET=(str, ""),
-    FRONTEND_URL=(str, "http://localhost:3000"),
-    OPENAI_API_KEY=(str, ""),
-    OPENAI_TRANSCRIBE_MODEL=(str, "gpt-4o-mini-transcribe"),
-)
+LOGGING = {
+    ...
+}
+
+# Environment variables)
+ALLOWED_HOSTS = [
+    "your-backend.up.railway.app",
+    "empindu.vercel.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://empindu.vercel.app",
+    "https://empindu.com",
+    "https://api.empindu.com"
+]
 
 # Read .env file
 environ.Env.read_env(BASE_DIR / ".env")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+DEBUG = env.bool("DEBUG", default=False)
 
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = env("SECRET_KEY", default=None)
 
-ALLOWED_HOSTS = env("ALLOWED_HOSTS")
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY is not configured")
+
+ALLOWED_HOSTS = env.list(
+    "ALLOWED_HOSTS",
+    default=[
+        "localhost",
+        "127.0.0.1",
+    ],
+)
 
 TELEGRAM_BOT_TOKEN = env("TELEGRAM_BOT_TOKEN")
 TELEGRAM_WEBHOOK_URL = env("TELEGRAM_WEBHOOK_URL")
@@ -123,20 +134,28 @@ ASGI_APPLICATION = "config.asgi.application"
 
 # Database
 # PostgreSQL (production-ready with pgvector support)
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': env('DB_NAME', default='empindu'),
+#         'USER': env('DB_USER', default='postgres'),
+#         'PASSWORD': env('DB_PASSWORD', default='3mpindu'),
+#         'HOST': env('DB_HOST', default='127.0.0.1'),
+#         'PORT': env('DB_PORT', default='5432'),
+#         'ATOMIC_REQUESTS': True,
+#         'CONN_MAX_AGE': env.int('DB_CONN_MAX_AGE', default=60),
+#         'OPTIONS': {
+#             'sslmode': env('DB_SSLMODE', default='prefer'),
+#         }
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME', default='empindu'),
-        'USER': env('DB_USER', default='postgres'),
-        'PASSWORD': env('DB_PASSWORD', default='3mpindu'),
-        'HOST': env('DB_HOST', default='127.0.0.1'),
-        'PORT': env('DB_PORT', default='5432'),
-        'ATOMIC_REQUESTS': True,
-        'CONN_MAX_AGE': env.int('DB_CONN_MAX_AGE', default=60),
-        'OPTIONS': {
-            'sslmode': env('DB_SSLMODE', default='prefer'),
-        }
-    }
+    "default": dj_database_url.config(
+        default=env("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True,
+    )
 }
 
 # Ensure pgvector extension is used for AI/ML features
@@ -207,6 +226,7 @@ CORS_ALLOWED_ORIGINS = env.list(
     default=[
         "http://localhost:3000",
         "https://empindu.vercel.app",
+
           
           # Assuming Vercel for production
           # use app.empindu.com in production
@@ -233,6 +253,22 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
     "x-empindu-social-secret",
 ]
+
+SECURE_SSL_REDIRECT = not DEBUG
+
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
+SECURE_BROWSER_XSS_FILTER = True
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+X_FRAME_OPTIONS = "DENY"
+
+SECURE_REFERRER_POLICY = "same-origin"
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -368,12 +404,17 @@ UNFOLD = {
 # ============================================================================
 
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+
     'DEFAULT_THROTTLE_CLASSES': [
         'api.v1.throttles.AuthThrottle',
         'api.v1.throttles.SearchThrottle',
         'api.v1.throttles.CheckoutThrottle',
         'api.v1.throttles.CustomThrottle',
     ],
+    
     'DEFAULT_THROTTLE_RATES': {
         'auth': '50/minute',
         'search': '100/minute',
