@@ -4,6 +4,11 @@
   "scripts": {
     "build": "cd apps/next && (test -x node_modules/.bin/next || npm install --silent) && node_modules/.bin/next build && cd ../.. && mkdir -p dist && printf '<!doctype html><meta charset=\"utf-8\"><title>Empindu</title><meta http-equiv=\"refresh\" content=\"0;url=/\">' > dist/index.html",
     "build:dev": "npm run build",
-    "dev": "cd apps/next && (test -x node_modules/.bin/next || npm install --silent) && node_modules/.bin/next dev"
+    "dev": "cd apps/next && (test -x node_modules/.bin/next || npm install --silent) && node_modules/.bin/next dev",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.114.0"
   }
 }
