@@ -124,14 +124,14 @@ export function GiftingExperience() {
 
   if (complete) {
     return (
-      <main className="min-h-screen bg-background px-4 py-12">
-        <div className="mx-auto max-w-3xl rounded-[2rem] border border-foreground/10 bg-card p-8 shadow-clay">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-accent">Gift order captured</p>
-          <h1 className="mt-3 text-4xl font-bold">Gift order #{complete.id}</h1>
-          <p className="mt-4 text-muted-foreground">
+      <main className="min-h-screen bg-background px-4 py-24 text-foreground">
+        <div className="mx-auto max-w-3xl border-2 border-foreground bg-card p-10 shadow-brutal">
+          <span className="brutal-eyebrow">Gift Order Captured</span>
+          <h1 className="brutal-h2 mt-6">Gift order #{complete.id}</h1>
+          <p className="mt-4 font-body leading-8 text-muted-foreground">
             {complete.total_items} item(s), {complete.recipient_count} recipient(s), UGX {Math.round(complete.total_amount_ugx).toLocaleString()}.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild variant="earth">
               <Link href="/marketplace">Continue shopping</Link>
             </Button>
