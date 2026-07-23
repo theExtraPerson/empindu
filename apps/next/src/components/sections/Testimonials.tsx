@@ -206,8 +206,8 @@ export function Testimonials() {
           viewport={{ once: true }}
           className="text-center mt-8 md:mt-12"
         >
-          <span className="font-mono text-xs text-bark-brown/40 tracking-wider">
-            AUTO-ROTATING - CLICK TO SELECT
+          <span className="font-mono text-xs py-6 mx-auto text-bark-brown/40 tracking-wider">
+            THE ARTISAN'S STORY IS ONLY THE BEGINNING. BE PART OF IT NOW.
           </span>
         </motion.div>
       </div>

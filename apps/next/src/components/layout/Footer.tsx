@@ -74,11 +74,11 @@ export function Footer() {
               className="flex flex-col sm:flex-row gap-0"
               onSubmit={(e: FormEvent<HTMLFormElement>) => e.preventDefault()}
             >
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="bg-transparent border-2 border-warm-cream/30 text-warm-cream placeholder:text-warm-cream/40 focus:border-warm-cream rounded-none h-14 flex-1"
-              />
+              <h3
+                className="bg-transparent border-2 border-warm-cream/30 text-warm-cream placeholder:text-warm-cream/40 focus:border-warm-cream rounded h-14 flex-1"
+              >
+                Be part of the journey
+              </h3>
               <button className="h-14 px-8 bg-secondary text-secondary-foreground font-display text-sm tracking-widest hover:bg-secondary/90 transition-colors flex items-center gap-2 border-2 border-secondary">
                 SUBSCRIBE
                 <ArrowRight className="h-4 w-4" />
