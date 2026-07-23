@@ -3,9 +3,9 @@
   "private": true,
   "version": "0.2.0",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "test -x node_modules/.bin/next || npm install --silent; node_modules/.bin/next dev",
+    "build": "test -x node_modules/.bin/next || npm install --silent; node_modules/.bin/next build && mkdir -p ../../dist && printf '%s' '<!doctype html><meta charset=\"utf-8\"><title>Empindu</title><meta http-equiv=\"refresh\" content=\"0;url=/\">' > ../../dist/index.html",
+    "start": "test -x node_modules/.bin/next || npm install --silent; node_modules/.bin/next start",
     "lint": "next lint"
   },
   "dependencies": {

@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Users insert own order history" ON public.gift_order_status_history;

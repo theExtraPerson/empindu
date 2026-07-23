@@ -18,6 +18,7 @@ import { useCartStore } from "@/stores/cartStore";
 const navigation = [
   { name: "ARTISANS", href: "/artisans" },
   { name: "MARKETPLACE", href: "/marketplace" },
+  { name: "RESOURCES", href: "/resources" },
   { name: "ABOUT", href: "/about" },
   { name: "CHECKOUT", href: "/checkout" },
 ];

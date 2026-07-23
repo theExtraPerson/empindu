@@ -19,12 +19,12 @@ const footerLinks = {
   discover: [
     { name: "ARTISAN DIRECTORY", href: "/artisans" },
     { name: "MARKETPLACE", href: "/marketplace" },
+    { name: "RESOURCES", href: "/resources" },
     { name: "ABOUT EMPINDU", href: "/about" },
-    { name: "CHECKOUT", href: "/checkout" },
   ],
   support: [
-    { name: "ABOUT US", href: "/about" },
-    { name: "SHOP STORIES", href: "/marketplace" },
+    { name: "FIELD JOURNAL", href: "/resources" },
+    { name: "BUYING GUIDES", href: "/resources" },
     { name: "MEET ARTISANS", href: "/artisans" },
     { name: "START SHOPPING", href: "/marketplace" },
   ],
@@ -32,7 +32,7 @@ const footerLinks = {
     { name: "ORDER SUPPORT", href: "/checkout" },
     { name: "HERITAGE STORY", href: "/about" },
     { name: "BUYER JOURNEY", href: "/marketplace" },
-    { name: "ARTISAN DIRECTORY", href: "/artisans" },
+    { name: "CRAFT FILMS", href: "/resources" },
   ],
 };
 

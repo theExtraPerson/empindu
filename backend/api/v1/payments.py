@@ -52,11 +52,27 @@ def is_admin(user) -> bool:
 
 @router.post('/webhook', auth=None)
 def payment_webhook(request, payload: WebhookIn):
-    # Generic webhook receiver for payment providers. Proper providers should sign requests.
+    """
+    Generic webhook receiver for payment providers.
+    Requires a shared secret header (X-Webhook-Secret) matching the
+    PAYMENTS_WEBHOOK_SECRET setting. Providers with real signature
+    schemes (Stripe/Flutterwave/etc.) should be handled in provider-
+    specific endpoints that verify the signature cryptographically.
+    """
+    import hmac
+    from django.conf import settings
+    from ninja.errors import HttpError
+
+    expected = getattr(settings, "PAYMENTS_WEBHOOK_SECRET", "") or ""
+    supplied = request.headers.get("X-Webhook-Secret", "") or ""
+    if not expected or not supplied or not hmac.compare_digest(expected, supplied):
+        raise HttpError(401, "Invalid webhook signature")
+
     tx = process_provider_callback(payload.reference, payload.status, external_reference=payload.external_reference, payload=payload.payload)
     if not tx:
         return {"detail": "transaction not found"}
     return {"ok": True, "status": tx.status, "reference": tx.reference}
+
 
 
 @router.get('/payouts', response=List[PayoutOut])

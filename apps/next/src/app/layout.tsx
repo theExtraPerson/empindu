@@ -21,8 +21,22 @@ const bodyFont = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Empindu | Thrive With Nature',
-  description: 'Story-first Ugandan artisan marketplace powered by Django commerce and a Next.js storefront.',
+  metadataBase: new URL('https://empindu.lovable.app'),
+  title: {
+    default: 'Empindu | Thrive With Nature — Ugandan Artisan Marketplace',
+    template: '%s | Empindu',
+  },
+  description:
+    'Story-first Ugandan artisan marketplace. Shop heritage baskets, textiles, pottery and beadwork with visible provenance and maker stories.',
+  keywords: ['Ugandan crafts', 'African artisan marketplace', 'heritage crafts', 'handmade Uganda', 'fair trade gifts'],
+  openGraph: {
+    title: 'Empindu — Thrive With Nature',
+    description: 'Story-first Ugandan artisan marketplace with visible provenance.',
+    type: 'website',
+    siteName: 'Empindu',
+  },
+  twitter: { card: 'summary_large_image', title: 'Empindu — Thrive With Nature' },
+  alternates: { canonical: '/' },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
