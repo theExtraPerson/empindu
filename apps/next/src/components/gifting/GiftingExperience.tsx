@@ -170,8 +170,9 @@ export function GiftingExperience() {
       </section>
 
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-
+        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.2fr]">
           <section className="rounded-[2rem] border border-foreground/10 bg-card p-5 shadow-clay">
+
             <div className="grid grid-cols-2 rounded-2xl bg-muted p-1">
               <button type="button" onClick={() => setMode('personal')} className={`min-h-11 rounded-xl text-sm font-semibold ${mode === 'personal' ? 'bg-card shadow-medium' : 'text-muted-foreground'}`}>
                 Personal
